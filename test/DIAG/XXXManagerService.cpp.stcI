@@ -1,0 +1,299 @@
+stcI_HASH : Module_Name
+stcI_EXTENSION : cpp
+stcI_FILEPOSTFIX : ManagerService
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+/*
+ *   This software is copyright protected and proprietary to
+ *   LG electronics. LGE grants to you only those rights as
+ *   set out in the license conditions. All other rights remain
+ *   with LG electronics.
+ * \author  Jong Kyung Byun
+ * \date    2017.11.14
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+
+#define LOG_TAG "+<+$MODULENAME+>+ManagerService"
+
+#include <Log.h>
+#include <binder/IServiceManager.h>
+
+#include "+<+$MODULENAME+>+ManagerService.h"
+#include "+<+$MODULENAME+>+Service.h"
+
++<+$MODULENAME+>+ManagerService::+<+$MODULENAME+>+ManagerService() :      SystemService(+<+$MODULENAME+>+ManagerService::getServiceName()) {}
+
++<+$MODULENAME+>+ManagerService::~+<+$MODULENAME+>+ManagerService() {}
+
+error_t +<+$MODULENAME+>+ManagerService::dump(LogOutput&)
+{
+	return E_OK;
+}
+
+bool +<+$MODULENAME+>+ManagerService::onInit()
+{
+	LOGV("onInit");
+
+	mReceiverDeathRecipient = new ReceiverDeathRecipient(*this);
+
+	return false;
+}
+
+void +<+$MODULENAME+>+ManagerService::instantiate()
+{
+	LOGV("instantiate");
+	android::defaultServiceManager()->addService(android::String16(+<+$MODULENAME+>+ManagerService::getServiceName()), new ServiceStub(*this));
+}
+
+error_t +<+$MODULENAME+>+ManagerService::onStart(void)
+{
+	LOGV("Onstart");
+	error_t ret = E_OK;
+
+	m+<+$MODULENAME+>+InputMgr = new +<+$MODULENAME+>+InputManager(this);
+	ret = m+<+$MODULENAME+>+InputMgr->init();
+
+	SystemService::onStart();
+
+	return ret;
+}
+
+error_t +<+$MODULENAME+>+ManagerService::onStop()
+{
+	return E_OK;
+}
+
+error_t +<+$MODULENAME+>+ManagerService::attachReceiver(serviceid_t id, sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver)
+{
+
+    LOGV("attachReceiver(), id = [%2x]", id);
+    if(receiver == NULL) {
+        LOGE("attachReceiver(), receiver is null");
+        return E_ERROR;
+    }
+
+    Mutex::Autolock _l(mReceiverLock);
+    auto &receivers = mReceivers[id];
+
+    // check duplication
+    for(auto &r: receivers) {
+        if(android::IInterface::asBinder(r) == android::IInterface::asBinder(receiver)) {
+            LOGE("attachReceiver(), existed");
+            return E_ERROR;
+        }
+    }
+    android::IInterface::asBinder(receiver)->linkToDeath(mReceiverDeathRecipient);
+    receivers.push_back(receiver);
+
+    return E_OK;
+}
+
+error_t +<+$MODULENAME+>+ManagerService::unregisterReceiver(const sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver) {
+    LOGV("unregisterReceiver()");
+
+    Mutex::Autolock _l(mReceiverLock);
+    for(auto &receivers: mReceivers) {
+        for(const auto r: receivers.second) {
+            if(android::IInterface::asBinder(r) == android::IInterface::asBinder(receiver)) {
+                android::IInterface::asBinder(r)->unlinkToDeath(mReceiverDeathRecipient);
+                receivers.second.remove(r);
+                return E_OK;
+            }
+        }
+    }
+
+    LOGE("+<+$MODULENAME+>+Mgr unregisterReceiver(), no hit");
+    return E_ERROR;
+}
+
+void +<+$MODULENAME+>+ManagerService::onReceiverBinderDied(const android::wp<android::IBinder>& who) {
+    LOGE("onReceiverBinderDied()");
+
+    Mutex::Autolock _l(mReceiverLock);
+    for(auto &receivers: mReceivers) {
+        for(const auto r: receivers.second) {
+            if(android::IInterface::asBinder(r) == who) {
+                LOGE("onReceiverBinderDied(), remove died receiver");
+                receivers.second.remove(r);
+                return;
+            }
+        }
+    }
+}
+
+error_t +<+$MODULENAME+>+ManagerService::queryReceiverById(appid_t id, android::sp<+<+$MODULENAME+>+Data>& diagData)
+{
+	Mutex::Autolock _l(mReceiverLock);
+
+	error_t result = E_ERROR;
+	for (const auto s: mReceivers) {
+		if (s.first == id ) {
+			result = E_OK;
+
+			for (const auto r: s.second) {
+				LOGV("queryReceiverById : [%2x]", id);
+				r->onReceive(diagData);
+			}
+		}
+	}
+
+	return result;
+}
+
+bool +<+$MODULENAME+>+ManagerService::isApplicationExecuted(appid_t id)
+{
+	Mutex::Autolock _l(mReceiverLock);
+	bool result = false;
+	for (const auto s: mReceivers) {
+		if (s.first == id) {
+			for (const auto r: s.second) {
+				LOGV("isApplicationExecuted : [%2x]", id);
+				result = true;
+			}
+		}
+	}
+
+	return result;
+}
+
+error_t +<+$MODULENAME+>+ManagerService::requestResponseDataID(android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+{
+	LOGV("requestResponseDataID start");
+	error_t results = E_ERROR;
+
+	uint8_t tempdata[+<+uc($MODULENAME)+>+DATA_BUFSIZE] = {0U,};
+
+	if (mdiagData == NULL) {
+		LOGE("requestResponseDataID diagData NULL");
+		return results;
+	}
+
+	uint16_t tempDID = mdiagData->getDid();
+	uint16_t tempSize = mdiagData->getLen();
+	uint8_t tempAtt = mdiagData->getAtt();
+
+	if ((mdiagData->getData() != NULL) && (tempSize != 0)) {
+		memcpy(tempdata, mdiagData->getData(), tempSize);
+	}
+
+	results = m+<+$MODULENAME+>+InputMgr->+<+$MODULENAME+>+OutputManager(tempDID, tempSize, tempAtt, tempdata);
+
+	LOGV("requestResponseDataID end");
+	return results;
+}
+
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::requestDataID(android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+{
+	LOGV("ServiceStub: requestDataID");
+
+	return mParent.requestResponseDataID(mdiagData);
+}
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::responseDataID (android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+{
+	LOGV("ServiceStub: responseDataID");
+
+	return mParent.requestResponseDataID(mdiagData);
+}
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver)
+{
+	return mParent.attachReceiver(id, receiver);
+}
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::unregisterReceiver( const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver)
+{
+	return mParent.unregisterReceiver(receiver);
+}
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::queryReceiverById(appid_t id , android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+{
+	return mParent.queryReceiverById(id, mdiagData);
+}
+
+
+// auto CGA start
+ITERATE %API +<<+ ITKEY  ITVALUE
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+{
+	LOGV("ServiceStub: ITKEY");
+
+	// implement your code
+
+	return E_OK;
+}
++>>+
+
+// auto CGA end
+
+/*
+ * SLDD Use ONLY
+ * */
+#ifdef +<+uc($MODULENAME)+>+_SLDD_TEST
+error_t +<+$MODULENAME+>+ManagerService::SlddTestCmd(uint8_t id, uint8_t cmd, uint8_t cmd2, android::sp<Buffer> buf)
+{
+	return E_OK;
+}
+
+android::sp<Buffer> +<+$MODULENAME+>+ManagerService::SLDDRequestDataID(uint16_t index)
+{
+	LOGV("SLDDRequestDataID start");
+	error_t results = E_OK;
+
+	int bufsize = 12;
+	uint8_t dataValue[bufsize] = {0,};
+	android::sp<Buffer> buf = new Buffer();
+
+	dataValue[0] = 0x00;
+	dataValue[1] = 0x00;
+	dataValue[2] = 0x1a;
+	dataValue[3] = 0x2b;
+	dataValue[4] = 0x00;
+	dataValue[5] = 0x00;
+	dataValue[6] = (uint8_t)index;
+	dataValue[7] = index>>8;
+	dataValue[8] = 0x01;
+	dataValue[9] = 0x00;
+	dataValue[10] = 0x01;
+	dataValue[11] = 0x01;
+
+	buf->setSize(bufsize);
+	buf->setTo(dataValue,bufsize);
+
+	results = m+<+$MODULENAME+>+InputMgr->messagefromVIF(index, buf);
+	LOGV("SLDDRequestDataID end");
+	return buf;
+}
+
+error_t +<+$MODULENAME+>+ManagerService::SLDDResponseDataID(uint16_t request_id, android::sp<Buffer>  buf)
+{
+	LOGV("SLDDResponseDataID");
+	error_t results = E_OK;
+
+//	results = m+<+$MODULENAME+>+InputMgr->messagefromVIF(request_id, buf);
+	results = m+<+$MODULENAME+>+InputMgr->slddMsgToVIF(request_id, buf);
+	return results;
+}
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::SlddTestCmd(uint8_t id, uint8_t cmd, uint8_t cmd2, android::sp<Buffer> buf)
+{
+	return mParent.SlddTestCmd(id, cmd, cmd2, buf);
+}
+
+android::sp<Buffer> +<+$MODULENAME+>+ManagerService::ServiceStub::SLDDRequestDataID(uint16_t index)
+{
+	LOGV("ServiceStub: SLDDRequestDataID");
+
+	return mParent.SLDDRequestDataID(index);
+}
+
+error_t +<+$MODULENAME+>+ManagerService::ServiceStub::SLDDResponseDataID (uint16_t request_id, android::sp<Buffer> buf)
+{
+	LOGV("ServiceStub: SLDDResponseDataID");
+
+	return mParent.SLDDResponseDataID(request_id, buf);
+}
+
+#endif
+

@@ -1,0 +1,308 @@
+FileName : DiagInputManager.h
+Set : $iterate_comments = OFF
+/*
+ *   This software is copyright protected and proprietary to
+ *   LG electronics. LGE grants to you only those rights as
+ *   set out in the license conditions. All other rights remain
+ *   with LG electronics.
+ * \author  Jong Kyung Byun
+ * \date    2017.11.14
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+
+#ifndef SERVICELAYER_DIAGE_IO_MANAGER_H
+#define SERVICELAYER_DIAGE_IO_MANAGER_H
+
+#include <binder/IBinder.h>
+#include <binder/IInterface.h>
+
+#include <utils/Handler.h>
+#include <utils/SLLooper.h>
+#include <utils/Timer.h>
+#include <utils/external/mindroid/lang/String.h>
+
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/
+#include "services/ApplicationManagerService/IApplicationManagerService.h"
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/
+
+
+IFEQUAL(+<+$Related_Manager{vif}+>+  eq "O")+{{+
+/*!! vif Inheritance CGA start-------------------------------------------------*/
+#include "services/vifManagerService/IvifManagerService.h"
+#include "services/vifManagerService/IvifManagerReceiver.h"
+/*!! vif Inheritance CGA end-------------------------------------------------*/
++}}+
+
+IFEQUAL(+<+$Related_Manager{system}+>+  eq "O")+{{+
+/*!! system Inheritance CGA start-------------------------------------------------*/
+#include "services/SystemManagerService/ISystemReceiver.h"
+#include "services/SystemManagerService/ISystemManagerService.h"
+/*!! system Inheritance CGA end-------------------------------------------------*/
++}}+
+
+IFEQUAL(+<+$Related_Manager{hmi}+>+  eq "O")+{{+
+/*!! hmi Inheritance CGA start-------------------------------------------------*/
+#include <services/HMIManagerService/IHMIEventReceiver.h>
+#include <services/HMIManagerService/IHMIManagerService.h>
+#include <services/HMIManagerService/IHMIManagerServiceType.h>
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
++}}+
+
+IFEQUAL(+<+$Related_Manager{loc}+>+  eq "O")+{{+
+/*!! loc Inheritance CGA start-------------------------------------------------*/
+#include <services/LocationManagerService/LocationData.h>
+#include <services/LocationManagerService/ILocationReceiver.h>
+#include <services/LocationManagerService/ILocationManagerService.h>
+#include <services/LocationManagerService/ILocationManagerServiceType.h>
+/*!! loc Inheritance CGA end-------------------------------------------------*/
++}}+
+
+IFEQUAL(+<+$Related_Manager{audio}+>+  eq "O")+{{+
+/*!! Audio Inheritance CGA start-------------------------------------------------*/
+#include <services/AudioManagerService/IAudioManagerService.h>
+#include <services/AudioManagerService/IAudioManagerServiceType.h>
+/*!! Audio Inheritance CGA end-------------------------------------------------*/
++}}+
+
+#include "ProcessDataManager.h"
+#include "services/DiagManagerService/DiagCommand.h"
+#include "services/DiagManagerService/OEM_Diag_Defines.h"
+
+#include <TCUProtocol.h>
+
+
+class DiagManagerService;
+class ProcessDataManager;
+
+enum eDiagHandler : unit32_t {
+	MSG_RECEIVE_BOOT_COMPLETE = 1,
+	MSG_RECEIVE_WATCH_DOG = 2,
+	MSG_BOOT_COMPLETE_DID_START = 3,
+	MSG_DIAGDATA_QUEUE = 4,
+	MSG_SIGNAL_INTERNAL_IGNITION2_STATUS = 5,
+/*!! app manager  Inheritance CGA start-------------------------------------------------*/
+	MSG_CONNECT_TO_APPMGR = 13,
+/*!! app manager  Inheritance CGA end-------------------------------------------------*/
+
+ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+IFEQUAL(+<+$Related_Manager{ITKEY}+>+  eq "O")+{{+
+/*!! ITKEY Inheritance CGA start-------------------------------------------------*/
+	MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR ,
+	MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+ ,
+/*!! ITKEY Inheritance CGA end-------------------------------------------------*/
++}}+
+
++>>+
+
+	TIME_SEND_RETRY_DELAY_MS  = 500,
+};
+
+/*!! DID_WORK_FOR_DEFINE_0 msg CGA start-------------------------------------------------*/
+enum eDiagFunction : unit32_t {
+ITERATE %Function +<<+ ITKEY  ITVALUE
+	ITKEY , 
++>>+
+}
+/*!! DID_WORK_FOR_DEFINE_0 msg CGA end-------------------------------------------------*/
+
+class DiagInputManager: public android::RefBase
+{
+    public:
+	class DiagHandler: public sl::Handler {
+        public:
+			
+ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+// see : enum eDiagHandler
+/*!! ITKEY Inheritance CGA start-------------------------------------------------*/
+			static const uint32_t MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR = 11;
+			static const uint32_t MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+ = 21;
+/*!! ITKEY Inheritance CGA end-------------------------------------------------*/
++>>+
+
+
+/*!! DID_WORK_FOR_DEFINE_0 msg CGA start-------------------------------------------------*/
+// see : enum eDiagFunction
+ITERATE %Function +<<+ ITKEY  ITVALUE
+			static const uint32_t ITKEY = 30;
++>>+
+/*!! DID_WORK_FOR_DEFINE_0 msg CGA end-------------------------------------------------*/
+
+        public:
+            DiagHandler(android::sp<sl::SLLooper>& looper, DiagInputManager& outer) :
+            Handler(looper), mDiagInputMgr(outer) { }
+            virtual void handleMessage(const android::sp<sl::Message>& msg);
+
+        private:
+            DiagInputManager& mDiagInputMgr;
+    };
+
+    class DiagInputMgrTimer : public TimerTimeoutHandler {
+        public:
+        /* Timer ID */
+            static const uint32_t DIAG_WATCHDOG_TIMER = 1;
+            static const uint32_t BOOT_COMPLETE_TIME_OUT = 2;
+
+            explicit DiagInputMgrTimer(android::sp<DiagInputManager::DiagHandler> handler) :	mHandler(handler) { }
+                virtual void handlerFunction(int timer_id) {
+                    LOGV("DiagInputMgrTimer is received");
+                    switch(timer_id) {
+                        case DIAG_WATCHDOG_TIMER:
+                            mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_WATCH_DOG)->sendToTarget();
+                            break;
+                        case BOOT_COMPLETE_TIME_OUT:
+                            mHandler->obtainMessage(DiagHandler::DIAG_BOOT_COMPLETE_DID_START)->sendToTarget();
+                            break;
+                        default :
+                            break;
+                    }
+                }
+        private:
+            android::sp<DiagInputManager::DiagHandler> mHandler;
+    };
+
+	void onServiceBinderDied(const android::wp<android::IBinder>& who);
+
+    class ServiceDeathRecipient : public android::IBinder::DeathRecipient {
+        public:
+            ServiceDeathRecipient(DiagInputManager& parent) : mParent(parent) {}
+            virtual ~ServiceDeathRecipient() {}
+            virtual void binderDied(const android::wp<android::IBinder>& who)
+            { mParent.onServiceBinderDied(who);}
+        private:
+            DiagInputManager& mParent;
+    };
+	
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/
+    class DiagSystemPostReceiver: public BnSystemPostReceiver {
+        public:
+            explicit DiagSystemPostReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler) {}
+            virtual bool onSystemPostReceived(const android::sp<Post>& systemPost) {
+                LOGV("DiagSystemPostReceiver Boot Complete");
+                android::sp<sl::Message> message = mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_BOOT_COMPLETE);
+                message->sendToTarget();
+                return true;
+            }
+        private:
+            android::sp<DiagInputManager::DiagHandler> mHandler;
+    };
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/
+
+ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+/*!! ITKEY Inheritance CGA start-------------------------------------------------*/
+class ITKEYReceiver: public BnITKEYManagerReceiver {
+	public:
+		ITKEYReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler)
+		{ targetModuleID = NAD_MODULE_DIAGNOSTIC_MGR; }
+
+		virtual void onReceive(uint32_t Sigid, android::sp<Buffer>& buf) 	{
+			LOGV("DiagInput Manager   onReceive ITKEY Sigid:0x%02X", Sigid);
+
+			android::sp<sl::Message> message = mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_FROM_+<+uc(ITKEY)+>+, Sigid);
+			if (buf->size() > 0) {
+				message->buffer.setTo(buf->data(), buf->size());
+			} else {
+				LOGE("ITKEY : CAN signal received without data.");
+			}
+			message->sendToTarget();
+			return;
+		}
+
+		// write the virtual functions from BnReceiver
+		// virtual void onLocationInfoChanged(android::sp<LocationData> locData){}
+        // virtual void onGPSStatusChanged(gps_status_t status){}
+		// ....... etc.
+
+		private:
+			android::sp<DiagInputManager::DiagHandler> mHandler;
+	};
+/*!! ITKEY Inheritance CGA end-------------------------------------------------*/
+
++>>+
+
+/*!! Audio Inheritance CGA start-------------------------------------------------*/
+    class DiagAudioReceiver : public BnAudioReceiver {
+        public:
+            DiagAudioReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler){}
+            virtual DiagAudioReceiver() {}
+
+            virtual void onAudioPlayStateChanged(uint8_t dtc_type){
+                LOGV("%s dtc_type[%d]",__FUNCTION__, dtc_type);
+                sp<sl::Message> message = mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_FROM_AUDIO, (int32_t)dtc_type);
+                message->sendToTarget();
+           	}
+        private:
+            android::sp<DiagInputManager::DiagHandler> mHandler;
+    };
+/*!! Audio Inheritance CGA end-------------------------------------------------*/
+
+    public:
+        DiagInputManager(android::sp<DiagManagerService> diagMgrService);
+        virtual ~DiagInputManager();
+        error_t init();
+
+        error_t messagefromVIF(uint16_t sigId, android::sp<Buffer>& buf);
+		error_t messagefrom_SOMEIP(uint16_t sigId, android::sp<Buffer>& buf);
+        error_t  transferDatabyVIF (android::sp<DiagData>& mdiagData);
+
+        void sendingData(android::sp<Buffer>& buf);
+        error_t sendToQueue(android::sp<DiagData>& mdiagData);
+        error_t sendToVif(android::sp<DiagData>& mdiagData);
+		error_t sendTo_SOMEIP(android::sp<DiagData>& mdiagData);
+        error_t DiagOutputManager(uint16_t id,uint16_t size, uint8_t mAtt_type, uint8_t* data);
+
+/*!! DID_WORK_FOR_DEFINE_0 header CGA start-------------------------------------------------*/	
+ITERATE %Function +<<+ ITKEY  ITVALUE
+		error_t ITKEY(android::sp<DiagData>& mdiagData);
++>>+
+/*!! DID_WORK_FOR_DEFINE_0 header CGA end-------------------------------------------------*/
+
+    private:
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/
+        void connectToAppMgr(void);
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/
+
+ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+/*!! ITKEY Inheritance CGA start-------------------------------------------------*/
+        void connectTo+<+ucfirt(ITKEY)+>+Mgr(void);
+/*!! ITKEY Inheritance CGA end-------------------------------------------------*/
+
++>>+
+
+        void TimerStart( void );
+        void TimerStop( void );
+
+    private:
+        android::sp<DiagManagerService> mDiagMgrService;
+        android::sp<DiagHandler> mMyHandler;
+
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/	
+		android::sp<IApplicationManagerService> mAppManager;
+		android::sp<ISystemPostReceiver> mSystemPostReceiver;
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
+
+ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+IFEQUAL(+<+$Related_Manager{ITKEY}+>+  eq "O")+{{+
+/*!! ITKEY Inheritance CGA start-------------------------------------------------*/ 
+        android::sp<I+<+ucfirst("ITKEY")+>+AntennaReceiver> m+<+ucfirst("ITKEY")+>+Receiver;
+		android::sp<I+<+ucfirst("ITKEY")+>+ManagerService> m+<+ucfirst("ITKEY")+>+Manager;
+		android::sp<I+<+ucfirst("ITKEY")+>+PostReceiver> m+<+ucfirst("ITKEY")+>+PostReceiver;
+/*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
++}}+
++>>+
+
+        uint8_t longDataBuffer[DIAGDATA_BUFSIZE];
+        int each_packet_ptr;
+        did_data_transfer longData;
+
+        Timer* m_WatcdogTimer;
+        DiagInputMgrTimer* mDiagInputMgrTimer;
+
+        android::sp<Timer> mDIDStartTimer;
+
+        bool isLongBufferActive;
+
+        android::sp<ServiceDeathRecipient> mServiceDeathRecipient;
+        android::sp<ProcessDataManager> mProcessDataManager;
+};
+
+#endif /* SERVICELAYER_DIAGE_IO_MANAGER_H */
