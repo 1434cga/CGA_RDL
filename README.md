@@ -89,13 +89,22 @@ https://perlmaven.com/read-an-excel-file-in-perl
 	- [VALUE] 
 		- This contents is value of hash
 	- example of excel
+
 		| [Header]PPP | CGA | [VALUE] |
 		|-------------|-----|---------|
-		| type        | int | 100     | => $PPP{type}{int} = 100  |
-		| length      | char| C       | => $PPP{length}{char} = C  |
+		| type        | int | 100     |
+		| length      | char| C       |
+
+```perl
+		$PPP{type}{int} = 100
+		$PPP{length}{char} = C
+```
+
 - default.GV
+```perl
 	- $PPP{type}{int} = 100
 	- $PPP{length}{char} = C
+```
 - stc
 	- FileName : DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc
 - stcI
