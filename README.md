@@ -33,9 +33,17 @@
 	- repeted works (iteration) of lists
 
 # Environment
-- perl for excel
-	- >> add cpan install 
+- install perl module (cpan)
 - library MY::CHARLES in perllib directory
+## read excel
+https://perlmaven.com/read-an-excel-file-in-perl
+## Install
+### perl module install
+- cpan
+	- install Spreadsheet::Read
+		- When I run read.pl , I meet the following msg “Parser for XLSX is not installed at read.pl line 9.”
+	- install Spreadsheet::XLSX
+
 
 # How to run the test 
 ## example1 (stc)
@@ -80,11 +88,11 @@
 		- You can use AAA name as variable name in stc/stcI file
 	- [VALUE] 
 		- This contents is value of hash
-	- example
-		- | [Header]PPP | CGA | [VALUE] |
-		- +-------------+-----+---------+
-		- | type        | int | 100     | => $PPP{type}{int} = 100
-		- | length      | char| C       | => $PPP{length}{char} = C
+	- example of excel
+		| [Header]PPP | CGA | [VALUE] |
+		|-------------|-----|---------|
+		| type        | int | 100     | => $PPP{type}{int} = 100  |
+		| length      | char| C       | => $PPP{length}{char} = C  |
 - default.GV
 	- $PPP{type}{int} = 100
 	- $PPP{length}{char} = C
