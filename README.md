@@ -77,10 +77,62 @@ https://perlmaven.com/read-an-excel-file-in-perl
 # Process
 - Excel ---(1_exce.pl)---> Hash Data -----+
 - _________________________stc(I) File ---+--(2_replace.pl)---> output c/cpp files
+
+| Data | Execute | Data | Execute | Data |
+|------|---------|------|---------|------|
+| Excel|-(1_exce.pl)->|Hash Data|  |   |
+|      |         | stc(I) File |-(2_replace.pl)-> | output c/cpp files |
+
+```puml
+@startuml
+Excel << (D,#FFFFFF) >>
+Data.stc_stcI_Files << (D,#FFFFFF) >>
+Data.Hash_Data << (D,#FFFFFF) >>
+C_Cpp_Files << (D,#FFFFFF) >>
+1_excel << (E,#00FFFF) >>
+2_replace << (E,#00FFFF) >>
+
+
+Excel -right-> 1_excel
+1_excel -down-> Data.Hash_Data
+Data -down-> 2_replace
+2_replace -right-> C_Cpp_Files
+@enduml
+```
 - If you want to reuse your works after changing your excel file , 
 	- Update Excel ---(1_exce.pl)---> Hash Data -----+
 	- ________________________________stc(I) File ---+--(2_replace.pl)---> Updated output c/cpp file ---+
 	- __________________________________________________________Worked(Changed) file from c/cpp file ---+--(3_recover.pl)---> Merged file
+
+| Data | Execute | Data | Execute | Data | Execute | Data | 
+|------|---------|------|---------|------|---------|------|
+| Update Excel|-(1_exce.pl)->|Hash Data|  |   |
+|      |         | stc(I) File |-(2_replace.pl)-> | Updated output c/cpp files |
+|      |         |             |                  | Worked(Changed) file from c/cpp files | -(3_recover.pl)-> | Merged file
+
+```puml
+@startuml
+Update_Excel << (D,#0F0FFF) >>
+Data.stc_stcI_Files << (D,#FFFFFF) >>
+Data.Hash_Data << (D,#FFFFFF) >>
+Changed.Working_C_Cpp_Files << (D,#0F0FFF) >>
+Changed.Updated_C_Cpp_Files << (D,#0F0FFF) >>
+Merged_Files << (D,#0F0FFF) >>
+
+1_excel << (E,#00FFFF) >>
+2_replace << (E,#00FFFF) >>
+3_recover << (E,#00FFFF) >>
+
+Update_Excel -left-> 1_excel
+1_excel -down-> Data.Hash_Data
+Data -left-> 2_replace
+'Data.Hash_Data -down-> 2_replace
+2_replace -down-> Changed.Updated_C_Cpp_Files
+Changed -right-> 3_recover
+'3_recover -right-> Changed
+3_recover -left-> Merged_Files
+@enduml
+```
 
 # Syntax and Explanation
 - Excel file
