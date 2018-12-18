@@ -173,7 +173,7 @@ Changed -right-> 3_recover
 		- $MODULENAME=length in IlengthManaager.cpp
 - common in stc and stcI
 	- Set : $iterateInputFileName = DiagInputManager.cpp	-> use as variable. $ means variable.
-		- +<+$iterateInputFileName+>+						-> +<+ $variable +>+  means replacement with it.
+		- +<+$iterateInputFileName+>+ replaces with "DiagInputManager.cpp".
 	- +<+$variable+>+   ...  +<+ $hash{key} +>+
 		- +<+ $variable +>+  means replacement with it.
 		- you can use perl hash variable as a variable..
