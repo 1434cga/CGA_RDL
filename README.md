@@ -83,6 +83,11 @@ https://perlmaven.com/read-an-excel-file-in-perl
 | Excel|-(1_exce.pl)->|Hash Data|  |   |
 |      |         | stc(I) File |-(2_replace.pl)-> | output c/cpp files |
 
+- This is plantuml. You can see plantuml through editor vscode or atom with Markdown-Preview_Enhanced Module.
+	- install vscode or atom
+	- install java
+	- install graphviz
+
 ```puml
 @startuml
 Excel << (D,#FFFFFF) >>
