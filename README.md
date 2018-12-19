@@ -117,25 +117,46 @@ Data -down-> 2_replace
 
 ```puml
 @startuml
-Update_Excel << (D,#0F0FFF) >>
-Data.stc_stcI_Files << (D,#FFFFFF) >>
-Data.Hash_Data << (D,#FFFFFF) >>
-Changed.Working_C_Cpp_Files << (D,#0F0FFF) >>
-Changed.Updated_C_Cpp_Files << (D,#0F0FFF) >>
-Merged_Files << (D,#0F0FFF) >>
+folder Update {
+  artifact Excel
+}
 
-1_excel << (E,#00FFFF) >>
-2_replace << (E,#00FFFF) >>
-3_recover << (E,#00FFFF) >>
+folder STC {
+	artifact template.stc
+	artifact template.stcI
+}
+ 
+folder Template {
+	artifact Template.hpp
+	artifact Template.CPP
+	artifact Template.etc
+}
 
-Update_Excel -left-> 1_excel
-1_excel -down-> Data.Hash_Data
-Data -left-> 2_replace
-'Data.Hash_Data -down-> 2_replace
-2_replace -down-> Changed.Updated_C_Cpp_Files
-Changed -right-> 3_recover
-'3_recover -right-> Changed
-3_recover -left-> Merged_Files
+database Hash_Data [
+Hash from 1_excel
+]
+
+folder Changed {
+	artifact working.hpp
+	artifact working.CPP
+	artifact working.etc
+}
+
+folder Merge {
+	artifact Merged.hpp
+	artifact Merged.CPP
+	artifact Merged.etc
+}
+
+
+Update -down-> 1_excel.pl
+1_excel.pl -down-> Hash_Data
+STC -down-> 2_replace.pl
+Hash_Data -down-> 2_replace.pl
+2_replace.pl -down-> Template
+Template -down-> 3_recover.pl
+Changed -down-> 3_recover.pl
+3_recover.pl -down-> Merge
 @enduml
 ```
 
