@@ -26,21 +26,21 @@ Set : $iterate_comments = OFF
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/
 
 
-IFEQUAL(+<+$Related_Manager{vif}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{vif}{VALUE}+>+  eq "O")+{{+
 /*!! vif Inheritance CGA start-------------------------------------------------*/
 #include "services/vifManagerService/IvifManagerService.h"
 #include "services/vifManagerService/IvifManagerReceiver.h"
 /*!! vif Inheritance CGA end-------------------------------------------------*/
 +}}+
 
-IFEQUAL(+<+$Related_Manager{system}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{system}{VALUE}+>+  eq "O")+{{+
 /*!! system Inheritance CGA start-------------------------------------------------*/
 #include "services/SystemManagerService/ISystemReceiver.h"
 #include "services/SystemManagerService/ISystemManagerService.h"
 /*!! system Inheritance CGA end-------------------------------------------------*/
 +}}+
 
-IFEQUAL(+<+$Related_Manager{hmi}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{hmi}{VALUE}+>+  eq "O")+{{+
 /*!! hmi Inheritance CGA start-------------------------------------------------*/
 #include <services/HMIManagerService/IHMIEventReceiver.h>
 #include <services/HMIManagerService/IHMIManagerService.h>
@@ -48,7 +48,7 @@ IFEQUAL(+<+$Related_Manager{hmi}+>+  eq "O")+{{+
 /*!! hmi Inheritance CGA end-------------------------------------------------*/
 +}}+
 
-IFEQUAL(+<+$Related_Manager{loc}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{loc}{VALUE}+>+  eq "O")+{{+
 /*!! loc Inheritance CGA start-------------------------------------------------*/
 #include <services/LocationManagerService/LocationData.h>
 #include <services/LocationManagerService/ILocationReceiver.h>
@@ -57,7 +57,7 @@ IFEQUAL(+<+$Related_Manager{loc}+>+  eq "O")+{{+
 /*!! loc Inheritance CGA end-------------------------------------------------*/
 +}}+
 
-IFEQUAL(+<+$Related_Manager{audio}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{audio}{VALUE}+>+  eq "O")+{{+
 /*!! Audio Inheritance CGA start-------------------------------------------------*/
 #include <services/AudioManagerService/IAudioManagerService.h>
 #include <services/AudioManagerService/IAudioManagerServiceType.h>
@@ -85,7 +85,7 @@ enum eDiagHandler : unit32_t {
 /*!! app manager  Inheritance CGA end-------------------------------------------------*/
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
-IFEQUAL(+<+$Related_Manager{ITKEY}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/
 	MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR ,
 	MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+ ,
@@ -281,7 +281,7 @@ ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
-IFEQUAL(+<+$Related_Manager{ITKEY}+>+  eq "O")+{{+
+IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/ 
         android::sp<I+<+ucfirst("ITKEY")+>+AntennaReceiver> m+<+ucfirst("ITKEY")+>+Receiver;
 		android::sp<I+<+ucfirst("ITKEY")+>+ManagerService> m+<+ucfirst("ITKEY")+>+Manager;

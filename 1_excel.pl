@@ -64,80 +64,98 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 	#}
 	my @rows = Spreadsheet::Read::rows($book->[1]);
 	my @title;
+	my $headerCnt = 0;
 	my $titleCnt = 0;
-	my $titleValueIndex = -1;
 	my $titleName = "";
 	foreach my $i (1 .. scalar @rows) {
 		print " $i  $rows[$i-1][0] \n";
 		next if($rows[$i-1][0] =~ /^\s*$/) ;
+		checkHeader($rows[$i-1][0]);
 		if($rows[$i-1][0] =~ /^\s*\[HEADER\]\s*(\S*)/){
+			$headerCnt = 0;
 			$titleCnt = 0;
-			$titleValueIndex = -1;
 			delete @title[0 .. $#title];
 			say "$1";
 			$titleName = $1;
-			$title[$titleCnt] = $1;
-			$gTitle{$titleName}{$titleCnt} = $title[$titleCnt];
 			my $myhash = \%{$titleName};
 			print "AAA $titleName : $$titleName myhash :$myhash\n";
 			#foreach my $key (keys %Manager_Name){ print "MN: $key  "; }
 			#print "\n";
-			$titleCnt++;
 			my @row = Spreadsheet::Read::row($book->[1], $i);
-			for my $j (1 .. $#row) {
-				next if($row[$j] =~ /^\s*$/) ;
-				#say "$book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($row[$j] // '');
-				$title[$titleCnt] = removeSpace($row[$j]);
-				if($title[$titleCnt] =~ /\[VALUE\]/){
-					$titleValueIndex = $titleCnt;
+			for my $j (0 .. $#row) {
+				say "HEADER 1, $j , hC $headerCnt , tC $titleCnt , $book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($row[$j] // '');
+				next if($row[$j] =~ /^\s*$/);
+				checkHeader($row[$j]);
+				if($row[$j] =~ /^\s*\[HEADER\]\s*(\S*)/){
+					$title[$titleCnt] = removeSpace($1);
+					$gTitle{$titleName}{$titleCnt} = $title[$titleCnt];
+					$titleCnt++;
+					$headerCnt++;
+				} else {
+					last;
 				}
+			}
+			say "2, $j , hC $headerCnt , tC $titleCnt , $book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($row[$j] // '');
+			for my $j ($headerCnt .. $#row) {
+				say "3, $j , hC $headerCnt , tC $titleCnt , $book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($row[$j] // '');
+				if($row[$j] =~ /^\s*\[HEADER\]\s*(\S*)/){
+					die "ERROR : You should have [HEADER] continuously from first column. But, you used [HEADER] in the middle of titles.\n";
+				}
+				next if($row[$j] =~ /^\s*$/);
+				$title[$titleCnt] = removeSpace($row[$j]);
 				$gTitle{$titleName}{$titleCnt} = $title[$titleCnt];
 				$titleCnt++;
 			}
 			#$gPrintHashName{$title[0]} = "Title $i Row";
 			for my $j (0 .. $#title) {
-				say "sheet Header:$j " . chr(65+$j) . ' ' . ($title[$j] // '');
+				if($j < $headerCnt){
+					say "sheet Header:$j $#title " . chr(65+$j) . ' ' . ($title[$j] // '');
+				} else {
+					say "sheet Data:$j $#title " . chr(65+$j) . ' ' . ($title[$j] // '');
+				}
 			}
 		} elsif( not ($rows[$i-1][0] =~ /^\s*$/) ){		# must have contents in firt column
 			#my $details = getDetails(3, \%{ $D{classes}{$classes}{public_methods}{members}{$members}{detailed}{doc} });
 				#my $myhash = shift;
 				#foreach my $tmpKey (sort_keys(\%{$myhash})){
 					#print "getDetails type [" . $myhash->{$tmpKey}{type} . "]\n";
+				#}
 			my @row = Spreadsheet::Read::row($book->[1], $i);
-			my $myValue = ($titleValueIndex < 0) ? "" : $row[$titleValueIndex];
-			say "ROW[$i]  @row : [$titleValueIndex] $myValue";
 			my $myhash = \%{ $titleName };
 			print "BBB myhash $titleName : $myhash\n";
-			for my $j (0 .. $#row) {
-				print "=> $j $row[$j]  max $#row\n";
-				print "=> $myhash $myhash->{$row[$j]}\n";
+			for my $j (0 .. ($headerCnt -1)) {
+				print "1=> $j $row[$j]  max $#row  , headerCnt $headerCnt\n";
+				print "1=> $myhash $myhash->{$row[$j]}\n";
 				#next if($row[$j] =~ /^\s*$/) ;
-				if( ($j+1) == $titleValueIndex){
-					print "=> LAST $j $row[$j] ValueIndex=$titleValueIndex\n";
-					$myhash->{$row[$j]} = $row[$j+1];
-					last;
-				} elsif($j == $#row){
-					print "=> END $j $row[$j]\n";
-					$myhash->{$row[$j]} = "";
+				my $key = removeSpace($row[$j]);
+				if($j == $#row){
+					print "=> END $j $row[$j]  $#row\n";
+					$myhash->{$key} = "";
 					last;
 				}
-				unless (exists $myhash->{$row[$j]}){
-					$myhash->{$row[$j]} = {};
-					print "=> unless $myhash $myhash->{$row[$j]}\n";
+				unless (exists $myhash->{$key}){
+					$myhash->{$key} = {};
+					print "=> unless $myhash $myhash->{$key}\n";
 				}
-				say "$book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($row[$j] // '');
-				$myhash = \%{ $myhash->{$row[$j]} };
+				say "$book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($key // '');
+				$myhash = \%{ $myhash->{removeSpace($key)} };
 				#traverse_hash_tree(\%_G_,"_G_","",STDOUT);
 			}
+			for my $j ($hederCnt .. $#title) {		# Data
+				if($title[$j] =~ /^\s*$/){
+					die "ERROR: j=$j , title does not exist of $row[$j]\n";
+				}
+				print "2=> $j $row[$j]  max $#row , headerCnt $headerCnt\n";
+				print "2=> $myhash $myhash->{$title[$j]}\n";
+				print "=> DATA $j $title[$j]\n";
+				$myhash->{$title[$j]} = removeSpace($row[$j]);
+			}
 		}
+		hashTraverseSTDOUT();
 	}
 }
-print "===KKK1\n";
-traverse_hash_tree(\%gTitle,"gTitle","",STDOUT);
-foreach my $key (sort keys %gTitle){
-	print "key: $key\n";
-	traverse_hash_tree(\%$key,"$key","",STDOUT);
-}
+
+hashTraverseSTDOUT();
 
 # $gPrintHashName{"LXID_ROTATE"} = "telltale of type ROTATE";
 $file = "./default.GV";
@@ -146,6 +164,26 @@ traverse_tree_to_file(\%gTitle,"gTitle",">>",$file);
 foreach my $key (sort keys %gTitle){
 	traverse_tree_to_file(\%$key,"$key",">>",$file);
 }
+
+sub checkHeader {
+	my $str = shift;
+	if($str =~ /^\[\s*(\w+)\s*\]/){
+		if( ($1 ne "HEADER") and (uc($1) eq "HEADER") ){
+			die "$1 -> HEADER :: should change into CAPITALIZATION";
+		} 
+	}
+}
+
+sub hashTraverseSTDOUT {
+	print "===========TTTTTT==============start\n";
+	traverse_hash_tree(\%gTitle,"gTitle","",STDOUT);
+	foreach my $key (sort keys %gTitle){
+		print "key: $key\n";
+		traverse_hash_tree(\%$key,"$key","",STDOUT);
+	}
+	print "===========TTTTTT==============end\n";
+}
+
 
 sub removeSpace {
 	my $s = shift;

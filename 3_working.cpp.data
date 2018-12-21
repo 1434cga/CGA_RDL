@@ -14,28 +14,28 @@
 
 #include <binder/IServiceManager.h>
 
-/*!! appmgr Inheritance start-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/ 
 #include <services/ApplicationManagerService/IApplicationManagerService.h>
 #include <services/ApplicationManagerService/IApplicationManagerServiceType.h>
-/*!! appmgr Inheritance end-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-/*!! vif Inheritance start-------------------------------------------------*/		
+/*!! vif Inheritance CGA start-------------------------------------------------*/		
 #include <services/vifManagerService/IvifManagerService.h>
 #include <services/vifManagerService/IvifManagerReceiver.h>
 #include <services/vifManagerService/IvifManagerServiceType.h>
-/*!! vif Inheritance end-------------------------------------------------*/
+/*!! vif Inheritance CGA end-------------------------------------------------*/
 
 
-/*!! hmi Inheritance start-------------------------------------------------*/		
+/*!! hmi Inheritance CGA start-------------------------------------------------*/		
 #include <services/HMIManagerService/IHMIManagerService.h>
 #include <services/HMIManagerService/IHMIManagerServiceType.h>
-/*!! hmi Inheritance end-------------------------------------------------*/
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
 
 
-/*!! Audio Inheritance start-------------------------------------------------*/ 
+/*!! Audio Inheritance CGA start-------------------------------------------------*/ 
 #include <services/AudioManagerService/IAudioManagerService.h>
 #include <services/AudioManagerService/IAudioManagerServiceType.h>
-/*!! Audio Inheritance end-------------------------------------------------*/
+/*!! Audio Inheritance CGA end-------------------------------------------------*/
 
 #include <utils/watchdog/watchdog_client.h>
 
@@ -51,30 +51,30 @@ DiagInputManager::DiagInputManager(android::sp<DiagManagerService> diagMgrServic
 		: mDiagMgrService(diagMgrService), each_packet_ptr(0), mDiagInputMgrTimer(NULL)
 {
 
-/*!! appmgr Inheritance start-------------------------------------------------*/		
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/		
 	mAppManager = NULL;
     mSystemPostReceiver = NULL;
-/*!! appmgr Inheritance end-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-/*!! audio Inheritance start-------------------------------------------------*/		
+/*!! audio Inheritance CGA start-------------------------------------------------*/		
 	mAudioManager = NULL;
     mAudioReceiver = NULL;
     mAudioPostReceiver = NULL;
-/*!! audio Inheritance end-------------------------------------------------*/
+/*!! audio Inheritance CGA end-------------------------------------------------*/
 
-/*!! hmi Inheritance start-------------------------------------------------*/		
+/*!! hmi Inheritance CGA start-------------------------------------------------*/		
 	mHmiManager = NULL;
     mHmiReceiver = NULL;
     mHmiPostReceiver = NULL;
-/*!! hmi Inheritance end-------------------------------------------------*/
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
 
 
 
-/*!! vif Inheritance start-------------------------------------------------*/		
+/*!! vif Inheritance CGA start-------------------------------------------------*/		
 	mVifManager = NULL;
     mVifReceiver = NULL;
     mVifPostReceiver = NULL;
-/*!! vif Inheritance end-------------------------------------------------*/
+/*!! vif Inheritance CGA end-------------------------------------------------*/
 
 
     isLongBufferActive = false;
@@ -98,19 +98,19 @@ error_t DiagInputManager::init()
     result = mProcessDataManager->init();
     mMyHandler = new DiagHandler(mDiagMgrService->looper(), *this);
 
-/*!! appmgr Inheritance start-------------------------------------------------*/		
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/		
     connectToAppMgr();
-/*!! appmgr Inheritance end-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-/*!! audio Inheritance start-------------------------------------------------*/		
+/*!! audio Inheritance CGA start-------------------------------------------------*/		
     connectToAudioMgr();
-/*!! audio Inheritance end-------------------------------------------------*/
-/*!! hmi Inheritance start-------------------------------------------------*/		
+/*!! audio Inheritance CGA end-------------------------------------------------*/
+/*!! hmi Inheritance CGA start-------------------------------------------------*/		
     connectToHmiMgr();
-/*!! hmi Inheritance end-------------------------------------------------*/
-/*!! vif Inheritance start-------------------------------------------------*/		
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
+/*!! vif Inheritance CGA start-------------------------------------------------*/		
     connectToVifMgr();
-/*!! vif Inheritance end-------------------------------------------------*/
+/*!! vif Inheritance CGA end-------------------------------------------------*/
 
 
     mDiagInputMgrTimer = new DiagInputMgrTimer (mMyHandler);
@@ -149,7 +149,7 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
 
     switch (what) {
 
-/*!! appmgr Inheritance start-------------------------------------------------*/		
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/		
 	case MSG_CONNECT_TO_APPMGR:
         LOGV("handleMessage MSG_CONNECT_TO_APPMGR");
         mDiagInputMgr.connectToAppMgr();
@@ -159,9 +159,9 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
 	    LOGV("handleMessage MSG_RECEIVE_BOOT_COMPLETE");
 	    mDiagInputMgr.TimerStart();
 	    break;	
-/*!! appmgr Inheritance end-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-/*!! audio Inheritance start-------------------------------------------------*/		
+/*!! audio Inheritance CGA start-------------------------------------------------*/		
     case MSG_CONNECT_TO_AUDIOMGR:
         LOGV("handleMessage MSG_CONNECT_TO_AUDIOMGR");
         mDiagInputMgr.connectToAudioMgr();
@@ -171,8 +171,8 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
 		LOGV("handleMessage MSG_RECEIVE_FROM_AUDIO sigID : %x", msg->arg1);
 		mDiagInputMgr.messagefromAudio((uint16_t)msg->arg1, buf);
 		break;
-/*!! audio Inheritance end-------------------------------------------------*/
-/*!! hmi Inheritance start-------------------------------------------------*/		
+/*!! audio Inheritance CGA end-------------------------------------------------*/
+/*!! hmi Inheritance CGA start-------------------------------------------------*/		
     case MSG_CONNECT_TO_HMIMGR:
         LOGV("handleMessage MSG_CONNECT_TO_HMIMGR");
         mDiagInputMgr.connectToHmiMgr();
@@ -182,8 +182,8 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
 		LOGV("handleMessage MSG_RECEIVE_FROM_HMI sigID : %x", msg->arg1);
 		mDiagInputMgr.messagefromHmi((uint16_t)msg->arg1, buf);
 		break;
-/*!! hmi Inheritance end-------------------------------------------------*/
-/*!! vif Inheritance start-------------------------------------------------*/		
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
+/*!! vif Inheritance CGA start-------------------------------------------------*/		
     case MSG_CONNECT_TO_VIFMGR:
         LOGV("handleMessage MSG_CONNECT_TO_VIFMGR");
         mDiagInputMgr.connectToVifMgr();
@@ -193,9 +193,9 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
 		LOGV("handleMessage MSG_RECEIVE_FROM_VIF sigID : %x", msg->arg1);
 		mDiagInputMgr.messagefromVif((uint16_t)msg->arg1, buf);
 		break;
-/*!! vif Inheritance end-------------------------------------------------*/
+/*!! vif Inheritance CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_? case start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_? case CGA start-------------------------------------------------*/
     //case MSG_DID_WORK_FOR_DEFINE_1:
         //LOGV("handleMessage MSG_DID_WORK_FOR_DEFINE_1");
         //mDiagInputMgr.DID_WORK_FOR_DEFINE(msg->arg1);
@@ -240,7 +240,7 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
         LOGV("handleMessage DID_WORK_FOR_DEFINE_9");
         mDiagInputMgr.DID_WORK_FOR_DEFINE_9(msg->arg1);
         break;
-/*!! DID_WORK_FOR_DEFINE_? case end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_? case CGA end-------------------------------------------------*/
 
     case MSG_DIAGDATA_QUEUE:
         LOGV("handleMessage MSG_DIAGDATA_QUEUE");
@@ -263,7 +263,7 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
     }
 }
 
-/*!! appmgr Inheritance start-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/ 
 void DiagInputManager::connectToAppMgr(void)
 {
     mAppManager = android::interface_cast<IApplicationManagerService>
@@ -296,9 +296,9 @@ void DiagInputManager::connectToAppMgr(void)
 
     mAppManager->registerSystemPostReceiver(mSystemPostReceiver, SYS_POST_BOOT_COMPLETED);
 }
-/*!! appmgr Inheritance end-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-/*!! audio Inheritance start-------------------------------------------------*/ 
+/*!! audio Inheritance CGA start-------------------------------------------------*/ 
 void DiagInputManager::connectToAudioMgr(void)
 {
     mAudioManager = android::interface_cast<IaudioManagerService>
@@ -325,8 +325,8 @@ void DiagInputManager::connectToAudioMgr(void)
     }
 
 }
-/*!! audio Inheritance end-------------------------------------------------*/
-/*!! hmi Inheritance start-------------------------------------------------*/ 
+/*!! audio Inheritance CGA end-------------------------------------------------*/
+/*!! hmi Inheritance CGA start-------------------------------------------------*/ 
 void DiagInputManager::connectToHmiMgr(void)
 {
     mHmiManager = android::interface_cast<IhmiManagerService>
@@ -360,8 +360,8 @@ void DiagInputManager::connectToHmiMgr(void)
 	 Do Something to regist Receiver
 //@CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToHmiMgr(void):variant end
 }
-/*!! hmi Inheritance end-------------------------------------------------*/
-/*!! vif Inheritance start-------------------------------------------------*/ 
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
+/*!! vif Inheritance CGA start-------------------------------------------------*/ 
 void DiagInputManager::connectToVifMgr(void)
 {
     mVifManager = android::interface_cast<IvifManagerService>
@@ -391,31 +391,31 @@ void DiagInputManager::connectToVifMgr(void)
 	// Do Something to regist Receiver
 //@CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void):variant end
 }
-/*!! vif Inheritance end-------------------------------------------------*/
+/*!! vif Inheritance CGA end-------------------------------------------------*/
 
 void DiagInputManager::onServiceBinderDied(const android::wp<android::IBinder>& who)
 {
-/*!! appmgr Inheritance start-------------------------------------------------*/ 		
+/*!! appmgr Inheritance CGA start-------------------------------------------------*/ 		
     if (mAppManager != NULL && android::IInterface::asBinder(mAppManager) == who) {
         LOGW("killed AppManager!!");
         connectToAppMgr();
-/*!! appmgr Inheritance end-------------------------------------------------*/ 
+/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-/*!! audio Inheritance start-------------------------------------------------*/ 
+/*!! audio Inheritance CGA start-------------------------------------------------*/ 
     } else if (mAudioManager != NULL && android::IInterface::asBinder(mAudioManager) == who) {
         LOGW("killed mAudioManager!!");
         connectToAudioMgr();
-/*!! audio Inheritance end-------------------------------------------------*/
-/*!! hmi Inheritance start-------------------------------------------------*/ 
+/*!! audio Inheritance CGA end-------------------------------------------------*/
+/*!! hmi Inheritance CGA start-------------------------------------------------*/ 
     } else if (mHmiManager != NULL && android::IInterface::asBinder(mHmiManager) == who) {
         LOGW("killed mHmiManager!!");
         connectToHmiMgr();
-/*!! hmi Inheritance end-------------------------------------------------*/
-/*!! vif Inheritance start-------------------------------------------------*/ 
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
+/*!! vif Inheritance CGA start-------------------------------------------------*/ 
     } else if (mVifManager != NULL && android::IInterface::asBinder(mVifManager) == who) {
         LOGW("killed mVifManager!!");
         connectToVifMgr();
-/*!! vif Inheritance end-------------------------------------------------*/
+/*!! vif Inheritance CGA end-------------------------------------------------*/
     } else {
         LOGE("nothing!! onServiceBinderDied()");
     }
@@ -433,85 +433,85 @@ error_t DiagInputManager::messagefromVIF(uint16_t sigId, android::sp<Buffer>& bu
 	return result;
 }
 
-/*!! DID_WORK_FOR_DEFINE_0 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_0 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_0(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_0 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_0 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_1 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_1 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_1(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_1 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_1 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_2 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_2 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_2(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_2 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_2 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_3 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_3 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_3(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_3 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_3 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_4 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_4 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_4(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_4 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_4 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_5 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_5 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_5(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_5 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_5 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_6 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_6 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_6(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_6 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_6 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_7 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_7 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_7(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_7 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_7 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_8 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_8 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_8(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_8 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_8 func body CGA end-------------------------------------------------*/
 
-/*!! DID_WORK_FOR_DEFINE_9 func body start-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_9 func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::DID_WORK_FOR_DEFINE_9(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! DID_WORK_FOR_DEFINE_9 func body end-------------------------------------------------*/
+/*!! DID_WORK_FOR_DEFINE_9 func body CGA end-------------------------------------------------*/
 
 
 error_t DiagInputManager::sendToQueue(android::sp<DiagData>& mdiagData)
