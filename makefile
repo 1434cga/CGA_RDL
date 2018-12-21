@@ -12,4 +12,4 @@ clean:
 	rm -rf *.log
 	rm -rf OUTPUT
 	rm -rf *.GV
-	rm -rf *.cpp
+	rm -rf 3_merge.cpp
