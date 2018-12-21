@@ -5,6 +5,8 @@ all:
 	perl 1_excel.pl --input=1_example.xlsx
 	perl 2_replace.pl default.GV 2_example.cpp.stc
 	perl 3_recover.pl --template=./OUTPUT/stc/2_example.cpp --working=./3_working.cpp.data
+test: test.pl test.xlsx
+	perl test.pl --input=test.xlsx
 clean:
 	rm -rf *.log
 	rm -rf OUTPUT
