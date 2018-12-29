@@ -24,7 +24,7 @@
 
 # Purpose
 - Reduce the wasting time for tedious repetitive works
-	- Generally we have a lot of tedious repetitive job.  So in case of android , android supports to make a ASDL to make binder bn,bp services. So we can use easily with this template. But , it is just for android application.
+	- Generally we have a lot of tedious repetitive job.  So in case of android , android supports to make a AIDL (Android Interface Definition Language) to make binder bn,bp services. So we can use easily with this template. But , it is just for android application.
 	- I wanna make a tool for more general purpose. So We will support simple definition. The simple definitions are Loop and Condition and Replacement's statements.
 - example
 	- repeted works (iteration) of cases in switch
