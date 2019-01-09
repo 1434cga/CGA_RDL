@@ -17,12 +17,12 @@
 - Reduce the wasting time for tedious repetitive works
 
 ## Figure
-- ![Architecture](png/slide1.png)
-- ![Syntax 1 of 2](png/slide2.png)
-- ![Syntax 2 of 2](png/slide3.png)
-- ![Loop Syntax Explanation](png/slide4.png)
-- ![Mapping between excel and database](png/slide5.png)
-- ![Summary How to map](png/slide6.png)
+![Architecture](png/slide1.png)
+![Syntax 1 of 2](png/slide2.png)
+![Syntax 2 of 2](png/slide3.png)
+![Loop Syntax Explanation](png/slide4.png)
+![Mapping between excel and database](png/slide5.png)
+![Summary How to map](png/slide6.png)
 
 ## Description
 - This is replacement tool with special syntax.
