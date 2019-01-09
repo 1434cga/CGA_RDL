@@ -16,13 +16,13 @@
 - Replacement Definition Language
 - Reduce the wasting time for tedious repetitive works
 
-## Figure
-![Architecture](png/slide1.png)
-![Syntax 1 of 2](png/slide2.png)
-![Syntax 2 of 2](png/slide3.png)
-![Loop Syntax Explanation](png/slide4.png)
-![Mapping between excel and database](png/slide5.png)
-![Summary How to map](png/slide6.png)
+## Explanation
+![Architecture](png/Slide1.PNG)
+![Syntax 1 of 2](png/Slide2.PNG)
+![Syntax 2 of 2](png/Slide3.PNG)
+![Loop Syntax Explanation](png/Slide4.PNG)
+![Mapping between excel and database](png/Slide5.PNG)
+![Summary How to map](png/Slide6.PNG)
 
 ## Description
 - This is replacement tool with special syntax.
