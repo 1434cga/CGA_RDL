@@ -88,7 +88,7 @@ public:
 
 	// auto CGA start
 ITERATE %API +<<+ ITKEY  ITVALUE
-	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData);
+	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData)=0;
 +>>+
 	// auto CGA end
 

@@ -74,7 +74,7 @@ IFEQUAL(+<+$Related_Manager{audio}{VALUE}+>+  eq "O")+{{+
 class DiagManagerService;
 class ProcessDataManager;
 
-enum eDiagHandler : unit32_t {
+enum {
 	MSG_RECEIVE_BOOT_COMPLETE = 1,
 	MSG_RECEIVE_WATCH_DOG = 2,
 	MSG_BOOT_COMPLETE_DID_START = 3,
@@ -94,39 +94,20 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 
 +>>+
 
+/*!! DID_WORK_FOR_DEFINE_0 msg CGA start-------------------------------------------------*/
+ITERATE %Function +<<+ ITKEY  ITVALUE
+	MSG_ITKEY , 
++>>+
+/*!! DID_WORK_FOR_DEFINE_0 msg CGA end-------------------------------------------------*/
+
 	TIME_SEND_RETRY_DELAY_MS  = 500,
 };
 
-/*!! DID_WORK_FOR_DEFINE_0 msg CGA start-------------------------------------------------*/
-enum eDiagFunction : unit32_t {
-ITERATE %Function +<<+ ITKEY  ITVALUE
-	ITKEY , 
-+>>+
-}
-/*!! DID_WORK_FOR_DEFINE_0 msg CGA end-------------------------------------------------*/
 
 class DiagInputManager: public android::RefBase
 {
     public:
 	class DiagHandler: public sl::Handler {
-        public:
-			
-ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
-// see : enum eDiagHandler
-/*!! ITKEY Inheritance CGA start-------------------------------------------------*/
-			static const uint32_t MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR = 11;
-			static const uint32_t MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+ = 21;
-/*!! ITKEY Inheritance CGA end-------------------------------------------------*/
-+>>+
-
-
-/*!! DID_WORK_FOR_DEFINE_0 msg CGA start-------------------------------------------------*/
-// see : enum eDiagFunction
-ITERATE %Function +<<+ ITKEY  ITVALUE
-			static const uint32_t ITKEY = 30;
-+>>+
-/*!! DID_WORK_FOR_DEFINE_0 msg CGA end-------------------------------------------------*/
-
         public:
             DiagHandler(android::sp<sl::SLLooper>& looper, DiagInputManager& outer) :
             Handler(looper), mDiagInputMgr(outer) { }
@@ -147,10 +128,10 @@ ITERATE %Function +<<+ ITKEY  ITVALUE
                     LOGV("DiagInputMgrTimer is received");
                     switch(timer_id) {
                         case DIAG_WATCHDOG_TIMER:
-                            mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_WATCH_DOG)->sendToTarget();
+                            mHandler->obtainMessage(MSG_RECEIVE_WATCH_DOG)->sendToTarget();
                             break;
                         case BOOT_COMPLETE_TIME_OUT:
-                            mHandler->obtainMessage(DiagHandler::DIAG_BOOT_COMPLETE_DID_START)->sendToTarget();
+                            mHandler->obtainMessage(MSG_BOOT_COMPLETE_DID_START)->sendToTarget();
                             break;
                         default :
                             break;
@@ -178,7 +159,7 @@ ITERATE %Function +<<+ ITKEY  ITVALUE
             explicit DiagSystemPostReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler) {}
             virtual bool onSystemPostReceived(const android::sp<Post>& systemPost) {
                 LOGV("DiagSystemPostReceiver Boot Complete");
-                android::sp<sl::Message> message = mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_BOOT_COMPLETE);
+                android::sp<sl::Message> message = mHandler->obtainMessage(MSG_RECEIVE_BOOT_COMPLETE);
                 message->sendToTarget();
                 return true;
             }
@@ -188,52 +169,58 @@ ITERATE %Function +<<+ ITKEY  ITVALUE
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/
-class ITKEYReceiver: public BnITKEYManagerReceiver {
+class ITKEYReceiver: public +<+$Related_Manager{ITKEY}{BnReceiverClass}+>+ {
 	public:
-		ITKEYReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler)
-		{ targetModuleID = NAD_MODULE_DIAGNOSTIC_MGR; }
+		ITKEYReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler){}
 
-		virtual void onReceive(uint32_t Sigid, android::sp<Buffer>& buf) 	{
-			LOGV("DiagInput Manager   onReceive ITKEY Sigid:0x%02X", Sigid);
+IFEQUAL(ITKEY eq "audio")+{{+
+        virtual void onAudioPlayStateChanged(uint8_t dtc_type){
+            LOGV("%s AUDIO dtc_type[%d]",__FUNCTION__, dtc_type);
+            sp<sl::Message> message = mHandler->obtainMessage(MSG_RECEIVE_FROM_AUDIO, (int32_t)dtc_type);
+            message->sendToTarget();
+        }
++}}+
 
-			android::sp<sl::Message> message = mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_FROM_+<+uc(ITKEY)+>+, Sigid);
-			if (buf->size() > 0) {
-				message->buffer.setTo(buf->data(), buf->size());
-			} else {
-				LOGE("ITKEY : CAN signal received without data.");
-			}
-			message->sendToTarget();
-			return;
-		}
+IFEQUAL(ITKEY eq "hmi")+{{+
+        virtual void onHMIReceived(uint32_t hmi_type, uint32_t hmi_action)
+        {
+            LOGV("onHMIReceived hmi_type:%d hmi_action:%d ", hmi_type, hmi_action);
+            sp<sl::Message> message = mHandler->obtainMessage(MSG_RECEIVE_FROM_HMI, hmi_type, hmi_action);
+            message->sendToTarget();
+        }
++}}+
+
+IFEQUAL(ITKEY eq "vif")+{{+
+        virtual void onReceive(uint32_t Sigid, android::sp<Buffer>& buf)
+        {
+            LOGV("%s VIF dtc_type[%d]",__FUNCTION__, dtc_type);
+
+            android::sp<sl::Message> message = mHandler->obtainMessage(MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+, Sigid);
+            if (buf->size() > 0) {
+                message->buffer.setTo(buf->data(), buf->size());
+            } else {
+                LOGE("ITKEY : CAN signal received without data.");
+            }
+            message->sendToTarget();
+            return;
+        }
++}}+
 
 		// write the virtual functions from BnReceiver
 		// virtual void onLocationInfoChanged(android::sp<LocationData> locData){}
         // virtual void onGPSStatusChanged(gps_status_t status){}
 		// ....... etc.
 
-		private:
-			android::sp<DiagInputManager::DiagHandler> mHandler;
+	private:
+		android::sp<DiagInputManager::DiagHandler> mHandler;
+
 	};
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/
 
++}}+
 +>>+
-
-/*!! Audio Inheritance CGA start-------------------------------------------------*/
-    class DiagAudioReceiver : public BnAudioReceiver {
-        public:
-            DiagAudioReceiver(android::sp<DiagInputManager::DiagHandler> handler) : mHandler(handler){}
-            virtual DiagAudioReceiver() {}
-
-            virtual void onAudioPlayStateChanged(uint8_t dtc_type){
-                LOGV("%s dtc_type[%d]",__FUNCTION__, dtc_type);
-                sp<sl::Message> message = mHandler->obtainMessage(DiagHandler::DIAG_RECEIVE_FROM_AUDIO, (int32_t)dtc_type);
-                message->sendToTarget();
-           	}
-        private:
-            android::sp<DiagInputManager::DiagHandler> mHandler;
-    };
-/*!! Audio Inheritance CGA end-------------------------------------------------*/
 
     public:
         DiagInputManager(android::sp<DiagManagerService> diagMgrService);
@@ -252,7 +239,7 @@ class ITKEYReceiver: public BnITKEYManagerReceiver {
 
 /*!! DID_WORK_FOR_DEFINE_0 header CGA start-------------------------------------------------*/	
 ITERATE %Function +<<+ ITKEY  ITVALUE
-		error_t ITKEY(android::sp<DiagData>& mdiagData);
+		error_t FUNC_ITKEY(uint8_t* data);
 +>>+
 /*!! DID_WORK_FOR_DEFINE_0 header CGA end-------------------------------------------------*/
 
@@ -262,10 +249,11 @@ ITERATE %Function +<<+ ITKEY  ITVALUE
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
+IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/
-        void connectTo+<+ucfirt(ITKEY)+>+Mgr(void);
+        void connectTo+<+$Related_Manager{ITKEY}{usingName}+>+Mgr(void);
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/
-
++}}+
 +>>+
 
         void TimerStart( void );
@@ -280,15 +268,27 @@ ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 		android::sp<ISystemPostReceiver> mSystemPostReceiver;
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
 
-ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
-IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
-/*!! ITKEY Inheritance CGA start-------------------------------------------------*/ 
-        android::sp<I+<+ucfirst("ITKEY")+>+AntennaReceiver> m+<+ucfirst("ITKEY")+>+Receiver;
-		android::sp<I+<+ucfirst("ITKEY")+>+ManagerService> m+<+ucfirst("ITKEY")+>+Manager;
-		android::sp<I+<+ucfirst("ITKEY")+>+PostReceiver> m+<+ucfirst("ITKEY")+>+PostReceiver;
-/*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
+IFEQUAL(+<+$Related_Manager{audio}{VALUE}+>+  eq "O")+{{+
+/*!! audio Inheritance CGA start-------------------------------------------------*/ 
+        android::sp<IAudioReceiver> mAudioReceiver;
+		android::sp<IAudioManagerService> mAudioManager;
+/*!! audio Inheritance CGA end-------------------------------------------------*/
 +}}+
-+>>+
+
+IFEQUAL(+<+$Related_Manager{hmi}{VALUE}+>+  eq "O")+{{+
+/*!! hmi Inheritance CGA start-------------------------------------------------*/ 
+        android::sp<IHMIEventReceiver> mHmiReceiver;
+		android::sp<IHMIManagerService> mHmiManager;
+/*!! hmi Inheritance CGA end-------------------------------------------------*/
++}}+
+
+IFEQUAL(+<+$Related_Manager{vif}{VALUE}+>+  eq "O")+{{+
+/*!! vif Inheritance CGA start-------------------------------------------------*/ 
+        android::sp<IvifManagerReceiver> mVifReceiver;
+		android::sp<IvifManagerService> mVifManager;
+/*!! vif Inheritance CGA end-------------------------------------------------*/
++}}+
+
 
         uint8_t longDataBuffer[DIAGDATA_BUFSIZE];
         int each_packet_ptr;

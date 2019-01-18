@@ -46,12 +46,6 @@ public:
 	virtual error_t onStop();
 	virtual error_t dump(LogOutput&);
 
-	// auto CGA start
-ITERATE %API +<<+ ITKEY  ITVALUE
-	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData);
-+>>+
-	// auto CGA end
-
 	error_t attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
 	error_t unregisterReceiver(const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
 
@@ -87,6 +81,13 @@ private:
 		virtual error_t unregisterReceiver(const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
 		virtual error_t requestDataID(android::sp<+<+$MODULENAME+>+Data>& mdiagData);
 		virtual error_t responseDataID(android::sp<+<+$MODULENAME+>+Data>& mdiagData);
+
+	// auto CGA start
+ITERATE %API +<<+ ITKEY  ITVALUE
+	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData);
++>>+
+	// auto CGA end
+
 #ifdef +<+uc($MODULENAME)+>+_SLDD_TEST
 		virtual error_t SlddTestCmd(uint8_t, uint8_t, uint8_t, android::sp<Buffer>);
 		virtual sp<Buffer> SLDDRequestDataID(uint16_t index);

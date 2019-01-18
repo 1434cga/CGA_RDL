@@ -437,7 +437,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 	if($stc_debug eq "DEBUG_ON"){ end_time_log("==END CChange =="); }
 }
 
-sub  iterate_equal(){
+sub iterate_equal(){
 	# Rules
 	# IFEQUAL | IFNOTEQUAL ( condition with general rules :&& ,|| ,etc)  /#       
 	#       Contents with multiple lines
@@ -450,26 +450,33 @@ sub  iterate_equal(){
 	my $if_before="";
 	my $if_match="";
 	my $if_after="";
+    my $if_eval = "";
 
 	$iterate_lines = shift @_;
 	print DBG __SUB__ . " RD1 $iterate_lines]]]]]\n";
 
-	while($iterate_lines =~ s/\n([\t ]*)(IFEQUAL|IFNOTEQUAL)\s*\(//){
+	while($iterate_lines =~ m/(\n[\t ]*)(IFEQUAL|IFNOTEQUAL)(\s*)\(/){
 		#$iterate_lines =~ m/\n([\t ]*)(IFEQUAL|IFNOTEQUAL)\s*([^\n#\/]*)\s*\/\#/;
-		$indent = $1;
-		$order = $2;
+        # iterate_lines = $if_before . $if_match . $if_after
+		my $indent = $1;
+		my $order = $2;
 		$if_before = $`;
-		$if_match = $&;
+		$if_match = $1 . $2 . $3;
 		$if_after = $';
-		#$if_len = length($if_before);
+		#my $if_len = length($if_before);
+		my $m_before = "";
+		my $m_match = "";
+		my $m_after = "";
+        my $recursive = "";
 		print DBG __SUB__ . "RD2 indent[$indent] order[$order] \n";
 		$if_after = "\(" . $if_after;;
-		if($if_after =~ s/(\(([^\(\)]|(?R))*\))//){
+        if($if_after =~ m/(\(([^\(\)]|(?R))*\))/){
+            # iterate_lines = $if_before . $if_match . ($m_before . $m_match . $m_after)
 			$m_before = $`;
 			$m_match = $&;
 			$m_after = $';
 			print DBG __SUB__ . "RD2 if_match[$m_match]\n";
-			$condition = $m_match;
+			my $condition = $m_match;
 			$if_eval = eval($condition);
 			if($if_eval){
 				print DBG "EQUAL_SUCCESS\n";
@@ -489,20 +496,34 @@ sub  iterate_equal(){
 		}
 		# get block from +{{+ to +}}+
 		print DBG __SUB__ . "RD2-2 m_after [$m_after]\n";
-		if($m_after =~ s/\+\{\{\+(\s*(.*?|\n)*\s*)+\}\}\+//){   # not recursive
+		if($m_after =~ m/\+\{\{\+(\s*(.*?|\n)*\s*)+\}\}\+/){   # recursion for nesting
+            # iterate_lines = $if_before . $if_match . ($m_before . $m_match . ($contents_before . contents_match . contents_after))
+            #                 ....         IFEQUAL      ___         (a eq b)    _                  +{{+abcd+}}+      .......
 			# we need a new code for recursion. (refer to match.pl)
 			# if($m_after =~ s/(\{([^\{\}]|(?R))*\})//)
 			# if($if_after =~ m/((?:\/\#(?:[^#]|(?:\#+[^#\/]))*\#+\/))/)
-			$contents_group1 = $1;
-			$contents_before = $`;
-			$contents_match = $&;
-			$contents_after = $';
-			print DBG __SUB__ . " RD3-1 contents_group1 [$contents_group1]\n";
-			print DBG __SUB__ . " RD3-1 contents_match [$contents_match]\n";
-			$contents_match =~ s/^\s*\+\{\{\+//;
-			$contents_match =~ s/\s*\+\}\}\+\s*$//;
-			print DBG __SUB__ . " RD3 contents_match [$contents_match]\n";
-			#print DBG __SUB__ . " RD3 contents_after [$contents_after]\n";
+			my $contents_group1 = $1;
+			my $contents_before = $`;
+			my $contents_match = $&;
+			my $contents_match_inner = $contents_match;
+			my $contents_after = $';
+            if($contents_match =~ m/(IFEQUAL|IFNOTEQUAL)/){     # recursion for nesting
+                print STDOUT "1 = $1\n";
+                print STDOUT "contents_match = [$contents_match]\n";
+                print DBG "RD3-0 contents_match = [$contents_match]\n";
+                print STDOUT "match = [$&]\n";
+                $contents_match_inner = $if_match . $m_before . $m_match . $contents_before . iterate_equal($contents_match);
+                $recursive = 1;
+                print DBG "RD3-0 contents_result = [$contents_match_inner]\n";
+                print STDOUT "contents_result = [$contents_match_inner]\n";
+            } else {
+			    print DBG __SUB__ . " RD3-1 contents_group1 [$contents_group1]\n";
+			    print DBG __SUB__ . " RD3-1 contents_match [$contents_match]\n";
+			    $contents_match_inner =~ s/^\s*\+\{\{\+//;
+			    $contents_match_inner =~ s/\s*\+\}\}\+\s*$//;
+            }
+			print DBG __SUB__ . " RD3-2 if_eval($m_match=>$if_eval) contents_match [$contents_match]\n";
+			print DBG __SUB__ . " RD3-2 if_eval($m_match=>$if_eval) contents_match_inner [$contents_match_inner]\n";
 
 			# rule : IF(?NOT)EQUAL (....) { .... }
 			#    each gap does not have any characters.
@@ -513,20 +534,25 @@ sub  iterate_equal(){
 			}
 
 			# eval and process
-			if($order eq "IFEQUAL"){
-				if($if_eval){
-					$iterate_lines = $if_before . $contents_match . $contents_after;
-				} else {
-					$iterate_lines = $if_before . $contents_after;
-				}
-			} else {  # IFNOTEQUAL
-				if(not $if_eval){
-					$iterate_lines = $if_before . $contents_match . $contents_after;
-				} else {
-					$iterate_lines = $if_before . $contents_after;
-				}
-			}
-			print DBG __SUB__ . " RD4 $iterate_lines\n";
+            if($recursive){
+                $iterate_lines = $if_before . $contents_match_inner . $contents_after;
+            } else {
+                if($order eq "IFEQUAL"){
+                    if($if_eval){
+                        $iterate_lines = $if_before . $contents_match_inner . $contents_after;
+                    } else {
+                        $iterate_lines = $if_before . $contents_after;
+                    }
+                } else {  # IFNOTEQUAL
+                    if(not $if_eval){
+                        $iterate_lines = $if_before . $contents_match_inner . $contents_after;
+                    } else {
+                        $iterate_lines = $if_before . $contents_after;
+                    }
+                }
+            }
+			print DBG __SUB__ . " RD4 if_eval($m_match=>$if_eval) : recursive=$recursive\n";
+			print DBG "[$iterate_lines]\n";
 		} else {
 			print STDOUT "ERROR : IFEQUAL|IFNOTEQUAL has contents with {...} \n";
 			print DBG "ERROR : IFEQUAL|IFNOTEQUAL has contents with {...} \n";

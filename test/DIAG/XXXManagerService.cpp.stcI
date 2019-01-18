@@ -272,7 +272,7 @@ error_t +<+$MODULENAME+>+ManagerService::SLDDResponseDataID(uint16_t request_id,
 	error_t results = E_OK;
 
 //	results = m+<+$MODULENAME+>+InputMgr->messagefromVIF(request_id, buf);
-	results = m+<+$MODULENAME+>+InputMgr->slddMsgToVIF(request_id, buf);
+//	results = m+<+$MODULENAME+>+InputMgr->slddMsgToVIF(request_id, buf);
 	return results;
 }
 

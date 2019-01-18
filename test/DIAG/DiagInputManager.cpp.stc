@@ -82,7 +82,6 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/		
 	m+<+ucfirst("ITKEY")+>+Manager = NULL;
     m+<+ucfirst("ITKEY")+>+Receiver = NULL;
-    m+<+ucfirst("ITKEY")+>+PostReceiver = NULL;
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 
@@ -116,7 +115,7 @@ error_t DiagInputManager::init()
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/		
-    connectTo+<+ucfirst("ITKEY")+>+Mgr();
+    connectTo+<+ $Related_Manager{ITKEY}{usingName} +>+Mgr();
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 +>>+
@@ -175,12 +174,12 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/		
     case MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR:
         LOGV("handleMessage MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR");
-        mDiagInputMgr.connectTo+<+ucfirst("ITKEY")+>+Mgr();
+        mDiagInputMgr.connectTo+<+$Related_Manager{ITKEY}{usingName}+>+Mgr();
         break;
 		
 	case MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+:
 		LOGV("handleMessage MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+ sigID : %x", msg->arg1);
-		mDiagInputMgr.messagefrom+<+ucfirst("ITKEY")+>+((uint16_t)msg->arg1, buf);
+		//mDiagInputMgr.messagefrom+<+ucfirst("ITKEY")+>+((uint16_t)msg->arg1, buf);
 		break;
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
@@ -192,9 +191,9 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
         //mDiagInputMgr.DID_WORK_FOR_DEFINE(msg->arg1);
         //break;
 ITERATE %Function +<<+ ITKEY  ITVALUE
-    case ITKEY:
+    case MSG_ITKEY:
         LOGV("handleMessage ITKEY");
-        mDiagInputMgr.ITKEY(msg->arg1);
+        mDiagInputMgr.FUNC_ITKEY(msg->arg1);
         break;
 +>>+
 /*!! DID_WORK_FOR_DEFINE_? case CGA end-------------------------------------------------*/
@@ -228,8 +227,8 @@ void DiagInputManager::connectToAppMgr(void)
 
     if (mAppManager != NULL) {
         if (mAppManager->getBootCompleted()) {
-            mMyHandler->sendMessageDelayed(mMyHandler->obtainMessage(DiagHandler::MSG_RECEIVE_BOOT_COMPLETE),
-                                            DiagHandler::TIME_SEND_RETRY_DELAY_MS);
+            mMyHandler->sendMessageDelayed(mMyHandler->obtainMessage(MSG_RECEIVE_BOOT_COMPLETE),
+                                            TIME_SEND_RETRY_DELAY_MS);
         } else {
             android::IInterface::asBinder(mAppManager)->linkToDeath(mServiceDeathRecipient);
             LOGV("connectToAppMgr: AppManager OK...");
@@ -237,8 +236,8 @@ void DiagInputManager::connectToAppMgr(void)
     } else {
         LOGE("appManager is NULL retry in 500ms");
         if(mMyHandler != NULL) {
-            mMyHandler->sendMessageDelayed(mMyHandler->obtainMessage(DiagHandler::MSG_CONNECT_TO_APPMGR),
-                                            DiagHandler::TIME_SEND_RETRY_DELAY_MS);
+            mMyHandler->sendMessageDelayed(mMyHandler->obtainMessage(MSG_CONNECT_TO_APPMGR),
+                                            TIME_SEND_RETRY_DELAY_MS);
         } else {
             LOGE("connectToAppMgr: mMyHandler is null");
         }
@@ -258,10 +257,10 @@ void DiagInputManager::connectToAppMgr(void)
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/ 
-void DiagInputManager::connectTo+<+ucfirst("ITKEY")+>+Mgr(void)
+void DiagInputManager::connectTo+<+$Related_Manager{ITKEY}{usingName}+>+Mgr(void)
 {
-    m+<+ucfirst("ITKEY")+>+Manager = android::interface_cast<IITKEYManagerService>
-                (android::defaultServiceManager()->getService(android::String16(ITKEY_SRV_NAME)));
+    m+<+ucfirst("ITKEY")+>+Manager = android::interface_cast<I+<+$Related_Manager{ITKEY}{usingName}+>+ManagerService>
+                (android::defaultServiceManager()->getService(android::String16(+<+uc("ITKEY")+>+_SRV_NAME)));
 
     if (m+<+ucfirst("ITKEY")+>+Manager != NULL) {
                 android::IInterface::asBinder(m+<+ucfirst("ITKEY")+>+Manager)->linkToDeath(mServiceDeathRecipient);
@@ -269,16 +268,16 @@ void DiagInputManager::connectTo+<+ucfirst("ITKEY")+>+Mgr(void)
     } else {
         LOGE("m+<+ucfirst("ITKEY")+>+Manager is NULL retry in 500ms");
         if (mMyHandler != NULL) {
-            mMyHandler->sendMessageDelayed(mMyHandler->obtainMessage(DiagHandler::MSG_CONNECT_TO_ITKEYMGR),
-                                            DiagHandler::TIME_SEND_RETRY_DELAY_MS);
+            mMyHandler->sendMessageDelayed(mMyHandler->obtainMessage(MSG_CONNECT_TO_+<+uc("ITKEY")+>+MGR),
+                                            TIME_SEND_RETRY_DELAY_MS);
         } else {
-            LOGE("connectTo+<+ucfirst("ITKEY")+>+Mgr: mMyHandler is null");
+            LOGE("connectTo+<+$Related_Manager{ITKEY}{usingName}+>+Mgr: mMyHandler is null");
         }
         return;
     }
 
     if (m+<+ucfirst("ITKEY")+>+Receiver == NULL) {
-        m+<+ucfirst("ITKEY")+>+Receiver = new +<+ucfirst("ITKEY")+>+Receiver(mMyHandler);
+        m+<+ucfirst("ITKEY")+>+Receiver = new ITKEYReceiver(mMyHandler);
     } else {
         LOGV("Already m+<+ucfirst(ITKEY)+>+Receiver was created.");
     }
@@ -308,7 +307,7 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 /*!! ITKEY Inheritance CGA start-------------------------------------------------*/ 
     } else if (m+<+ucfirst("ITKEY")+>+Manager != NULL && android::IInterface::asBinder(m+<+ucfirst("ITKEY")+>+Manager) == who) {
         LOGW("killed m+<+ucfirst("ITKEY")+>+Manager!!");
-        connectTo+<+ucfirst("ITKEY")+>+Mgr();
+        connectTo+<+$Related_Manager{ITKEY}{usingName}+>+Mgr();
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 +>>+
@@ -331,7 +330,7 @@ error_t DiagInputManager::messagefromVIF(uint16_t sigId, android::sp<Buffer>& bu
 
 ITERATE %Function +<<+ ITKEY  ITVALUE
 /*!! ITKEY func body CGA start-------------------------------------------------*/
-error_t DiagInputManager::ITKEY(android::sp<DiagData>& mdiagData)
+error_t DiagInputManager::FUNC_ITKEY(uint8_t* data)
 {
 	error_t result = E_OK;
 	return result;
@@ -348,7 +347,7 @@ error_t DiagInputManager::sendToQueue(android::sp<DiagData>& mdiagData)
     android::sp<Buffer> buf = new Buffer();
     did_data_transfer sendData;
     uint16_t sigID = SIGNAL_INTERNAL_DIAG_BASE;
-    android::sp<sl::Message> message = mMyHandler->obtainMessage(DiagHandler::MSG_DIAGDATA_QUEUE, sigID);
+    android::sp<sl::Message> message = mMyHandler->obtainMessage(MSG_DIAGDATA_QUEUE, sigID);
     error_t result = E_OK;
 
     LOGV("sendToQueue start 1");
@@ -445,9 +444,10 @@ error_t DiagInputManager::transferDatabyVIF(android::sp<DiagData>& mdiagData)
 }
 
 
-/* sample code send to vif
 error_t DiagInputManager::sendToVif(android::sp<DiagData>& mdiagData)
 {
+
+#if 0
     uint16_t sigID = SIGNAL_INTERNAL_DIAG_BASE;
     uint8_t SendingvifData[DIAGDATA_BUFSIZE] = {0U,};
 
@@ -516,10 +516,10 @@ error_t DiagInputManager::sendToVif(android::sp<DiagData>& mdiagData)
         mVifManager->send_dataToVif(1U, vifContainer);
         LOGV("DiagInputManager::sendToVif Single-Packet End");
     }
+#endif
 
     return E_OK;
 }
-*/
 
 
 /*  
