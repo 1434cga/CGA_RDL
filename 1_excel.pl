@@ -7,6 +7,7 @@ use Spreadsheet::Read;
 use File::Basename qw(dirname);
 use Cwd  qw(abs_path);
 use lib dirname(dirname abs_path $0) . '/perllib';
+use lib abs_path . '/CGA_RDL/perllib';
 use lib abs_path . '/perllib';
 use lib abs_path . '/../perllib';
 use lib abs_path . '/../../perllib';

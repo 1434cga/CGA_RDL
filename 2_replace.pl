@@ -1,5 +1,7 @@
 #!/bin/perl
 
+use File::Path qw(make_path);
+
 our $tttime;
 our $cchange_start_time;
 our $outputdir = "OUTPUT";
@@ -435,11 +437,11 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
             #print "tmpKey before[$m_before] , match [$m_match]\n";
             if($m_before ne ""){
                 if($tmpKey =~ /^\//){
-                    print "mkdir $m_before\n";
-                    mkdir "$m_before";
+                    print "make_path $m_before\n";
+                    make_path("$m_before");
                 } else {
-                    print "mkdir $outputdir/$stc_output_dir/$m_before\n";
-                    mkdir "$outputdir/$stc_output_dir/$m_before";
+                    print "make_path $outputdir/$stc_output_dir/$m_before\n";
+                    make_path("$outputdir/$stc_output_dir/$m_before");
                 }
             }
         }
