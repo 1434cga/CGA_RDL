@@ -316,6 +316,9 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 ## Syntax and Explanation of RDL
 - stc
 	- FileName : DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc
+	- FileName : src/DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc/src
+	- FileName : ../DiagInputManager.cpp   -> generate file name in ./OUTPUT/
+	- FileName : /tmp/DiagInputManager.cpp   -> generate file name in /tmp
 - stcI
 	- stcI_HASH : PPP    -> generate multiple files from hash PPP (PPP is Header name in excel file.)
 		- generated multiple file in example -> ???type???.???   , ???length???.???

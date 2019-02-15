@@ -426,7 +426,26 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		#$lines =~ s/STG_SHARP_/\#/g;
 		if($stc_debug eq "DEBUG_ON"){ mid_time_log("==MID equal end =="); }
 
-		open(OUTPUTC , ">$outputdir/$stc_output_dir/$tmpKey");
+        #print "tmpKey $tmpKey\n";
+        if($tmpKey =~ /[^\/]*$/){
+			my $m_before = $`;
+			my $m_match = $&;
+            #print "tmpKey before[$m_before] , match [$m_match]\n";
+            if($m_before ne ""){
+                if($tmpKey =~ /^\//){
+                    print "mkdir $m_before\n";
+                    mkdir "$m_before";
+                } else {
+                    print "mkdir $outputdir/$stc_output_dir/$m_before\n";
+                    mkdir "$outputdir/$stc_output_dir/$m_before";
+                }
+            }
+        }
+        if($tmpKey =~ /^\//){
+		    open(OUTPUTC , "> $tmpKey");
+        } else {
+		    open(OUTPUTC , "> $outputdir/$stc_output_dir/$tmpKey");
+        }
 		$lines =~ s///g;
 		print OUTPUTC $lines;
 		close(OUTPUTC);
