@@ -1,4 +1,4 @@
-FileName : 2_example.cpp
+FileName : src/2_example.cpp
 Set : $iterateInputFileName = DiagInputManager.cpp
 Set : $iterate_comments = OFF
 /*
