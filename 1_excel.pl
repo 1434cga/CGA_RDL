@@ -159,7 +159,7 @@ hashTraverseSTDOUT();
 
 # $gPrintHashName{"LXID_ROTATE"} = "telltale of type ROTATE";
 $file = "./default.GV";
-unlink $file or warn "Could not unlink $file: $!";
+unlink $file;  # or warn "Could not unlink $file: $!";
 traverse_tree_to_file(\%gTitle,"gTitle",">>",$file);
 foreach my $key (sort keys %gTitle){
 	traverse_tree_to_file(\%$key,"$key",">>",$file);
