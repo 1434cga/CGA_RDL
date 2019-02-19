@@ -68,7 +68,6 @@ sub IChange
 	my $stcI_lines = "";
 	my @stcI_lines;
 	my $stcfilename="";
-	my $tmpstcfilename="";
 	my $tttime;
 	my $ddtime;
 
@@ -103,11 +102,13 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 	print_fp("stcI_FILEPREFIX : $stcI_fileprefix\n",STDOUT,DBG);
 	foreach $temp (keys %$stcI_for){
 		print_fp("stcI_HASH : $stcI_for key $temp\n",STDOUT,DBG);
-		$tmpstcfilename = "$temp" . "$stcI_filepostfix";
 		$stcfilename = "$stcI_fileprefix" . "$temp" . "$stcI_filepostfix";
-		print_fp("STCI tmp OUTPUT FileName :  $tmpstcfilename\n",STDOUT,DBG);
+		$stcfilename =~ s/KEY/$temp/g;
+		$stcfilename =~ s/VALUE/$$stcI_for{$temp}/g;
         my $stcNoDirectoryName = $stcfilename;
         $stcNoDirectoryName =~ s/\//_/g;
+		print_fp("STCI tmp OUTPUT FileName :  $stcNoDirectoryName\n",STDOUT,DBG);
+		print_fp("STCI OUTPUT FileName :  $stcfilename\n",STDOUT,DBG);
 		my $tmpStcIFileName = "$outputdir/tmp/$stcNoDirectoryName\.$stcI_extension\.stc";
 		open(STCI_OUTPUT , ">$tmpStcIFileName");
 		print STCI_OUTPUT "FileName : $stcfilename\.$stcI_extension\n";
