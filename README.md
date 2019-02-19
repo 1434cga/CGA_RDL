@@ -332,7 +332,7 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 		- $MODULENAME=type in ItypeManaager.cpp
 		- $MODULENAME=length in IlengthManaager.cpp
 	- example 1 (test/DIAG/IXXXManagerService.h.stcI)
-        	- Module_Name has 2 keys : Diag and Antenna
+		- Module_Name has 2 keys : Diag and Antenna
 			- stcI_HASH : Module_Name
 			- stcI_EXTENSION : h
 			- stcI_FILEPREFIX : TTT/I
@@ -342,17 +342,18 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 		- output : 
 			- OUTPUT/stc/TTT/I**Diag**ManagerService.h
 			- OUTPUT/stc/TTT/I**Antenna**ManagerService.h
-    	- example 2 (test/DIAG/IXXXManagerService.cpp.stcI)
-        	- Module_Name has 2 keys : Diag and Antenna
+	- example 2 (test/DIAG/IXXXManagerService.cpp.stcI)
+		- Module_Name has 2 keys : Diag and Antenna
 			- stcI_HASH : Module_Name
 			- stcI_EXTENSION : h
 			- stcI_FILEPREFIX : TTTKEY/I
 			- stcI_FILEPOSTFIX : ManagerService
 			- Set : $iterate_comments = OFF
 			- SetI : $MODULENAME = KEY
-	        - output : 
+		- output : 
 			- OUTPUT/stc/TTT**Diag**/I**Diag**ManagerService.h
-            		- OUTPUT/stc/TTT**Antenna**/I**Antenna**ManagerService.h
+			- OUTPUT/stc/TTT**Antenna**/I**Antenna**ManagerService.h
+
 
 - common in stc and stcI
 	- Set : $iterateInputFileName = DiagInputManager.cpp	-> use as variable. $ means variable.
