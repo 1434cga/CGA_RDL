@@ -1,6 +1,7 @@
 stcI_HASH : Module_Name
 stcI_EXTENSION : h
-stcI_FILEPREFIX : TTT/I
+stcI_FILEPREFIX : TTT/IKEY_
+stcI_FILEBODY : NO
 stcI_FILEPOSTFIX : ManagerService
 Set : $iterate_comments = OFF
 SetI : $MODULENAME = KEY

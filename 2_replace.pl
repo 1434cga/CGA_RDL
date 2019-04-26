@@ -65,6 +65,7 @@ sub IChange
 	my $stcI_extension="";
 	my $stcI_filepostfix="";
 	my $stcI_fileprefix="";
+	my $stcI_filebody="";
 	my $stcI_lines = "";
 	my @stcI_lines;
 	my $stcfilename="";
@@ -86,10 +87,12 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 	while ($in = <STCI_INPUT>) {
 		if($in =~ /^stcI_HASH\s*\:\s*(\S+)\s*$/){
 			$stcI_for = $1;
-		} elsif($in =~ /^stcI_EXTENSION\s*\:\s*(\w+)\s*$/){
+		} elsif($in =~ /^stcI_EXTENSION\s*\:\s*(\S+)\s*$/){
 			$stcI_extension = $1;
-		} elsif($in =~ /^stcI_FILEPOSTFIX\s*\:\s*(\w+)\s*$/){
+		} elsif($in =~ /^stcI_FILEPOSTFIX\s*\:\s*(\S+)\s*$/){
 			$stcI_filepostfix = $1;
+		} elsif($in =~ /^stcI_FILEBODY\s*\:\s*NO\s*$/){
+			$stcI_filebody = "NO";
 		} elsif($in =~ /^stcI_FILEPREFIX\s*\:\s*([^\s]+)\s*$/){
 			$stcI_fileprefix = $1;
 		} else {
@@ -102,7 +105,11 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 	print_fp("stcI_FILEPREFIX : $stcI_fileprefix\n",STDOUT,DBG);
 	foreach $temp (keys %$stcI_for){
 		print_fp("stcI_HASH : $stcI_for key $temp\n",STDOUT,DBG);
-		$stcfilename = "$stcI_fileprefix" . "$temp" . "$stcI_filepostfix";
+		if($stcI_filebody eq "NO"){
+            $stcfilename = "$stcI_fileprefix" . "$stcI_filepostfix";
+        } else {
+            $stcfilename = "$stcI_fileprefix" . "$temp" . "$stcI_filepostfix";
+        }
 		$stcfilename =~ s/KEY/$temp/g;
 		$stcfilename =~ s/VALUE/$$stcI_for{$temp}/g;
         my $stcNoDirectoryName = $stcfilename;
