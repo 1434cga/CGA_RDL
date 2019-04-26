@@ -1,0 +1,19 @@
+{
+  "name": "diag_app",
+  "version": "0.0.1",
+  "type": "app",
+  "desc": "diag app",
+  "license": "LGE",
+  "author": "LGE",
+
+  "launchOnBoot": true,
+  "launchOnProvisioned": false,
+  "permanent": true,
+  "hmis": [
+    1,
+    2
+  ],
+  "posts": [
+    "post.action.SEND_CALL"
+  ]
+}
