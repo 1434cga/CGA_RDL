@@ -1,0 +1,105 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : source/KEYManagerService/include/I
+stcI_FILEPOSTFIX : ManagerService
+stcI_EXTENSION : h
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+// FileName - I+<+$MODULENAME+>+ManagerService.h
+/**
+ * \file    I+<+$MODULENAME+>+ManagerService.h
+ * \brief   Declaration of I+<+$MODULENAME+>+ManagerService
+ *
+ * \details
+ *    This software is copyright protected and proprietary to
+ *    LG electronics. LGE grants to you only those rights as
+ *    set out in the license conditions. All other rights remain
+ *    with LG electronics.
+ * \author     Jong Kyung Byun
+ * \date       2017.06.30
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+
+ /** @defgroup +<+uc($MODULENAME)+>+MGR +<+$MODULENAME+>+Manager
+  *  +<+$MODULENAME+>+Manager provides access to +<+uc($MODULENAME)+>+ functions for ECU. It describes Interface for +<+$MODULENAME+>+ManagerService.@n
+  * If Apps or other services need to control +<+uc($MODULENAME)+>+, It could be obatined by these API. @n
+  * To use these API, APP or Service, You Should get <I+<+$MODULENAME+>+ManaerService> @n
+  *
+  * #include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerServiceType.h"@n
+
+  * sp<I+<+$MODULENAME+>+ManagerService> m_+<+lc($MODULENAME)+>+Manager = interface_cast<I+<+$MODULENAME+>+ManagerService>(defaultServiceManager()->getService(String16(+<+uc($MODULENAME)+>+_SRV_NAME)));@n
+
+  * @author
+  *   Jong Kyung Byun
+  * @date
+  *   2017.05.15
+  * @version
+  *   0.7.00
+  * @note
+  * I+<+$MODULENAME+>+ManagerService name is defined I+<+$MODULENAME+>+ManagerServiceType.h \n
+  * +<+lc($MODULENAME)+>+-sample application avalibale in the sample application folder \n
+  */
+
+/** @defgroup +<+uc($MODULENAME)+>+MGR_SET_GET  +<+uc($MODULENAME)+>+MGR +<+uc($MODULENAME)+>+ Get Set
+ *  @ingroup +<+uc($MODULENAME)+>+MGR
+ *  When the device is booted up, \n
+ * the app must pass the data ID value of the response or request to MICOM according to the purpose of use.\n
+ *In this case, you can use the those APIs in this group.
+ *
+*/
+
+/** @defgroup +<+uc($MODULENAME)+>+MGR_RECEIVER  +<+uc($MODULENAME)+>+MGR +<+uc($MODULENAME)+>+ Register
+ *  @ingroup +<+uc($MODULENAME)+>+MGR
+ *  This is the Manager Receiver.
+*/
+#ifndef _I+<+uc($MODULENAME)+>+NOSTIC_MANAGER_SERVICE_H_
+#define _I+<+uc($MODULENAME)+>+NOSTIC_MANAGER_SERVICE_H_
+
+#include <binder/IBinder.h>
+#include <binder/IInterface.h>
+#include "Typedef.h"
+
+#include "services/+<+$MODULENAME+>+ManagerService/+<+$MODULENAME+>+Command.h"
+#include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerReceiver.h"
+#include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerServiceType.h"
+
+/**
+ * Service to manage +<+$MODULENAME+>+.\n
+ * The modes depends on OEM's requirements.
+ *
+ * @author
+ * Jong Kyung Byun
+ * @version
+ * 1.00.000 (A: major change, B: refactoring or structure change, C: minor change (ex) 1.12.133)
+ * @note
+ * +<+$MODULENAME+>+ManagerService service name is @b +<+$MODULENAME+>+_SRV_NAME (="service_layer.+<+lc($MODULENAME)+>+ManagerService") \n\n
+ */
+class I+<+$MODULENAME+>+ManagerService : public android::IInterface
+{
+public:
+    DECLARE_META_INTERFACE(+<+$MODULENAME+>+ManagerService);
+    //< Interfaces for I+<+$MODULENAME+>+ManagerService
+
+    virtual error_t attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver) = 0;
+    virtual error_t unregisterReceiver( const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver) = 0;
+    virtual android::sp<Buffer> SLDDRequestDataID (uint16_t  request_id)=0;
+    virtual error_t SLDDResponseDataID (uint16_t request_id, android::sp<Buffer> buf) = 0;
+
+	// auto CGA start
+ITERATE %API +<<+ ITKEY  ITVALUE
+	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& m+<+lc($MODULENAME)+>+Data)=0;
++>>+
+	// auto CGA end
+
+	virtual error_t requestDataID(android::sp<+<+$MODULENAME+>+Data>& m+<+lc($MODULENAME)+>+Data) =0;
+	virtual error_t responseDataID (android::sp<+<+$MODULENAME+>+Data>& m+<+lc($MODULENAME)+>+Data) =0;
+	virtual error_t SlddTestCmd(uint8_t id, uint8_t cmd, uint8_t cmd2, android::sp<Buffer> buf) = 0;
+};
+
+class Bn+<+$MODULENAME+>+ManagerService : public android::BnInterface<I+<+$MODULENAME+>+ManagerService>
+{
+
+public:
+    virtual android::status_t onTransact(uint32_t code, const android::Parcel& data, android::Parcel* reply, uint32_t flags);
+};
+#endif /**I+<+uc($MODULENAME)+>+_MANAGER_SERVICE_H*/
+

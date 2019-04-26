@@ -1,0 +1,49 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : source/KEYManagerService/lib/
+stcI_FILEBODY : NO
+stcI_FILEPOSTFIX : Makefile
+stcI_EXTENSION : am
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+ITERATE %Module_Name +<<+ ITKEY  ITVALUE
+# Makefile.am - libi+<+lc(ITKEY)+>+.a
+
+libi+<+lc(ITKEY)+>+_sources:= \
+	I+<+ucfirst($MODULENAME)+>+ManagerReceiver.cpp \
+	I+<+ucfirst($MODULENAME)+>+ManagerService.cpp \
+	sdk/+<+ucfirst($MODULENAME)+>+Manager.cpp \
+	I+<+ucfirst($MODULENAME)+>+Data.cpp
+
+# Target name
+lib_LIBRARIES := libi+<+lc($MODULENAME)+>+.a
+
+libi+<+lc($MODULENAME)+>+_includedir = $(includedir)/services/+<+ucfirst($MODULENAME)+>+ManagerService
+libi+<+lc($MODULENAME)+>+_include_HEADERS = ../include/*
+
+libi+<+lc($MODULENAME)+>+_a_SOURCES := \
+	$(libi+<+lc($MODULENAME)+>+_sources)
+
+libi+<+lc($MODULENAME)+>+_a_CPPFLAGS := \
+	-I$(top_srcdir)/include \
+	-I$(WORKSPACE)/services/+<+ucfirst($MODULENAME)+>+ManagerService/include \
+	-I$(stincdir)/servicelayer \
+	-I$(stincdir)/services \
+	-Wall \
+	-Werror \
+	-Wno-unused-parameter \
+	-fpermissive \
+	-std=c++11 \
+	$(LGE_LIB_CFLAGS) \
+	$(AM_CPPFLAGS)
+
+libi+<+lc(ITKEY)+>+_a_LDFLAGS := \
+	$(LGE_LIB_LDFLAGS) \
+	-lserviceutils
+
+
+#Build a DSO too
+lib_LTLIBRARIES := libi+<+lc(ITKEY)+>+.la
+libi+<+lc(ITKEY)+>+_la_SOURCES := $(libi+<+lc(ITKEY)+>+_a_SOURCES)
+libi+<+lc(ITKEY)+>+_la_CPPFLAGS := $(libi+<+lc(ITKEY)+>+_a_CPPFLAGS)
+libi+<+lc(ITKEY)+>+_la_LDFLAGS := $(libi+<+lc(ITKEY)+>+_a_LDFLAGS)
++>>+

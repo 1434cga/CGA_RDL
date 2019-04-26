@@ -1,0 +1,22 @@
+stcI_HASH : Module_Name
+stcI_EXTENSION : bb
+stcI_FILEPREFIX : meta-file/meta-lge-model/recipes-mgrs/service/
+stcI_FILEPOSTFIX : mgr-bin
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+inherit autotools
+inherit wave-features
+inherit wave-debug-features
+inherit wave-license
+
+DESCRIPTION = "+<+ucfirst($MODULENAME)+>+ Manager service's bin"
+SECTION = "+<+lc($MODULENAME)+>+mgr-bin"
+
+PR = "r0"
+
+FILESPATH := "${WAVE_SRC_DIR}/+<+lc($MODULENAME)+>+mgr:"
+SRC_URI = "file://bin/"
+
+S = "${WORKDIR}/bin"
+
+DEPENDS = "servicelayer +<+lc($MODULENAME)+>+mgr-lib"

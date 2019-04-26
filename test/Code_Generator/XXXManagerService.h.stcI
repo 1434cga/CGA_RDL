@@ -1,0 +1,108 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : source/KEYManagerService/bin/
+stcI_FILEPOSTFIX : ManagerService
+stcI_EXTENSION : h
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+/*
+ *   This software is copyright protected and proprietary to
+ *   LG electronics. LGE grants to you only those rights as
+ *   set out in the license conditions. All other rights remain
+ *   with LG electronics.
+ * \author  Jong Kyung Byun
+ * \date    2017.11.14
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+
+#ifndef _SERVICELAYER_+<+uc($MODULENAME)+>+NOSTIC_MANAGER_SERVICE_H_
+#define _SERVICELAYER_+<+uc($MODULENAME)+>+NOSTIC_MANAGER_SERVICE_H_
+
+#include <map>
+#include <list>
+
+#include <Typedef.h>
+#include <corebase/SystemService.h>
+
+#include "+<+$MODULENAME+>+InputManager.h"
+
+#include "services/+<+ucfirst($MODULENAME)+>+ManagerService/+<+ucfirst($MODULENAME)+>+Command.h"
+#include "services/+<+ucfirst($MODULENAME)+>+ManagerService/I+<+ucfirst($MODULENAME)+>+ManagerReceiver.h"
+#include "services/+<+ucfirst($MODULENAME)+>+ManagerService/I+<+ucfirst($MODULENAME)+>+ManagerService.h"
+
+class +<+$MODULENAME+>+ManagerService: public SystemService
+{
+public:
+	+<+$MODULENAME+>+ManagerService();
+	virtual ~+<+$MODULENAME+>+ManagerService();
+
+	static const char* getServiceName() { return "service_layer.+<+$MODULENAME+>+ManagerService"; }
+	virtual uint8_t getModuleID() { return MODULE_+<+uc($MODULENAME)+>+_MGR; }
+
+	virtual bool onInit();
+	virtual void instantiate();
+	virtual error_t onStart();
+	virtual error_t onStop();
+	virtual error_t dump(LogOutput&);
+
+	error_t attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
+	error_t unregisterReceiver(const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
+
+	error_t queryReceiverById(appid_t id, android::sp<+<+$MODULENAME+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+	error_t requestResponseDataID(android::sp<+<+$MODULENAME+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+
+	void onReceiverBinderDied(const android::wp<android::IBinder>& who);
+
+#ifdef +<+uc($MODULENAME)+>+_SLDD_TEST
+	error_t SlddTestCmd(uint8_t id, uint8_t cmd, uint8_t cmd2, android::sp<Buffer> buf);
+	android::sp<Buffer> SLDDRequestDataID(uint16_t index);
+	error_t SLDDResponseDataID (uint16_t request_id, android::sp<Buffer> buf);
+#endif
+
+private:
+	class ReceiverDeathRecipient : public android::IBinder::DeathRecipient {
+	public:
+		ReceiverDeathRecipient(+<+$MODULENAME+>+ManagerService& parent) : mParent(parent) {}
+		virtual ~ReceiverDeathRecipient() {}
+		virtual void binderDied(const android::wp<android::IBinder>& who)
+			{ mParent.onReceiverBinderDied(who); }
+	private:
+		+<+$MODULENAME+>+ManagerService& mParent;
+	};
+
+private:
+	class ServiceStub: public Bn+<+$MODULENAME+>+ManagerService {
+	public:
+		ServiceStub(+<+$MODULENAME+>+ManagerService& parent) : mParent(parent) {}
+		error_t queryReceiverById(appid_t id, android::sp<+<+$MODULENAME+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+		virtual error_t attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
+		virtual error_t unregisterReceiver(const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver);
+		virtual error_t requestDataID(android::sp<+<+$MODULENAME+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+		virtual error_t responseDataID(android::sp<+<+$MODULENAME+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+
+	// auto CGA start
+ITERATE %API +<<+ ITKEY  ITVALUE
+	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
++>>+
+	// auto CGA end
+
+#ifdef +<+uc($MODULENAME)+>+_SLDD_TEST
+		virtual error_t SlddTestCmd(uint8_t, uint8_t, uint8_t, android::sp<Buffer>);
+		virtual sp<Buffer> SLDDRequestDataID(uint16_t index);
+		virtual error_t SLDDResponseDataID (uint16_t request_id, android::sp<Buffer> buf);
+#endif
+
+	private:
+		+<+$MODULENAME+>+ManagerService& mParent;
+	};
+
+private:
+	android::sp<+<+$MODULENAME+>+InputManager> m+<+$MODULENAME+>+InputMgr;
+	std::map<int32_t, std::list< android::sp<I+<+$MODULENAME+>+ManagerReceiver>> > mReceivers;
+
+	int32_t mCurrentPowerState;
+	mutable Mutex mReceiverLock;
+
+	android::sp<ReceiverDeathRecipient> mReceiverDeathRecipient;
+};
+
+#endif // _SERVICELAYER_+<+uc($MODULENAME)+>+NOSTIC_MANAGER_SERVICE_H_

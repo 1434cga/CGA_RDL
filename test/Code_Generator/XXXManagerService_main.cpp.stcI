@@ -1,0 +1,48 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : source/KEYManagerService/bin/
+stcI_FILEPOSTFIX : ManagerService_main
+stcI_EXTENSION : cpp
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+/*
+ *   This software is copyright protected and proprietary to
+ *   LG electronics. LGE grants to you only those rights as
+ *   set out in the license conditions. All other rights remain
+ *   with LG electronics.
+ * \author  Jong Kyung Byun
+ * \date    2017.11.14
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+
+#include <unistd.h>
+
+#include "Log.h"
+
+#include <binder/IPCThreadState.h>
+#include <binder/ProcessState.h>
+#include <binder/IServiceManager.h>
+#include <cutils/process_name.h>
+
+#include "corebase/SystemService.h"
+#include "utils/Handler.h"
+#include "utils/Observer.h"
+#include <utils/Looper.h>
+#include <utils/Mutex.h>
+#include <utils/RefBase.h>
+
+
+#include "+<+$MODULENAME+>+ManagerService.h"
+
+int main(int argc, char **argv)
+{
+    LOGV("+<+$MODULENAME+>+ManagerService: main");
+
+    +<+$MODULENAME+>+ManagerService* service = new +<+$MODULENAME+>+ManagerService();
+    service->instantiate();
+    service->onInit();
+
+    android::ProcessState::self()->startThreadPool();
+    service->onStart();
+    android::IPCThreadState::self()->joinThreadPool();
+}
+

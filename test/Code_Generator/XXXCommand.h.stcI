@@ -1,0 +1,112 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : source/KEYManagerService/include/
+stcI_FILEPOSTFIX : Command
+stcI_EXTENSION : h
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+/*
+ *   This software is copyright protected and proprietary to
+ *   LG electronics. LGE grants to you only those rights as
+ *   set out in the license conditions. All other rights remain
+ *   with LG electronics.
+ * \author  Jong Kyung Byun
+ * \date    2017.11.14
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+
+#ifndef _SERVICELAYER_+<+uc($MODULENAME)+>+NOSTIC_COMMAND_H_
+#define _SERVICELAYER_+<+uc($MODULENAME)+>+NOSTIC_COMMAND_H_
+
+#include "Typedef.h"
+
+#include "utils/Buffer.h"
+#include <TCUProtocol.h>
+
+#include "utils/external/mindroid/lang/String.h"
+#include "Error.h"
+#include <binder/Parcel.h>
+#include <utils/RefBase.h>
+
+
+
+#define +<+uc($MODULENAME)+>+_SLDD_TEST
+
+#define +<+uc($MODULENAME)+>+_BOOTING_WAIT_TIME                  5
+#define +<+uc($MODULENAME)+>+_TIME_OUT                           0
+
+
+#define +<+uc($MODULENAME)+>+DATA_BUFSIZE    (4 * 1024)
+
+#define DID_READ_REQUEST    0x11
+#define DID_WRITE_REQUEST   0x01
+
+#define DID_READ_RESPONSE   0x10
+#define DID_WRITE_RESPONSE  0x00
+
+#define DATA_ID_SIZE        (2)
+
+#define DATA_EMPTY_SIZE     (1)
+
+#define PAYLOAD_SIZE        400U
+#define SIGNAL_INTERNAL_+<+uc($MODULENAME)+>+_BASE 0x0001
+
+
+#define DID_WORK_FOR_DEFINE_0  	0x0001
+#define DID_WORK_FOR_DEFINE_1  	0x0002
+#define DID_WORK_FOR_DEFINE_2  	0x0003
+#define DID_WORK_FOR_DEFINE_3  	0x0004
+#define DID_WORK_FOR_DEFINE_4  	0x0005
+#define DID_WORK_FOR_DEFINE_5  	0x0006
+#define DID_WORK_FOR_DEFINE_6  	0x0007
+#define DID_WORK_FOR_DEFINE_7  	0x0008
+#define DID_WORK_FOR_DEFINE_8  	0x0009
+#define DID_WORK_FOR_DEFINE_9  	0x000A
+
+
+class +<+$MODULENAME+>+Data: public android::RefBase {
+public:
+    +<+$MODULENAME+>+Data() {
+        did = static_cast<uint16_t>(0); 
+        len = static_cast<uint16_t>(0); 
+        att = static_cast<uint8_t>(0); 
+        data = static_cast<uint8_t *>(NULL);
+    }
+    +<+$MODULENAME+>+Data(const +<+$MODULENAME+>+Data& other);
+    virtual ~+<+$MODULENAME+>+Data();
+    +<+$MODULENAME+>+Data& operator=(const +<+$MODULENAME+>+Data& other);
+    void setTo(const +<+$MODULENAME+>+Data& other);
+    error_t writeToParcel(android::Parcel* parcel);
+    error_t readFromParcel(const android::Parcel& parcel);
+    void toString();
+    void toString(char* from);
+    uint16_t getDid();
+    uint16_t getLen();
+    uint8_t getAtt();
+    uint8_t * getData();
+    void setData(uint16_t mDid, uint16_t mLen, uint8_t mAtt, uint8_t * mData);
+
+private:
+    uint16_t did;
+    uint16_t len;
+    uint8_t att;
+    uint8_t * data;
+};
+
+typedef struct {
+    uint16_t DID;
+    uint16_t length;
+    uint8_t attribute;
+    uint8_t pkgIndex;
+} __attribute__((packed))did_data_transfer;
+
+
+typedef struct {
+    uint16_t DID;
+    uint16_t length;
+    uint8_t attribute;
+    uint8_t pkgIndex;
+    uint8_t data[+<+uc($MODULENAME)+>+DATA_BUFSIZE];
+} __attribute__((packed))Diagnotic_Data;
+
+
+#endif /**_SERVICELAYER_DIAGNOSTIC_COMMAND_H_*/
