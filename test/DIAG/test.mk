@@ -4,6 +4,7 @@ all:
 	mkdir -p ./OUTPUT/stc
 	perl ../../1_excel.pl --input=../TIDL.xlsx
 	perl ../../2_replace.pl default.GV XXXCommand.h.stcI
+	perl ../../2_replace.pl default.GV IXXXData.cpp.stcI
 
 clean:
 	rm -rf *.GV

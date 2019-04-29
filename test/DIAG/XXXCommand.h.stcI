@@ -2,7 +2,6 @@ stcI_HASH : Module_Name
 stcI_FILEPREFIX : source/KEYManagerService/include/
 stcI_FILEPOSTFIX : Command
 stcI_EXTENSION : h
-stcI_FILE_LOWER : YES
 Set : $iterate_comments = OFF
 SetI : $MODULENAME = KEY
 /*
@@ -68,8 +67,15 @@ class +<+$MODULENAME+>+Data: public android::RefBase {
 public:
     +<+$MODULENAME+>+Data() {
 ITERATE %xxData +<<+ ITKEY  ITVALUE
-        +<+$xxData[ITKEY}{name}+>+ = static_cast< +<+$xxData[ITKEY}{type}+>+ >(+<+$xxData[ITKEY}{init}+>+);
-+}}+
+    IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        +<+$xxData{ITKEY}{name}+>+ = static_cast< +<+$xxData{ITKEY}{type}+>+ >(+<+$xxData{ITKEY}{init}+>+);
+    +}}+
+    IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        +<+$xxData{ITKEY}{Len}+>+ = static_cast<size_t>(0);
+        +<+$xxData{ITKEY}{name}+>+ = static_cast< +<+$xxData{ITKEY}{type}+>+ >(+<+$xxData{ITKEY}{init}+>+);
+    +}}+
+
++>>+
 /*
         did = static_cast<uint16_t>(0); 
         len = static_cast<uint16_t>(0); 
@@ -86,8 +92,14 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
     void toString();
     void toString(char* from);
 ITERATE %xxData +<<+ ITKEY  ITVALUE
-        +<+$xxData[ITKEY}{type}+>+  get+<+ucfirst($xxData[ITKEY}{type})+>+();
-+}}+
+    IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        +<+$xxData{ITKEY}{type}+>+  get+<+ucfirst($xxData{ITKEY}{name})+>+();
+    +}}+
+    IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        size_t  get+<+ucfirst($xxData{ITKEY}{Len})+>+();
+        +<+$xxData{ITKEY}{type}+>+  get+<+ucfirst($xxData{ITKEY}{name})+>+();
+    +}}+
++>>+
 /*
     uint16_t getDid();
     uint16_t getLen();
@@ -98,8 +110,14 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
 
 private:
 ITERATE %xxData +<<+ ITKEY  ITVALUE
-        +<+$xxData[ITKEY}{type}+>+  get+<+$xxData[ITKEY}{type}+>+;
-+}}+
+    IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        +<+$xxData{ITKEY}{type}+>+  +<+$xxData{ITKEY}{name}+>+;
+    +}}+
+    IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        size_t  +<+$xxData{ITKEY}{Len}+>+;
+        +<+$xxData{ITKEY}{type}+>+  +<+$xxData{ITKEY}{name}+>+;
+    +}}+
++>>+
 /*
     uint16_t did;
     uint16_t len;
