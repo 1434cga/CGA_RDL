@@ -91,8 +91,12 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 			$stcI_extension = $1;
 		} elsif($in =~ /^stcI_FILEPOSTFIX\s*\:\s*(\S+)\s*$/){
 			$stcI_filepostfix = $1;
-		} elsif($in =~ /^stcI_FILEBODY\s*\:\s*NO\s*$/){
-			$stcI_filebody = "NO";
+		} elsif($in =~ /^stcI_FILEBODY\s*\:\s*(\S+)\s*$/){
+			$stcI_filebody = $1;
+		} elsif($in =~ /^stcI_FILE_LOWER\s*\:\s*(\S+)\s*$/){
+			$stcI_file_lower = $1;
+		} elsif($in =~ /^stcI_ALL_LOWER\s*\:\s*(\S+)\s*$/){
+			$stcI_all_lower = $1;
 		} elsif($in =~ /^stcI_FILEPREFIX\s*\:\s*([^\s]+)\s*$/){
 			$stcI_fileprefix = $1;
 		} else {
@@ -104,14 +108,17 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 	print_fp("stcI_FILEPOSTFIX : $stcI_filepostfix\n",STDOUT,DBG);
 	print_fp("stcI_FILEPREFIX : $stcI_fileprefix\n",STDOUT,DBG);
 	foreach $temp (keys %$stcI_for){
+        my $mykeyfilename = $temp;
+        if($stcI_file_lower eq "YES"){ $mykeyfilename = lc($temp); }
 		print_fp("stcI_HASH : $stcI_for key $temp\n",STDOUT,DBG);
 		if($stcI_filebody eq "NO"){
             $stcfilename = "$stcI_fileprefix" . "$stcI_filepostfix";
         } else {
-            $stcfilename = "$stcI_fileprefix" . "$temp" . "$stcI_filepostfix";
+            $stcfilename = "$stcI_fileprefix" . "$mykeyfilename" . "$stcI_filepostfix";
         }
 		$stcfilename =~ s/KEY/$temp/g;
 		$stcfilename =~ s/VALUE/$$stcI_for{$temp}/g;
+        if($stcI_all_lower eq "YES"){ $stcfilename = lc($stcfilename); }
         my $stcNoDirectoryName = $stcfilename;
         $stcNoDirectoryName =~ s/\//_/g;
 		print_fp("STCI tmp OUTPUT FileName :  $stcNoDirectoryName\n",STDOUT,DBG);

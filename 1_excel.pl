@@ -146,7 +146,8 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 				$myhash = \%{ $myhash->{removeSpace($key)} };
 				#traverse_hash_tree(\%_G_,"_G_","",STDOUT);
 			}
-			for my $j ($headerCnt .. $#title) {		# Data
+			for my $j (0 .. $#title) {		# Data
+			        ### for my $j ($headerCnt .. $#title) {		# Data
 				if($title[$j] =~ /^\s*$/){
 					die "ERROR: j=$j , title does not exist of $row[$j]\n";
 				}
