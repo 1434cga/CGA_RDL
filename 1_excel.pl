@@ -146,7 +146,7 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 				$myhash = \%{ $myhash->{removeSpace($key)} };
 				#traverse_hash_tree(\%_G_,"_G_","",STDOUT);
 			}
-			for my $j ($hederCnt .. $#title) {		# Data
+			for my $j ($headerCnt .. $#title) {		# Data
 				if($title[$j] =~ /^\s*$/){
 					die "ERROR: j=$j , title does not exist of $row[$j]\n";
 				}
@@ -168,6 +168,21 @@ unlink $file;  # or warn "Could not unlink $file: $!";
 traverse_tree_to_file(\%gTitle,"gTitle",">>",$file);
 foreach my $key (sort keys %gTitle){
 	traverse_tree_to_file(\%$key,"$key",">>",$file);
+}
+
+sub FixXML {
+    $parm = $_[0];
+    $parm =~ s/&amp;/&/g;
+    $parm =~ s/&gt;/>/g;
+    $parm =~ s/&lt;/</g;
+    $parm =~ s/&quot;/"/g;
+    $parm =~ s/&apos;/'/g;
+    $parm =~ s/&#xA;/\n/g;
+    $parm =~ s/&#xa;/\n/g;
+    $parm =~ s/&#xD;/\r/g;
+    $parm =~ s/&#xd;/\r/g;
+    $parm =~ s/&#x9;/\t/g;
+    return($parm);
 }
 
 sub checkHeader {
@@ -195,7 +210,8 @@ sub removeSpace {
 	my $default = shift;
 	$s =~ s/^\s*//g;
 	$s =~ s/\s*$//g;
-	$s =~ s/ /_/g;
+    #$s =~ s/ /_/g;
+    $s = FixXML($s);
 	return $s eq "" ? $default : $s;
 }
 
