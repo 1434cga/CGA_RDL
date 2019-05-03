@@ -94,6 +94,7 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 				if($row[$j] =~ /^\s*\[HEADER\]\s*(\S*)/){
 					$title[$titleCnt] = removeSpace($1);
 					$gTitle{$titleName}{$titleCnt} = $title[$titleCnt];
+					$gTitle{HEADER}{$titleName}{$titleCnt} = $title[$titleCnt];
 					$titleCnt++;
 					$headerCnt++;
 				} else {
@@ -109,6 +110,7 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 				next if($row[$j] =~ /^\s*$/);
 				$title[$titleCnt] = removeSpace($row[$j]);
 				$gTitle{$titleName}{$titleCnt} = $title[$titleCnt];
+				$gTitle{NOHEADER}{$titleName}{$titleCnt-$headerCnt} = $title[$titleCnt];
 				$titleCnt++;
 			}
 			#$gPrintHashName{$title[0]} = "Title $i Row";

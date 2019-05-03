@@ -106,7 +106,29 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
     uint8_t getAtt();
     uint8_t * getData();
 */
-    void setData(uint16_t mDid, uint16_t mLen, uint8_t mAtt, uint8_t * mData);
+    void setData(
+ITERATE %xxData +<<+ ITKEY  ITVALUE
+    IFEQUAL(ITKEY eq 1)+{{+
+        IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+            +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
+        +}}+
+        IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+            size_t m+<+$xxData{ITKEY}{Len}+>+  
+            , +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
+        +}}+
+    +}}+
+    IFEQUAL(ITKEY ne 1)+{{+
+        IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+            , +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
+        +}}+
+        IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+            , size_t m+<+$xxData{ITKEY}{Len}+>+  
+            , +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
+        +}}+
+    +}}+
++>>+
+    );
+    // (uint16_t mDid, uint16_t mLen, uint8_t mAtt, uint8_t * mData);
 
 private:
 ITERATE %xxData +<<+ ITKEY  ITVALUE
@@ -144,3 +166,14 @@ typedef struct {
 
 
 #endif /**_SERVICELAYER_DIAGNOSTIC_COMMAND_H_*/
+
+/*
+ITERATE %API +<<+ ITKEY  ITVALUE
+    ITKEY(
+    +<+$API{ITKEY}{API}+>+
+    +<+$API{ITKEY}{ARG1}+>+
+    +<+$API{ITKEY}{ARG2}+>+
+    +<+$API{ITKEY}{ARG3}+>+
+    );
++>>+
+*/

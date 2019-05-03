@@ -61,7 +61,7 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
             +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
         +}}+
         IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
-            uint32_t m+<+$xxData{ITKEY}{Len}+>+  
+            size_t m+<+$xxData{ITKEY}{Len}+>+  
             , +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
         +}}+
     +}}+
@@ -70,7 +70,7 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
             , +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
         +}}+
         IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
-            , uint32_t m+<+$xxData{ITKEY}{Len}+>+  
+            , size_t m+<+$xxData{ITKEY}{Len}+>+  
             , +<+$xxData{ITKEY}{type}+>+ m+<+$xxData{ITKEY}{name}+>+  
         +}}+
     +}}+
