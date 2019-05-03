@@ -1,15 +1,13 @@
 stcI_HASH : Module_Name
-stcI_EXTENSION : h
-stcI_FILEPREFIX : TTT/IKEY_
-stcI_FILEBODY : NO
+stcI_FILEPREFIX : KEYManagerService/include/I
 stcI_FILEPOSTFIX : ManagerService
+stcI_EXTENSION : h
 Set : $iterate_comments = OFF
 SetI : $MODULENAME = KEY
-
-// FileName - I+<+$MODULENAME+>+ManagerService.h
+// FileName - I+<+ucfirst($MODULENAME)+>+ManagerService.h
 /**
- * \file    I+<+$MODULENAME+>+ManagerService.h
- * \brief   Declaration of I+<+$MODULENAME+>+ManagerService
+ * \file    I+<+ucfirst($MODULENAME)+>+ManagerService.h
+ * \brief   Declaration of I+<+ucfirst($MODULENAME)+>+ManagerService
  *
  * \details
  *    This software is copyright protected and proprietary to
@@ -21,14 +19,14 @@ SetI : $MODULENAME = KEY
  * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
  */
 
- /** @defgroup +<+uc($MODULENAME)+>+MGR +<+$MODULENAME+>+Manager
-  *  +<+$MODULENAME+>+Manager provides access to diagnostic functions for ECU. It describes Interface for +<+$MODULENAME+>+ManagerService.@n
-  * If Apps or other services need to control +<+$MODULENAME+>+nostics, It could be obatined by these API. @n
-  * To use these API, APP or Service, You Should get <I+<+$MODULENAME+>+ManaerService> @n
+ /** @defgroup +<+uc($MODULENAME)+>+MGR +<+ucfirst($MODULENAME)+>+Manager
+  *  +<+ucfirst($MODULENAME)+>+Manager provides access to +<+uc($MODULENAME)+>+ functions for ECU. It describes Interface for +<+ucfirst($MODULENAME)+>+ManagerService.@n
+  * If Apps or other services need to control +<+uc($MODULENAME)+>+, It could be obatined by these API. @n
+  * To use these API, APP or Service, You Should get <I+<+ucfirst($MODULENAME)+>+ManaerService> @n
   *
-  * #include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerServiceType.h"@n
+  * #include "services/+<+ucfirst($MODULENAME)+>+ManagerService/I+<+ucfirst($MODULENAME)+>+ManagerServiceType.h"@n
 
-  * sp<I+<+$MODULENAME+>+ManagerService> m_diagManager = interface_cast<I+<+$MODULENAME+>+ManagerService>(defaultServiceManager()->getService(String16(+<+uc($MODULENAME)+>+_SRV_NAME)));@n
+  * sp<I+<+ucfirst($MODULENAME)+>+ManagerService> m_+<+lc($MODULENAME)+>+Manager = interface_cast<I+<+ucfirst($MODULENAME)+>+ManagerService>(defaultServiceManager()->getService(String16(+<+uc($MODULENAME)+>+_SRV_NAME)));@n
 
   * @author
   *   Jong Kyung Byun
@@ -37,8 +35,8 @@ SetI : $MODULENAME = KEY
   * @version
   *   0.7.00
   * @note
-  * I+<+$MODULENAME+>+ManagerService name is defined I+<+$MODULENAME+>+ManagerServiceType.h \n
-  * diag-sample application avalibale in the sample application folder \n
+  * I+<+ucfirst($MODULENAME)+>+ManagerService name is defined I+<+ucfirst($MODULENAME)+>+ManagerServiceType.h \n
+  * +<+lc($MODULENAME)+>+-sample application avalibale in the sample application folder \n
   */
 
 /** @defgroup +<+uc($MODULENAME)+>+MGR_SET_GET  +<+uc($MODULENAME)+>+MGR +<+uc($MODULENAME)+>+ Get Set
@@ -60,13 +58,12 @@ SetI : $MODULENAME = KEY
 #include <binder/IInterface.h>
 #include "Typedef.h"
 
-#include "services/+<+$MODULENAME+>+ManagerService/+<+$MODULENAME+>+Command.h"
-#include "services/+<+$MODULENAME+>+ManagerService/OEM_+<+$MODULENAME+>+_Defines.h"
-#include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerReceiver.h"
-#include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerServiceType.h"
+#include "+<+ucfirst($MODULENAME)+>+Command.h"
+#include "I+<+ucfirst($MODULENAME)+>+ManagerReceiver.h"
+#include "I+<+ucfirst($MODULENAME)+>+ManagerServiceType.h"
 
 /**
- * Service to manage +<+$MODULENAME+>+.\n
+ * Service to manage +<+ucfirst($MODULENAME)+>+.\n
  * The modes depends on OEM's requirements.
  *
  * @author
@@ -74,237 +71,64 @@ SetI : $MODULENAME = KEY
  * @version
  * 1.00.000 (A: major change, B: refactoring or structure change, C: minor change (ex) 1.12.133)
  * @note
- * +<+$MODULENAME+>+ManagerService service name is @b +<+$MODULENAME+>+_SRV_NAME (="service_layer.diagManagerService") \n\n
+ * +<+ucfirst($MODULENAME)+>+ManagerService service name is @b +<+ucfirst($MODULENAME)+>+_SRV_NAME (="service_layer.+<+lc($MODULENAME)+>+ManagerService") \n\n
  */
-class I+<+$MODULENAME+>+ManagerService : public android::IInterface
+class I+<+ucfirst($MODULENAME)+>+ManagerService : public android::IInterface
 {
 public:
-    DECLARE_META_INTERFACE(+<+$MODULENAME+>+ManagerService);
-    //< Interfaces for I+<+$MODULENAME+>+ManagerService
+    DECLARE_META_INTERFACE(+<+ucfirst($MODULENAME)+>+ManagerService);
+    //< Interfaces for I+<+ucfirst($MODULENAME)+>+ManagerService
 
-    virtual error_t attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver) = 0;
-    virtual error_t unregisterReceiver( const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver) = 0;
+    virtual error_t attachReceiver(serviceid_t id, android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver>& receiver) = 0;
+    virtual error_t unregisterReceiver( const android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver>& receiver) = 0;
     virtual android::sp<Buffer> SLDDRequestDataID (uint16_t  request_id)=0;
     virtual error_t SLDDResponseDataID (uint16_t request_id, android::sp<Buffer> buf) = 0;
 
 	// auto CGA start
 ITERATE %API +<<+ ITKEY  ITVALUE
-	virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData)=0;
+	virtual error_t ITKEY(
+    ITKEY
+    ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
+            IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  ne "") && (IT2KEY eq 1))+{{+
+                    android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  eq "")+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+        IFEQUAL(IT2KEY ne 1)+{{+
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  ne "")+{{+
+                    , android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  eq "")+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    , size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+    +>>+
+    // android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data
+    )=0;
 +>>+
 	// auto CGA end
 
-	/*---------------------------------------------------------------------------------------------------------*/
-	/**
-	 * This API is used at boot time to send down the information that MICOM \n
-	 * should receive through the requestDataID API.. \n
-	 * @ingroup +<+uc($MODULENAME)+>+MGR +<+uc($MODULENAME)+>+MGR_SET_GET
-	 * @param[in]		Sending request Data ID from App.
-	 * @return If readDataID is sent successfully, return E_OK, the others values otherwise
-        * @retval   (0) No error
-        * @retval   (-1) Unknown error
-        * @retval   (-2) Invalid parameter
-        * @retval   (-3) Can not send response
-        * @retval   (-4) Occur time-out
-        * @retval   (-5) Request is rejected due to some reason
-        * @retval   (-6) Request is pending due to some reason
-        * @retval   (-7) Not enough memory
-        * @retval   (-8) Data corrupted
-        * @retval   (-9) Buffer empty
-        * @retval   (-10) Input empty
-        * @retval   (-11) Frame Not Ready
-	 * @see +<+$MODULENAME+>+Command.h
-	 * @note
-	 *\n
-	 * class (+<+$MODULENAME+>+Data)\n
-	 *  private:\n
-        *               uint16_t did;\n
-        *               uint16_t len;\n
-        *               uint8_t att;\n
-        *               uint8_t * data;\n
-	 *-------------------\n
-	 * Data ID\n
-	 *-------------------\n
-	 * #define DID_Time_information                                               0x0109\n
-	 * #define DID_Firewall_error_detection_times                           0x010C\n
-	 * #define DID_HTTPS_TLS_error_detection_times                  0x010D\n
-	 * #define DID_Plant_Mode                                                       0x0204\n
-	 * #define DID_IP_Header_for_IDS                                           0x0508\n
-	 * #define DID_Transport_Layer_Header_for_IDS                     0x0509\n
-	 * #define DID_Domain_Name_Header_for_IDS                        0x050A\n
-	 * #define DID_TLS_error_factor_for_IDS                               0x050B\n
-	 * #define DID_Tool_authentication_error_factor_for_IDS         0x050C\n
-	 * #define DID_CANHD_FOR_IDS                                           0x050E\n
-	 * #define DID_CANBUS_FOR_IDS                                         0x050F\n
-	 * #define DID_Ethernet_Port_Num_for_IDS                             0x0510\n
-	 * #define DID_Secondary_Time_Counter_for_ROB_Usg          0x0511\n
-	 * #define DID_Source_IP_Address_for_IDS                             0x0512\n
-	 * #define DID_Destination_IP_Addr_for_IDS                           0x0513\n
-	 * #define DID_Wireless_device_ID_NUM_1                             0x1003\n
-	 * #define DID_Wireless_device_software_version                     0x1004\n
-	 * #define DID_Identification_information                                   0x1005\n
-	 * #define DID_MSISDN                                                          0x1006\n
-	 * #define DID_Vehicle_type_information                                  0x1007\n
-	 * #define DID_Antenna_connection_status                               0x1008\n
-	 * #define DID_eUICCID                                                         0x1016\n
-	 * #define DID_PLMN                                                             0x1017\n
-	 * #define DID_ICCID                                                             0x1018\n
-	 * #define DID_IMSI                                                               0x1019\n
-	 * #define DID_IMEI                                                               0x101A\n
-	 * #define DID_Air_Data_Feed_status                                     0x101B\n
-	 * #define DID_Grade_information                                         0x101D\n
-	 * #define DID_DCM_operation_mode                                   0x101E\n
-	 * #define DID_TSC_service_status                                        0x101F\n
-	 * #define DID_TSP_US_service_status                                  0x1021\n
-	 * #define DID_C_code_registration_status                              0x1081\n
-	 * #define DID_Data_table                                                      0x1083\n
-	 * #define DID_Service_progress_rate                                     0x1084\n
-	 * #define DID_Forgotten_operation_table                              0x1085\n
-	 * #define DID_Remote_confirmation_table                             0x1086\n
-	 * #define DID_Warning_table                                                 0x1087\n
-	 * #define DID_Remote_control_table                                      0x1088\n
-	 * #define DID_FOTA                                                            0x2001\n
-	 * #define DID_OfflineOnlineSwitching                                   0x2003\n
-	 * #define DID_Outgoing_call_volume_index                          0x2005\n
-	 * #define DID_Incoming_call_voice_volume_index               0x2006\n
-	 * #define DID_Speaker_system_configuration_setting          0x2007\n
-	 * #define DID_Connection_to_center_setting                        0x200C\n
-	 * #define DID_OfflineOnlineSwitching_distance                    0x200D\n
-	 * #define DID_ACN_phone_number_Primary                      0x2020\n
-	 * #define DID_ACN_phone_number_Secondary                 0x2021\n
-	 * #define DID_MAN_phone_number_Primary                     0x2022\n
-	 * #define DID_MAN_phone_number_Secondary                 0x2023\n
-	 * #define DID_Collision_notification_cancellation                0x2026\n
-	 * #define DID_Y_code_registration_status                          0x2040\n
-	 * #define DID_Equipment_remote_start_ECU_connection_availability      0x2041\n
-	 * #define DID_+<+$MODULENAME+>+nostics_recorder                                    0x2042\n
-	 * #define DID_Under_repair_status                                     0x2043\n
-	 * #define DID_Speaker_operation                                       0x2803\n
-	 * #define DID_ECUSerialNumberDataIdentifier               0xF18C\n
-	 * Sample code : @n
-	 * sp<I+<+$MODULENAME+>+ManagerService> m_diagManager = interface_cast<I+<+$MODULENAME+>+ManagerService>(defaultServiceManager()->getService(String16(+<+uc($MODULENAME)+>+_SRV_NAME))); @n
-        *\n
-         * android::sp<mindroid::String> newdata = new mindroid::String();\n
-         * newdata = TelephonyManager::getMsisdn();\n
-         * size = newdata->size();\n
-         * \n
-         * android::sp<+<+$MODULENAME+>+Data> new+<+$MODULENAME+>+Data = new +<+$MODULENAME+>+Data;\n
-         *  \n
-         * new+<+$MODULENAME+>+Data->setData((uint16_t)DID_MSISDN, (uint16_t)size, (uint8_t)DID_Read, (uint8_t*)newdata->c_str());\n
-         *\n
-	 * m_diagManager->requestDataID(android::sp<+<+$MODULENAME+>+Data>& diagData);
-	*/
-	/*------------------------------------------------------------------------------------------------------------*/
-    virtual error_t requestDataID(android::sp<+<+$MODULENAME+>+Data>& mdiagData) =0;
-	/*---------------------------------------------------------------------------------------------------------*/
-	/**
-	 * Sending response Data ID to Micom. \n
-	 * @ingroup +<+uc($MODULENAME)+>+MGR +<+uc($MODULENAME)+>+MGR_SET_GET
-	 * @param[out]		Sending response Data ID to Micom.
-	 * @return If ResponseData ID  is sent successfully, return E_OK, the others values otherwise
-        * @retval   (0) No error
-        * @retval   (-1) Unknown error
-        * @retval   (-2) Invalid parameter
-        * @retval   (-3) Can not send response
-        * @retval   (-4) Occur time-out
-        * @retval   (-5) Request is rejected due to some reason
-        * @retval   (-6) Request is pending due to some reason
-        * @retval   (-7) Not enough memory
-        * @retval   (-8) Data corrupted
-        * @retval   (-9) Buffer empty
-        * @retval   (-10) Input empty
-        * @retval   (-11) Frame Not Ready
-	 * @see +<+$MODULENAME+>+Command.h
-	 * @note
-	 *\n
-	 * class (+<+$MODULENAME+>+Data)\n
-	 *  private:\n
-        *               uint16_t did;\n
-        *               uint16_t len;\n
-        *               uint8_t att;\n
-        *               uint8_t * data;\n
-	 *-------------------\n
-	 * Data ID\n
-	 *-------------------\n
-	 * #define DID_Time_information                                               0x0109\n
-	 * #define DID_Firewall_error_detection_times                           0x010C\n
-	 * #define DID_HTTPS_TLS_error_detection_times                  0x010D\n
-	 * #define DID_Plant_Mode                                                       0x0204\n
-	 * #define DID_IP_Header_for_IDS                                           0x0508\n
-	 * #define DID_Transport_Layer_Header_for_IDS                     0x0509\n
-	 * #define DID_Domain_Name_Header_for_IDS                        0x050A\n
-	 * #define DID_TLS_error_factor_for_IDS                               0x050B\n
-	 * #define DID_Tool_authentication_error_factor_for_IDS         0x050C\n
-	 * #define DID_CANHD_FOR_IDS                                           0x050E\n
-	 * #define DID_CANBUS_FOR_IDS                                         0x050F\n
-	 * #define DID_Ethernet_Port_Num_for_IDS                             0x0510\n
-	 * #define DID_Secondary_Time_Counter_for_ROB_Usg          0x0511\n
-	 * #define DID_Source_IP_Address_for_IDS                             0x0512\n
-	 * #define DID_Destination_IP_Addr_for_IDS                           0x0513\n
-	 * #define DID_Wireless_device_ID_NUM_1                             0x1003\n
-	 * #define DID_Wireless_device_software_version                     0x1004\n
-	 * #define DID_Identification_information                                   0x1005\n
-	 * #define DID_MSISDN                                                          0x1006\n
-	 * #define DID_Vehicle_type_information                                  0x1007\n
-	 * #define DID_Antenna_connection_status                               0x1008\n
-	 * #define DID_eUICCID                                                         0x1016\n
-	 * #define DID_PLMN                                                             0x1017\n
-	 * #define DID_ICCID                                                             0x1018\n
-	 * #define DID_IMSI                                                               0x1019\n
-	 * #define DID_IMEI                                                               0x101A\n
-	 * #define DID_Air_Data_Feed_status                                     0x101B\n
-	 * #define DID_Grade_information                                         0x101D\n
-	 * #define DID_DCM_operation_mode                                   0x101E\n
-	 * #define DID_TSC_service_status                                        0x101F\n
-	 * #define DID_TSP_US_service_status                                  0x1021\n
-	 * #define DID_C_code_registration_status                              0x1081\n
-	 * #define DID_Data_table                                                      0x1083\n
-	 * #define DID_Service_progress_rate                                     0x1084\n
-	 * #define DID_Forgotten_operation_table                              0x1085\n
-	 * #define DID_Remote_confirmation_table                             0x1086\n
-	 * #define DID_Warning_table                                                 0x1087\n
-	 * #define DID_Remote_control_table                                      0x1088\n
-	 * #define DID_FOTA                                                            0x2001\n
-	 * #define DID_OfflineOnlineSwitching                                   0x2003\n
-	 * #define DID_Outgoing_call_volume_index                          0x2005\n
-	 * #define DID_Incoming_call_voice_volume_index               0x2006\n
-	 * #define DID_Speaker_system_configuration_setting          0x2007\n
-	 * #define DID_Connection_to_center_setting                        0x200C\n
-	 * #define DID_OfflineOnlineSwitching_distance                    0x200D\n
-	 * #define DID_ACN_phone_number_Primary                      0x2020\n
-	 * #define DID_ACN_phone_number_Secondary                 0x2021\n
-	 * #define DID_MAN_phone_number_Primary                     0x2022\n
-	 * #define DID_MAN_phone_number_Secondary                 0x2023\n
-	 * #define DID_Collision_notification_cancellation                0x2026\n
-	 * #define DID_Y_code_registration_status                          0x2040\n
-	 * #define DID_Equipment_remote_start_ECU_connection_availability      0x2041\n
-	 * #define DID_+<+$MODULENAME+>+nostics_recorder                                    0x2042\n
-	 * #define DID_Under_repair_status                                     0x2043\n
-	 * #define DID_Speaker_operation                                       0x2803\n
-	 * #define DID_ECUSerialNumberDataIdentifier               0xF18C\n
-	 * Sample code : @n
-	 * sp<I+<+$MODULENAME+>+ManagerService> m_diagManager = interface_cast<I+<+$MODULENAME+>+ManagerService>(defaultServiceManager()->getService(String16(+<+uc($MODULENAME)+>+_SRV_NAME))); @n
-         *\n
-          * android::sp<mindroid::String> newdata = new mindroid::String();\n
-          * newdata = TelephonyManager::getMsisdn();\n
-          * size = newdata->size();\n
-          * \n
-          * android::sp<+<+$MODULENAME+>+Data> new+<+$MODULENAME+>+Data = new +<+$MODULENAME+>+Data;\n
-          *  \n
-          * new+<+$MODULENAME+>+Data->setData((uint16_t)DID_MSISDN, (uint16_t)size, (uint8_t)DID_Read, (uint8_t*)newdata->c_str());\n
-          *\n
-	 * m_diagManager->responseDataID(android::sp<+<+$MODULENAME+>+Data>& diagData);
-	*/
-	/*------------------------------------------------------------------------------------------------------------*/
-      virtual error_t responseDataID (android::sp<+<+$MODULENAME+>+Data>& mdiagData) =0;
-
-    /*
-     * SLDD USE ONLY
-     * */
-    virtual error_t SlddTestCmd(uint8_t id, uint8_t cmd, uint8_t cmd2, android::sp<Buffer> buf) = 0;
-
+	virtual error_t requestDataID(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data) =0;
+	virtual error_t responseDataID (android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data) =0;
+	virtual error_t SlddTestCmd(uint8_t id, uint8_t cmd, uint8_t cmd2, android::sp<Buffer> buf) = 0;
 };
 
-class Bn+<+$MODULENAME+>+ManagerService : public android::BnInterface<I+<+$MODULENAME+>+ManagerService>
+class Bn+<+ucfirst($MODULENAME)+>+ManagerService : public android::BnInterface<I+<+ucfirst($MODULENAME)+>+ManagerService>
 {
 
 public:

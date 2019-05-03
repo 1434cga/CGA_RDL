@@ -1,0 +1,55 @@
+FileName : meta-file/meta-tiger-model/recipes-core/systemd-services/model-service.inc
+stcI_HASH : Module_Name
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+SRC_URI += " \
+    file://bmw-services/dlt.service \
+    file://bmw-services/diagctl-handler.service \
+    file://bmw-services/netifmgr.service \
+    file://bmw-services/remoteIfManager.service \
+    file://bmw-services/dummManager.service \
+    file://bmw-services/powermodehandler.service \
+    file://bmw-services/rild.service \
+    file://bmw-services/securityManager.service \
+    file://bmw-services/someipconsumer.service \
+    file://bmw-services/someipprovider.service \
+    file://bmw-services/ecallmanager.service \
+    file://bmw-services/ethmgr.service \
+    file://bmw-services/trafficShapingManager.service \
+    file://bmw-services/waveTimeManager.service \
+    file://bmw-services/ipsecmgr.service \
+    file://bmw-services/joynrmgr.service \
+    file://bmw-services/health-monitor.service \
+    file://bmw-services/voipclient.service \
+    file://bmw-services/araproxy.service \
+    #TIDL added Start
+    file://bmw-services/+<+ucfirst($MODULENAME)+>+mgr.service \
+    # TIDL added End
+    "
+
+BMW_SERVICES=" \
+    dlt.service \
+    diagctl-handler.service \
+    netifmgr.service \
+    remoteIfManager.service \
+    dummManager.service \
+    powermodehandler.service \
+    rild.service \
+    securityManager.service \
+    someipconsumer.service \
+    someipprovider.service \
+    ecallmanager.service \
+    ethmgr.service \
+    trafficShapingManager.service \
+    waveTimeManager.service \
+    ipsecmgr.service \
+    joynrmgr.service \
+    health-monitor.service \
+    voipclient.service \
+    araproxy.service \
+    +<+ucfirst($MODULENAME)+>+mgr.service \
+    "
+
+fakeroot do_install_append() {
+    do_install_systemd_bmw_services
+}

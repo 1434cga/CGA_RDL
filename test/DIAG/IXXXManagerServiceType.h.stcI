@@ -1,0 +1,23 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : KEYManagerService/include/I
+stcI_FILEPOSTFIX : ManagerServiceType
+stcI_EXTENSION : h
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+/*
+ *   This software is copyright protected and proprietary to
+ *   LG electronics. LGE grants to you only those rights as
+ *   set out in the license conditions. All other rights remain
+ *   with LG electronics.
+ * \author  Jong Kyung Byun
+ * \date    2017.11.14
+ * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
+ */
+ 
+#ifndef _I+<+uc($MODULENAME)+>+_MANAGER_SERVICE_TYPE_H_
+#define _I+<+uc($MODULENAME)+>+_MANAGER_SERVICE_TYPE_H_
+
+
+#define +<+uc($MODULENAME)+>+_SRV_NAME    "service_layer.+<+ucfirst($MODULENAME)+>+ManagerService"
+
+#endif

@@ -1,0 +1,207 @@
+stcI_HASH : Module_Name
+stcI_EXTENSION : cpp
+stcI_FILEPREFIX : KEYManagerService/lib/
+stcI_FILEPOSTFIX : Manager
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+/**
+ * @copyright
+ * Copyright (c) 2015 by LG Electronics Inc.
+ * This program or software including the accompanying associated documentation
+ * ("Software") is the proprietary software of LG Electronics Inc. and or its
+ * licensors, and may only be used, duplicated, modified or distributed pursuant
+ * to the terms and conditions of a separate written license agreement between you
+ * and LG Electronics Inc. ("Authorized License"). Except as set forth in an
+ * Authorized License, LG Electronics Inc. grants no license (express or implied),
+ * rights to use, or waiver of any kind with respect to the Software, and LG
+ * Electronics Inc. expressly reserves all rights in and to the Software and all
+ * intellectual property therein. If you have no Authorized License, then you have
+ * no rights to use the Software in any ways, and should immediately notify LG
+ * Electronics Inc. and discontinue all use of the Software.
+ *
+ * @file        +<+ucfirst($MODULENAME)+>+Manager.cpp
+ * @brief       Implementation of +<+ucfirst($MODULENAME)+>+Manager
+ * @authors:
+ *    copyright (c) 2017  jongkyung.byun <jongkyung.byun@lge.com>
+*/
+
+#include <binder/Parcel.h>
+#include <binder/IServiceManager.h>
+#include <utils/String16.h>
+
+#include "Error.h"
+#include "Log.h"
+#include <utils/SLLooper.h>
+#include <utils/Handler.h>
+#include <binder/IServiceManager.h>
+#include "../include/I+<+ucfirst($MODULENAME)+>+ManagerServiceType.h"
+#include "../include/+<+ucfirst($MODULENAME)+>+Manager.h"
+#include "../include/I+<+ucfirst($MODULENAME)+>+ManagerService.h"
+#include <utils/RefBase.h>
+#include <list>
+
+#undef LOG_TAG
+#define LOG_TAG "+<+ucfirst($MODULENAME)+>+Manager"
+
+#define +<+uc($MODULENAME)+>+_SRV_NAME "service_layer.+<+ucfirst($MODULENAME)+>+ManagerService"
+
+bool +<+ucfirst($MODULENAME)+>+Manager::DEBUG = true;
+
++<+ucfirst($MODULENAME)+>+Manager* +<+ucfirst($MODULENAME)+>+Manager::mInstance = NULL;
+
++<+ucfirst($MODULENAME)+>+Manager* +<+ucfirst($MODULENAME)+>+Manager::instance()
+{
+    if (mInstance == NULL)
+        mInstance = new +<+ucfirst($MODULENAME)+>+Manager();
+
+    return mInstance;
+}
+
++<+ucfirst($MODULENAME)+>+Manager::+<+ucfirst($MODULENAME)+>+Manager()
+{
+    if (DEBUG) LOGV("+<+ucfirst($MODULENAME)+>+Manager constructor - entry");
+    mToken = new android::BBinder();
+    m+<+ucfirst($MODULENAME)+>+Service = getService();
+    if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+        mDeathRecipient = new ManagerDeathRecipient(*this);
+#ifdef _MORE_MARSHM
+        android::IInterface::asBinder(m+<+ucfirst($MODULENAME)+>+Service)->linkToDeath(mDeathRecipient);
+#else
+        m+<+ucfirst($MODULENAME)+>+Service->asBinder()->linkToDeath(mDeathRecipient);
+#endif
+    }
+    if (DEBUG) LOGV("+<+ucfirst($MODULENAME)+>+Manager constructor - exit");
+}
+
++<+ucfirst($MODULENAME)+>+Manager::~+<+ucfirst($MODULENAME)+>+Manager()
+{
+    if (DEBUG) LOGV("~+<+ucfirst($MODULENAME)+>+Manager destructor - entry");
+
+    if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+        m+<+ucfirst($MODULENAME)+>+Service = NULL;
+    }
+    if (DEBUG) LOGV("~+<+ucfirst($MODULENAME)+>+Manager destructor - exit");
+}
+
+android::sp<I+<+ucfirst($MODULENAME)+>+ManagerService> +<+ucfirst($MODULENAME)+>+Manager::getService()
+{
+    if (DEBUG) LOGV("+<+ucfirst($MODULENAME)+>+Manager getService() - entry");
+
+    return android::interface_cast<I+<+ucfirst($MODULENAME)+>+ManagerService>(android::defaultServiceManager()->
+        getService(android::String16(+<+uc($MODULENAME)+>+_SRV_NAME)));
+} 
+
+void +<+ucfirst($MODULENAME)+>+Manager::onBinderDied(const android::wp<android::IBinder>& who)
+{
+
+LOGE("+<+ucfirst($MODULENAME)+>+Service onBinderDied");
+
+#ifdef _MORE_MARSHM
+    if (android::IInterface::asBinder(m+<+ucfirst($MODULENAME)+>+Service) == who)
+#else
+    if (m+<+ucfirst($MODULENAME)+>+Service->asBinder() == who)
+#endif
+    {
+        LOGE("Died +<+ucfirst($MODULENAME)+>+ Service!!");
+        m+<+ucfirst($MODULENAME)+>+Service = getService();
+        if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+#ifdef _MORE_MARSHM
+            android::IInterface::asBinder(m+<+ucfirst($MODULENAME)+>+Service)->linkToDeath(mDeathRecipient);
+#else
+            m+<+ucfirst($MODULENAME)+>+Service->asBinder()->linkToDeath(mDeathRecipient);
+#endif
+
+            if (mStateReceiver != NULL) {
+                for (std::list<int32_t>::iterator it=signal_list.begin(); it != signal_list.end(); ++it) {
+                   LOGE("Re register signal =%d",(*it));
+                   reAttachReceiver((*it));
+                }
+            }   
+        }
+    }
+}
+
+error_t +<+ucfirst($MODULENAME)+>+Manager::attachReceiver(serviceid_t id, android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver> receiver)
+{
+    error_t result = E_OK;
+
+    if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+        mStateReceiver = receiver;
+        result = m+<+ucfirst($MODULENAME)+>+Service->attachReceiver(id, receiver);
+        LOGV("interface attachReceiver");
+
+        if (result == E_ERROR) {
+            LOGE("result == ERROR!!");
+        }else {
+            signal_list.push_front(id);
+        }  
+    }
+    return result;
+}
+
+error_t +<+ucfirst($MODULENAME)+>+Manager::reAttachReceiver (const uint32_t id ){
+    error_t result = E_OK;
+    LOGV("interface reAttachReceiver");
+
+    if (mStateReceiver != NULL) {
+        result = m+<+ucfirst($MODULENAME)+>+Service->attachReceiver(id, mStateReceiver);
+    }
+    
+    if (result == E_ERROR) {
+        LOGE("ret_val == ERROR!!");
+    }else {
+        signal_list.push_front(id);
+    }
+    return result;
+} 
+
+error_t +<+ucfirst($MODULENAME)+>+Manager::unregisterReceiver(const android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver> receiver)
+{
+    error_t result = E_OK;
+    if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+        LOGV("interface unregisterReceiver");
+        m+<+ucfirst($MODULENAME)+>+Service->unregisterReceiver(receiver);
+        signal_list.clear();
+        mStateReceiver = NULL;
+        result = E_OK;
+    }
+    else {
+        LOGE("+<+ucfirst($MODULENAME)+>+Manager unregister+<+ucfirst($MODULENAME)+>+StateReciver() fail : m+<+ucfirst($MODULENAME)+>+Service is empty");
+        result = E_ERROR;
+    }
+
+    return result;
+}
+
+error_t +<+ucfirst($MODULENAME)+>+Manager::requestDataID(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data)
+{
+    error_t result = E_OK;
+    if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+        LOGV("interface requestDataID");
+        m+<+ucfirst($MODULENAME)+>+Service->requestDataID(m+<+lc($MODULENAME)+>+Data);        
+        result = E_OK;
+    }
+    else {
+        LOGE("+<+ucfirst($MODULENAME)+>+Manager requestDataID() fail : m+<+ucfirst($MODULENAME)+>+Service is empty");
+        result = E_ERROR;
+    }
+    return result;
+}
+
+ITERATE %API +<<+ ITKEY  ITVALUE
+error_t +<+ucfirst($MODULENAME)+>+Manager::ITKEY(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data)
+{
+    error_t result = E_OK;
+    if (m+<+ucfirst($MODULENAME)+>+Service != NULL) {
+        LOGV("interface ITKEY");
+        m+<+ucfirst($MODULENAME)+>+Service->ITKEY(m+<+ucfirst($MODULENAME)+>+Data);        
+        result = E_OK;
+    }
+    else {
+        LOGE("+<+ucfirst($MODULENAME)+>+Manager ITKEY() fail : m+<+ucfirst($MODULENAME)+>+Service is empty");
+        result = E_ERROR;
+    }
+    return result;
+}
++>>+
+

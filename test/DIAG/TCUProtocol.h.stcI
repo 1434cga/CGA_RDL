@@ -1,0 +1,628 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : tiger/servicelayer/variant/service_layer/include/
+stcI_FILEBODY : NO
+stcI_FILEPOSTFIX : TCUProtocol
+stcI_EXTENSION : h
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+#ifndef SERVICE_LAYER_TCUPROTOCOL_H
+#define SERVICE_LAYER_TCUPROTOCOL_H
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+typedef uint8_t byte;
+
+
+/**
+*  TYPE of packet : 8 bits
+*/
+/**Request packet. Response should be appeared after this.  */
+#define PACKET_TYPE_REQUEST                 (0x01U)
+/**Response packet.*/
+#define PACKET_TYPE_RESPONSE                (0x02U)
+/**Report packet. This does not have the response.*/
+#define PACKET_TYPE_REPORT                  (0x03U)
+/**Debug packet. This packet will be used only for purpose of debug.*/
+#define PACKET_TYPE_DEBUG                   (0x04U)
+
+#define MODULE_ID_NA                        (0xFEU)
+#define MODULE_ID_TEST                      (0x00U)
+#define NAD_MODULE_APPLICATION_MGR          (0x01U)
+#define NAD_MODULE_ALARM_MGR                (0x02U)
+#define NAD_MODULE_AUDIO_MGR                (0x03U)
+#define NAD_MODULE_CONFIGURATION_MGR        (0x04U)
+#define NAD_MODULE_CONFIGURATION_UPDATER    (0x05U)
+#define NAD_MODULE_DIAGNOSTIC_MGR           (0x06U)
+#define NAD_MODULE_HMI_MGR                  (0x07U)
+#define NAD_MODULE_LOCATION_MGR             (0x08U)
+#define NAD_MODULE_POWER_MGR                (0x09U)
+#define NAD_MODULE_SYSTEM_MGR               (0x0AU)
+#define NAD_MODULE_TELEPHONY_MGR            (0x0BU)
+#define NAD_MODULE_TELEPHONY_REG            (0x0CU)
+#define NAD_MODULE_DATA_MGR                 (0x0DU)
+#define NAD_MODULE_SMS_MGR                  (0x0EU)
+#define NAD_MODULE_NETWORK_QUERY_SVC        (0x0FU)
+#define NAD_MODULE_TIME_MGR                 (0x11U)
+#define NAD_MODULE_VIF_MGR                  (0x12U)
+#define NAD_MOULDE_POSSHIFT_MGR             (0x1AU)
+
+#define NAD_MODULE_RILD_SVC                 (0x13U)
+#define NAD_MODULE_LGIMS_MGR                (0x14U)
+#define NAD_MODULE_NETIF_MGR                (0x15U)
+#define NAD_MODULE_DIAGCTL_HANDLER_MGR      (0x16U)
+#define NAD_MODULE_REMOTEIF_MGR             (0x17U)
+#define NAD_MODULE_ECALL_MGR                (0x18U)
+#define NAD_MODULE_POWERMODE_HANDLER        (0x19U)
+#define NAD_MODULE_SECURITY_MGR             (0x20U)
+#define NAD_MODULE_SOMEIPCONSUMER_MGR       (0x21U)
+#define NAD_MODULE_SOMEIPPROVIDER_MGR       (0x22U)
+#define NAD_MODULE_ETHERNET_MGR             (0x23U)
+#define NAD_MODULE_TRAFFICSHAPING_MGR       (0x24U)
+#define NAD_MODULE_WAVE_TIME_MGR            (0x25U)
+#define NAD_MODULE_IPSEC_MGR                (0x26U)
+#define NAD_MODULE_TEST_MGR                 (0x27U)
+#define NAD_MODULE_MODEM_MONITOR            (0x28U)
+#define NAD_MODULE_JOYNR_MGR                (0x29U)
+#define NAD_MODULE_RTM_HANDLER              (0x30U)
+#define NAD_MODULE_VOIP_CLIENT              (0x31U)
+#define NAD_MODULE_THERMAL_MONITOR          (0x32U)
+#define NAD_MODULE_ARA_PROXY                (0x33U)
+#define NAD_MODULE_ERA_ECALL          		(0x34U)
+#define NAD_MODULE_EU_ECALL                	(0x35U)
+#define NAD_MODULE_BMW_ECALL                (0x36U)
+#define NAD_MODULE_PSAP_ECALL               (0x37U)
+#define NAD_MODULE_HEALTH_MONITOR           (0x38U)
+// TIDL added Start
+#define NAD_MODULE_+<+uc($MODULENAME)+>+                     (0x39U)
+// TIDL added End
+
+/**
+ *  Start of definitions for the Debug Manager
+ */
+// [START] Command for NAD_MOULDE_DEBUG_MGR
+#define DBG_REQ_CMD_TEST                    (0x01U)
+
+#define DBG_REQ_CMD_WAKEUP                  (0x02)
+#define DBG_REQ_CMD1_SET                    (0x01)
+#define DBG_REQ_CMD1_GET                    (0x02)
+
+#define DBG_REQ_CMD_ANTENA                  (0x03)
+#define DBG_REQ_CMD1_RF                     (0x01)
+#define DBG_REQ_CMD1_DIV                    (0x02)
+#define DBG_REQ_CMD1_GNSS                   (0x03)
+
+#define DBG_REQ_CMD_TEMP                    (0x04)
+#define DBG_REQ_CMD1_INTERNAL               (0x01)
+#define DBG_REQ_CMD1_PAM                    (0x02)
+
+#define DBG_REQ_CMD_LOOPBACK                (0x05)
+#define DBG_REQ_CMD1_ENABLE                 (0x01)
+#define DBG_REQ_CMD1_DISABLE                (0x02)
+
+#define DBG_REQ_CMD_MICVOL                  (0x06)
+
+#define DBG_REQ_CMD_RF_LOOPBACK             (0x07)
+#define DBG_REQ_CMD1_RF_ENABLE              (0x01)
+#define DBG_REQ_CMD1_RF_DISABLE             (0x02)
+
+#define DBG_REQ_CMD_OUTVOL                  (0x08)
+
+#define DBG_REQ_CMD_EMERGENCY_SPEAKER_OUT   (0x09)
+
+#define DBG_REQ_CMD_AUDIOPATH               (0x0A)
+#define DBG_CMD1_SET_SPK_IN_OUT             (0x01)
+#define DBG_CMD1_SET_AMP_OUT                (0x02)
+
+#define DBG_REQ_CMD_SEL_ANTENNA             (0x0B)
+#define DBG_CMD1_SET_ANT_INTERNAL           (0x01)
+#define DBG_CMD1_SET_ANT_FAKRA              (0x02)
+#define DBG_CMD1_GET_ANT_RFPATH             (0x03)
+
+#define DBG_REQ_CMD_REMOTESIM               (0x0C)
+
+#define DBG_REQ_CMD_CHANGE_POWERMODE        (0x0D)
+
+#define DBG_REQ_CMD_GPS_START_MODE          (0x0E)
+#define DBG_REQ_CMD1_COLD                   (0x00)
+#define DBG_REQ_CMD1_WARM                   (0x01)
+#define DBG_REQ_CMD1_HOT                    (0x02)
+#define DBG_REQ_CMD1_INFO_SEND_ON           (0x03)
+#define DBG_REQ_CMD1_INFO_SEND_OFF          (0x04)
+#define DBG_REQ_CMD1_TTFF                   (0x05)
+#define DBG_REQ_CMD1_TTFF_SEND              (0x06)
+
+#define DBG_REQ_CMD_DISPLAY_LOG             (0x0F)
+
+#define DBG_REQ_CMD_AUTO_ANTENNA            (0x10)
+#define DBG_CMD1_AUTO_ANT_SET_FALSE         (0x00)
+#define DBG_CMD1_AUTO_ANT_SET_TRUE          (0x01)
+#define DBG_CMD1_AUTO_ANT_GET               (0x02)
+
+#define DBG_REQ_CMD_MDM_INFO                (0x11)
+#define DBG_CMD1_GET_SW_VERSION             (0x01)
+#define DBG_CMD1_GET_MODEL_DIV              (0x02)
+
+#define DBG_REQ_CMD_VER_QUERY               (0x12)
+#define DBG_REQ_CMD1_MODEMAP_GET            (0x01)
+#define DBG_REQ_CMD1_EXTAP_GET              (0x02)
+#define DBG_REQ_CMD1_MODEMAP_SET            (0x03)
+#define DBG_REQ_CMD1_EXTAP_SET              (0x04)
+
+#define DBG_REQ_CMD_MAC_ADDR                (0x13)
+#define DBG_REQ_CMD1_MAC_SET                (0x01)
+
+#define DBG_REQ_CMD_DISPLAY_LOG_EXTAP       (0x14)
+#define DBG_REQ_CMD1_SEND_LOGE              (0x01)
+#define DBG_REQ_CMD1_SEND_LOGW              (0x02)
+#define DBG_REQ_CMD1_SEND_LOGI              (0x03)
+#define DBG_REQ_CMD1_SEND_LOGD              (0x04)
+#define DBG_REQ_CMD1_SEND_LOGV              (0x05)
+#define DBG_REQ_CMD_REMOTESIM_STATUS        (0x15)
+#define DBG_REQ_CMD1_REMOTE_DETECT          (0x01)
+
+#define DBG_REQ_CMD_MCU_WIFI1               (0x16)
+#define DBG_REQ_CMD1_DTC_WIFI1              (0x01)
+#define DBG_REQ_CMD_EXTAP_ETHERNET          (0x17)
+#define DBG_REQ_CMD1_DTC_ETHERNET           (0x01)
+
+#define DBG_REQ_CMD_TRACE_LOGGING           (0x18)
+#define DBG_REQ_CMD1_TRACE_ENABLE           (0x01)
+#define DBG_REQ_CMD1_TRACE_DISABLE          (0x02)
+#define DBG_REQ_CMD1_PROP_TRACE_GET         (0x03)
+
+#define DBG_REQ_CMD_LOG_MODE_START          (0x19)
+#define DBG_REQ_CMD1_LOG_MODE_EXTAP         (0x01)
+#define DBG_REQ_CMD_FACTORY_RESET_EXTAP     (0x1A)
+#define DBG_REQ_CMD1_FACTORY_RESET_EXTAP    (0x01)
+
+#define DBG_REQ_CMD_EMERGENCY_SPKOUT        (0x1B)
+#define DBG_REQ_CMD1_EMERGENCY_SPKOUT       (0x01)
+
+#define DBG_REQ_CMD_HW_VARIANT              (0x1C)
+#define DBG_CMD1_HW_VARIANT                 (0x01)
+
+#define DBG_REQ_CMD_DTC_LOG                 (0x1D)
+
+#define DBG_REQ_CMD_DTC_MIC                 (0x1E)
+
+#define DBG_REQ_CMD_DTC_SPK                 (0x1F)
+
+#define DBG_REQ_CMD_DTC_START               (0x20)
+
+#define DBG_REQ_CMD_TELE                    (0xA1)
+#define DBG_CMD1_IMSI_READ                  (0x01)
+#define DBG_CMD1_ICCID_READ                 (0x02)
+#define DBG_CMD1_MSISDN_READ                (0x03)
+#define DBG_CMD1_IMEI_WRITE                 (0x04)
+#define DBG_CMD1_IMEI_READ                  (0x05)
+#define DBG_CMD1_RF_CAL_CHECK_FACTORY       (0x06)
+#define DBG_CMD1_SW_COUNTRYID_WRITE         (0x07)
+#define DBG_CMD1_SW_COUNTRYID_READ          (0x08)
+#define DBG_CMD1_PN_NAD_READ                (0x09)
+#define DBG_CMD1_DATA_STATE_GET             (0x0A)
+#define DBG_CMD1_IMSI2_READ                 (0x0B)
+#define DBG_CMD1_ICCID2_READ                (0x0C)
+#define DBG_CMD1_MSISDN2_READ               (0x0D)
+#define DBG_CMD1_RF_CAL_CHECK_NORMAL        (0x0E)
+
+#define DBG_REQ_CMD_BT                      (0xA2)
+#define DBG_CMD1_PN_BT                      (0x01)
+
+#define DBG_REQ_CMD_MDM_EXTAP               (0xA3)
+#define DBG_CMD1_SN_WRITE                   (0x01)
+#define DBG_CMD1_SN_READ                    (0x02)
+#define DBG_CMD1_CAN_READ                   (0x03)
+#define DBG_CMD1_LOG_MODE_MODEMAP           (0x04)
+
+#define DBG_REQ_CMD_WIFIHOTSPOT             (0xA4)
+#define DBG_CMD1_MAC_WRITE                  (0x01)
+#define DBG_CMD1_MAC_READ                   (0x02)
+
+#define DBG_REQ_CMD_MCU                     (0xA5)
+#define DBG_CMD1_PN_MICOM                   (0x01)
+#define DBG_CMD1_PN_SIGNAL                  (0x02)
+#define DBG_CMD1_PN_SECOND_BOOT             (0x03)
+
+#define DBG_REQ_CMD_COMMON                  (0xA6)
+#define DBG_CMD1_TELEM_READ                 (0x01)
+#define DBG_CMD1_CONN_READ                  (0x02)
+#define DBG_CMD1_CAL_READ                   (0x03)
+#define DBG_CMD1_NGTP_ENKEY_WRITE           (0x04)
+#define DBG_CMD1_NGTP_ENKEY_READ            (0x05)
+#define DBG_CMD1_CORE_WRITE                 (0x06)
+#define DBG_CMD1_CORE_READ                  (0x07)
+#define DBG_CMD1_DELIVERY_WRITE             (0x08)
+#define DBG_CMD1_DELIVERY_READ              (0x09)
+#define DBG_CMD1_TOP_WRITE                  (0x0A)
+#define DBG_CMD1_TOP_READ                   (0x0B)
+#define DBG_CMD1_CAL_WRITE                  (0x0C)
+
+#define DBG_REQ_CMD_EXTAP                   (0xA7)
+#define DBG_CMD1_LOG_MODE_EXTAP             (0x01)
+
+#define DBG_REQ_CMD_SECURITY                (0xA8)
+#define DBG_CMD1_SC_FILE_KEY_READ           (0x01)
+#define DBG_CMD1_SC_FILE_KEY_SAVE           (0x02)
+#define DBG_CMD1_SC_FILE_KEY_DEL            (0x03)
+#define DBG_CMD1_ULOCK_PW_CHECK             (0x04)
+#define DBG_CMD1_SLDD_ULOCK_PW_CHECK        (0x05)
+
+#define CMD1_REQ_QUARY_VER                  (0xAA)
+
+#define DBG_REQ_CMD_FACTORY_CMD             (0xB0)
+// [END] Command for NAD_MOULDE_DEBUG_MGR
+
+
+/**
+ *  Start of definitions for the Audio Manager
+ */
+// [START] Command for MOULDE_ID_AUDIO_MGR
+#define CMD_ETH_START                       (0x01)
+#define CMD_ETH_STOP                        (0x02)
+#define AUDIO_DTC                           (0x05)
+#define AUDIO_REQ_CMD1_LOW_TEST             (0x09)
+#define AUDIO_REQ_CMD1_APA_EN_PIN           (0x0A)
+#define AUDIO_REQ_CMD1_MUTE_PIN             (0x0B)
+#define AUDIO_DEFAULT_VALUE                 (0x00)
+#define AUDIO_INVALIDE_VALUE                (0xff)
+
+#define AUDIO_CMD1_REQ_SET_GAIN_CONTROL     (0x01)
+#define AUDIO_CMD2_GAIN_20DB                (0x00)
+#define AUDIO_CMD2_GAIN_26DB                (0x01)
+#define AUDIO_CMD2_GAIN_32DB                (0x02)
+#define AUDIO_CMD2_GAIN_36DB                (0x03)
+
+//CMD2 is value for DTC
+#define IGN_ON                              (0x01)
+#define CALL_MODE                           (0x02)
+#define PC_TEST                             (0x03)
+
+//CMD2 is value for DTC
+#define AUDIO_CMD2_PM_OVER_4                (0x01)
+#define AUDIO_CMD2_ECALL_TRIGGER            (0x02)
+#define AUDIO_CMD2_PC_TEST                  (0x03)
+#define AUDIO_CMD2_DIAG_REQ                 (0x04)
+#define CMD2_SELF_BUB_REQ                   (0x05)
+#define CMD2_LED_BUTTON_REQ                 (0x06)
+#define CMD2_DEBUG_DTC_SCAN                 (0x07)
+#define AUDIO_CMD2_DEBUG_MANAGER            (0x08)
+
+//BUB
+#define CMD1_REQ_BUB_IMPEDENCE              0x02
+#define CMD2_REQ_BUB_IMPEDENCE_VALUE        0x01
+// [END] Command for MOULDE_ID_AUDIOMGR
+
+
+/**
+ *  Start of definitions for the Diagnostic Manager
+ */
+// [START] Command for NAD_MOULDE_DIAGNOSTIC_MGR
+#define  DIAG_TEST_LOOP
+#undef DIAG_GNSS_TEST // temporary test codes to get GNSS  position data
+#define DIAG_DEFINED_COMMUNICATION
+#define DIAG_APP_INTERFACE
+#define TEMP_BLOCK_COMM
+#define DIAG_DTC_INFO_HANDLE
+#ifdef DIAG_DEFINED_COMMUNICATION
+#define DIAG_TESTCODE_READ_BY_ID // To build  temporary test code
+#define DIAG_TESTCODE_ROUTINE_WITH_ID // To build  temporary test code
+#endif
+#define DIAG_SESSION_CONTROL_SUB_MAX                 9
+#define DIAG_ECU_RESET_SUB_MAX                      10
+#define DIAG_READ_DTC_INFO_MAX                      28
+#define DIAG_TESTER_PRESENT_MAX                      2
+#define DIAG_READ_BY_ID_MAX                          1
+#define DIAG_CLEAR_DIAG_INFO_MAX                     1
+#define DIAG_ROUTINE_MAX                             6
+#define DIAG_IOControl_BY_ID_MAX                     1
+
+#define DIAG_NO_RESPONSE                             (0x00)
+#define DIAG_WITH_RESPONSE                           (0x01)
+
+#define DIAG_CMD1_MIN                                (0x00)
+#define DIAG_CMD2_MIN                                (0x00)
+#define DIAG_CMD3_MIN                                (0x00)
+
+#define DIAG_CMD1_MAX                                (0xFF)
+#define DIAG_CMD2_MAX                                (0xFF)
+#define DIAG_CMD3_MAX                                (0xFF)
+
+#define DIAG_NONE_MODULE_SRC                         (0x00)
+#define DIAG_NONE_MODULE_DEST                        (0x00)
+
+#define DIAG_COMMON_NO_RESPONSE_START_CMD            (0x80)
+
+#ifdef DIAG_DTC_INFO_HANDLE
+#define DIAG_DTC_COMMAND                             (0x04)
+#define DIAG_DTC_AUDIO_COMMAND                       (0x06)
+#define DIAG_DTC_AUDIO_SUB_IGN_ON                    (0x01)
+#define DIAG_DTC_AUDIO_SUB_CALL_MODE                 (0x02)
+#define DIAG_CMD_REQ_CAN_TYPE                        (0x07)
+#endif
+
+
+/**
+ *Diagostic Services's Service ID
+ */
+#define DIAG_CMD_SESSION_CONTROL                     (0x10)
+#define DIAG_CMD_ECU_RESET                           (0x11)
+#define DIAG_CMD_READ_DTC_INFO                       (0x19)
+#define DIAG_CMD_TESTER_PRESENT                      (0x3E)
+#define DIAG_CMD_READ_BY_ID                          (0x22)
+#define DIAG_CMD_CLEAR_DIAG_INFO                     (0x14)
+#define DIAG_CMD_ROUTINE_CONTROL                     (0x31)
+#define DIAG_CMD_IOCTRL_BY_ID                        (0x2F)
+#define DIAG_CMD_CTRL_DTC_SETTING                    (0x85)
+#define DIAG_CMD_READ_SCALING_DATA_BY_ID             (0x24)
+#define DIAG_CMD_READ_MEM_BY_ADDRESS                 (0x23)
+#define DIAG_CMD_WRITE_MEM_BY_ADDRESS                (0x3D)
+#define DIAG_CMD_WRITE_DATA_BY_ID                    (0x2E)
+#define DIAG_CMD_DYNAMICAL_DEFINE_DATA_BY_ID         (0x2C)
+#define DIAG_CMD_SECURITY_ACCESS                     (0x27)
+#define DIAG_CMD_READ_DATA_BY_PERIODIC_ID            (0x2A)
+
+#define DIAG_CMD_TEST_LOOP                           (0xFE)
+#define DIAG_CMD_TEST_DEVICE_LOOP                    (0x01)
+#define DIAG_CMD_TEST_SVC_LAYER                      (0x02)
+#define DIAG_CMD_TEST_APP_LOOP                       (0x03)
+#define DIAG_DUMMY_SUB_FUNCTION                      (0xFF)
+
+// Sub function of "DIAG_CMD_SESSION_CONTROL"
+#define DIAG_SUB_DEFAULT                             (0x01)
+#define DIAG_SUB_ECU_PROGRAMMING                     (0x02)
+#define DIAG_SUB_ECU_EXTENDED                        (0x03)
+#define DIAG_SUB_EOL_EXTENDED_DIAGNOSTIC             (0x40)
+#define DIAG_SUB_DEFAULT_NORESPONSE                  (0x81)
+#define DIAG_SUB_ECU_PROGRAMMING_NORESPONSE          (0x82)
+#define DIAG_SUB_ECU_EXTENDED_NORESPONSE             (0x83)
+#define DIAG_SUB_SAFETY_SYSTEM_DIAGNOSTIC_NORESPONSE (0x84)
+#define DIAG_SUB_EOL_EXTENDED_DIAGNOSTIC_NORESPONSE  (0xC0)
+
+// Sub function of "DIAG_CMD_ECU_RESET"
+#define DIAG_SUB_HW_RESET                            (0x01)
+#define DIAG_SUB_KEYOFF_RESET                        (0x02)
+#define DIAG_SUB_SOFT_RESET                          (0x03)
+#define DIAG_SUB_EN_RAPID_PWR_SHUTDOWN               (0x04)
+#define DIAG_SUB_DIS_RAPID_PWR_SHUTDOWN              (0x05)
+#define DIAG_SUB_HW_RESET_NORESPONSE                 (0x81)
+#define DIAG_SUB_KEYOFF_RESET_NORESPONSE             (0x82)
+#define DIAG_SUB_SOFT_RESET_NORESPONSE               (0x83)
+#define DIAG_SUB_EN_RAPID_PWR_SHUTDOWN_NORESPONSE    (0x84)
+#define DIAG_SUB_DIS_RAPID_PWR_SHUTDOWN_NORESPONSE   (0x85)
+
+// Sub function of "DIAG_CMD_READ_DTC_INFO"
+#define DIAG_SUB_REPORT_NUMBER_OF_DTC_BY_STATUS_MASK                                    (0x01)
+#define DIAG_SUB_DTC_BY_STATUS_MASK                                                     (0x02)
+#define DIAG_SUB_REPORT_DTC_SNAPSHOT_IDENTIFICATION                                     (0x03)
+#define DIAG_SUB_REPORT_DTC_SNAPSHOT_RECORD_BY_DTC_NUMBER                               (0x04)
+#define DIAG_SUB_REPORT_DTC_SNAPSHOT_RECORD_BY_RECORD_NUMBER                            (0x05)
+#define DIAG_SUB_REPORT_DTC_EXTENDED_DATA_RECORD_BY_DTC_NUMBER                          (0x06)
+#define DIAG_SUB_REPORT_SUPPORTED_DTC                                                   (0x0A)
+#define DIAG_SUB_MIRROR_MEMORY_DTC_BY_STATUS_MASK                                       (0x0F)
+#define DIAG_SUB_REPORT_MIRROR_MEMORY_DTC_EXTENDED_DATA_RECORD_BY_DTC_NUMBER            (0x10)
+#define DIAG_SUB_REPORT_NUMBER_OF_MIRROR_MEMORY_DTC_BY_STATUS_MASK                      (0x11)
+#define DIAG_SUB_REPORT_NUMBER_OF_EMISSIONS_RELATED_OBD_DTC_BY_STATUS_MASK              (0x12)
+#define DIAG_SUB_REPORT_EMISSIONS_RELATED_OBD_DTC_BY_STATUS_MASK                        (0x13)
+#define DIAG_SUB_REPORT_DTC_FAULT_DETECTION_COUNTER                                     (0x14)
+#define DIAG_SUB_REPORT_DTC_WITH_PERMANENT_STATUS                                       (0x15)
+
+#define DIAG_SUB_REPORT_NUMBER_OF_DTC_BY_STATUS_MASK_NORESPONSE                         (0x81)
+#define DIAG_SUB_DTC_BY_STATUS_MASK_NORESPONSE                                          (0x82)
+#define DIAG_SUB_REPORT_DTC_SNAPSHOT_IDENTIFICATION_NORESPONSE                          (0x83)
+#define DIAG_SUB_REPORT_DTC_SNAPSHOT_RECORD_BY_DTC_NUMBER_NORESPONSE                    (0x84)
+#define DIAG_SUB_REPORT_DTC_SNAPSHOT_RECORD_BY_RECORD_NUMBER_NORESPONSE                 (0x85)
+#define DIAG_SUB_REPORT_DTC_EXTENDED_DATA_RECORD_BY_DTC_NUMBER_NORESPONSE               (0x86)
+#define DIAG_SUB_REPORT_SUPPORTED_DTC_NORESPONSE                                        (0x8A)
+#define DIAG_SUB_MIRROR_MEMORY_DTC_BY_STATUS_MASK_NORESPONSE                            (0x8F)
+#define DIAG_SUB_REPORT_MIRROR_MEMORY_DTC_EXTENDED_DATA_RECORD_BY_DTC_NUMBER_NORESPONSE (0x90)
+#define DIAG_SUB_REPORT_NUMBER_OF_MIRROR_MEMORY_DTC_BY_STATUS_MASK_NORESPONSE           (0x91)
+#define DIAG_SUB_REPORT_NUMBER_OF_EMISSIONS_RELATED_OBD_DTC_BY_STATUS_MASK_NORESPONSE   (0x92)
+#define DIAG_SUB_REPORT_EMISSIONS_RELATED_OBD_DTC_BY_STATUS_MASK_NORESPONSE             (0x93)
+#define DIAG_SUB_REPORT_DTC_FAULT_DETECTION_COUNTER_NORESPONSE                          (0x94)
+#define DIAG_SUB_REPORT_DTC_WITH_PERMANENT_STATUS_NORESPONSE                            (0x95)
+
+// Sub function of "DIAG_CMD_TESTER_PRESENT"
+#define DIAG_SUB_TESTER_PRESENT                                                         (0x00)
+#define DIAG_SUB_TESTER_PRESENT_NORESPONSE                                              (0x80)
+
+// Sub function of "DIAG_CMD_READ_BY_ID"
+#define DIAG_SUB_BR_PHY_LRE_REG             (0xD03A)
+#define DIAG_SUB_BR_PHY_EXT_REG             (0xD03F)
+
+// Sub function of "DIAG_CMD_ROUTINE_CONTROL"
+#define DIAG_SUB_StartRoutine               (0x01)
+#define DIAG_SUB_StopRoutin                 (0x02)
+#define DIAG_SUB_RoutineResults             (0x03)
+#define DIAG_SUB_START_ROUTINE_NORESPONSE   (0x81)
+#define DIAG_SUB_STOP_ROUTINE_NORESPONSE    (0x82)
+#define DIAG_SUB_ROUTINE_RESULTS_NORESPONSE (0x83)
+
+#define DIAG_ROUTINE_ID_1                   (0x0202)
+#define DIAG_ROUTINE_ID_2                   (0x040C)
+#define DIAG_ROUTINE_ID_3                   (0x040D)
+#define DIAG_ROUTINE_ID_4                   (0x2044)
+#define DIAG_ROUTINE_ID_5                   (0x2045)
+#define DIAG_ROUTINE_ID_6                   (0x0400)
+#define DIAG_ROUTINE_ID_7                   (0x8015)
+#define DIAG_ROUTINE_ID_8                   (0x7010)
+#define DIAG_ROUTINE_ID_9                   (0x0404)
+#define DIAG_ROUTINE_ID_10                  (0x8016)
+#define DIAG_ROUTINE_ID_11                  (0x040E)
+#define DIAG_ROUTINE_ID_12                  (0x800D)
+#define DIAG_ROUTINE_ID_13                  (0x800E)
+#define DIAG_ROUTINE_ID_14                  (0xF002)
+#define DIAG_ROUTINE_ID_15                  (0xF003)
+#define DIAG_ROUTINE_ID_16                  (0x020A)
+#define DIAG_ROUTINE_ID_17                  (0x020F)
+#define DIAG_ROUTINE_ID_18                  (0xF004)
+#define DIAG_ROUTINE_ID_19                  (0xF005)
+#define DIAG_ROUTINE_ID_20                  (0x021F)
+#define DIAG_ROUTINE_ID_21                  (0xF008)
+#define DIAG_ROUTINE_ID_22                  (0xF009)  //for monitoring updating status
+
+// Sub function of "DIAG_CMD_IOCTRL_BY_ID"
+// Nothing...
+
+//Sub function of "DIAG_CMD_CTRL_DTC_SETTING"
+#define DIAG_SUB_DTC_SETTING_ON             (0x01)
+#define DIAG_SUB_DTC_SETTING_OFF            (0x02)
+#define DIAG_SUB_DTC_SETTING_ON_NORESPONSE  (0x81)
+#define DIAG_SUB_DTC_SETTING_OFF_NORESPONSE (0x82)
+
+// Sub function of "DIAG_CMD_READ_SCALING_DATA_BY_ID"
+// Nothing...
+
+// Sub function of "DIAG_CMD_READ_MEM_BY_ADDRESS"
+// Nothing...
+
+// Sub function of "DIAG_CMD_WRITE_MEM_BY_ADDRESS"
+// Nothing...
+
+// Sub function of "DIAG_CMD_WRITE_DATA_BY_ID"
+// Nothing...
+
+// Sub function of "DIAG_CMD_DYNAMICAL_DEFINE_DATA_BY_ID"
+#define DIAG_SUB_DEFINE_BY_IDENTIFIER                                 (0x01)
+#define DIAG_SUB_DEFINE_BY_MEMORY_ADDRESS                             (0x02)
+#define DIAG_SUB_CLEAR_DYNAMICALLY_DEFINED_DATA_IDENTIFIER            (0x03)
+#define DIAG_SUB_DEFINE_BY_IDENTIFIER_NORESPONSE                      (0x81)
+#define DIAG_SUB_DEFINE_BY_MEMORY_ADDRESS_NORESPONSE                  (0x82)
+#define DIAG_SUB_CLEAR_DYNAMICALLY_DEFINED_DATA_IDENTIFIER_NORESPONSE (0x83)
+
+// Sub function of "DIAG_CMD_SECURITY_ACCESS"
+#define DIAG_SUB_REQUEST_SEED_SECURITY_LEVEL_1                        (0x03)
+#define DIAG_SUB_REQUEST_SEED_SECURITY_LEVEL_2                        (0x21)
+#define DIAG_SUB_REQUEST_SEED_SECURITY_LEVEL_3                        (0x23)
+#define DIAG_SUB_SEND_KEY_SECURITY_LEVEL_1                            (0x04)
+#define DIAG_SUB_SEND_KEY_SECURITY_LEVEL_2                            (0x22)
+#define DIAG_SUB_SEND_KEY_SECURITY_LEVEL_3                            (0x24)
+#define DIAG_SUB_REQUEST_SEED_SECURITY_LEVEL_1_NORESPONSE             (0x83)
+#define DIAG_SUB_REQUEST_SEED_SECURITY_LEVEL_2_NORESPONSE             (0xA1)
+#define DIAG_SUB_REQUEST_SEED_SECURITY_LEVEL_3_NORESPONSE             (0xA3)
+#define DIAG_SUB_SEND_KEY_SECURITY_LEVEL_1_NORESPONSE                 (0x84)
+#define DIAG_SUB_SEND_KEY_SECURITY_LEVEL_2_NORESPONSE                 (0xA2)
+#define DIAG_SUB_SEND_KEY_SECURITY_LEVEL_3_NORESPONSE                 (0xA4)
+
+// Sub function of "DIAG_CMD_READ_DATA_BY_PERIODIC_ID"
+// Nothing...
+
+// Sub function of "DIAG_CMD_TEST_LOOP"
+#define DIAG_SUB_TEST_LOOP_BACK                                       (0xf0)
+
+// Diagostic Services's Response Service ID
+#define DIAG_NEGATIVE_RESP_ID                               0x7F // Negative Response Service ID => fixed to 0x7F[ISO 14229 -1]
+#define DIAG_RESP_TYPE_OFFSET                               0x40 // difference of command config value between positive and negative response.
+
+#define DIAG_RESP_SESSION_CONTROL                          (0x50)
+#define DIAG_RESP_ECU_RESET                                (0x51)
+#define DIAG_RESP_READ_DTC_INFO                            (0x59)
+#define DIAG_RESP_TESTER_PRESENT                           (0x7E)
+#define DIAG_RESP_READ_BY_ID                               (0x62)
+#define DIAG_RESP_CLEAR_DIAG_INFO                          (0x54)
+#define DIAG_RESP_ROUTINE_CONTROL                          (0x71)
+#define DIAG_RESP_IOCTRL_BY_ID                             (0x6F)
+#define DIAG_RESP_CTRL_DTC_SETTING                         (0xC5)
+#define DIAG_RESP_READ_SCALING_DATA_BY_ID                  (0x64)
+#define DIAG_RESP_READ_MEM_BY_ADDRESS                      (0x63)
+#define DIAG_RESP_WRITE_MEM_BY_ADDRESS                     (0x7D)
+#define DIAG_RESP_WRITE_DATA_BY_ID                         (0x6E)
+#define DIAG_RESP_DYNAMICAL_DEFINE_DATA_BY_ID              (0x6C)
+#define DIAG_RESP_SECURITY_ACCESS                          (0x67)
+#define DIAG_RESP_READ_DATA_BY_PERIODIC_ID                 (0x6A)
+
+// IO CONTROL COMMAND for MODULE_BUTTON
+// PACKET_TYPE_REPORT
+#define DIAG_CMD1_REP_ECALL_BUTTON_STATUS        (0x01)
+#define DIAG_CMD1_REP_BCALL_BUTTON_STATUS        (0x02)
+
+// PACKET_TYPE_REQUEST
+#define DIAG_CMD1_REQ_ECALL_SET_BUTTON_STATUS_IO (0x03)
+#define DIAG_CMD1_REQ_BCALL_SET_BUTTON_STATUS_IO (0x04)
+#define DIAG_CMD1_REQ_GET_BUTTON_STATUS          (0x05)
+
+// IO control sub function
+// sub function for "DIAG_CMD1_REP_ECALL_BUTTON_STATUS"
+#define DIAG_CMD2_ECALL_RELEASE                  (0x00)
+#define DIAG_CMD2_ECALL_DETECT                   (0x01)
+#define DIAG_CMD2_ECALL_DOUBLE_DETECT            (0x02)
+#define DIAG_CMD2_ECALL_LONG_DETECT              (0x03)
+#define DIAG_CMD2_ECALL_LONG_LONG_DETECT         (0x04)
+#define DIAG_CMD2_ECALL_TRIGGER                  (0x05)
+#define DIAG_CMD2_ECALL_TESTMODE_TRIGGER         (0x06)
+
+// sub function for "DIAG_CMD1_REP_BCALL_BUTTON_STATUS"
+#define DIAG_CMD2_BCALL_RELEASE                  (0x00)
+#define DIAG_CMD2_BCALL_DETECT                   (0x01)
+#define DIAG_CMD2_BCALL_DOUBLE_DETECT            (0x02)
+#define DIAG_CMD2_BCALL_LONG_DETECT              (0x03)
+#define DIAG_CMD2_BCALL_LONG_LONG_DETECT         (0x04)
+#define DIAG_CMD2_BCALL_TRIGGER                  (0x05)
+#define DIAG_CMD2_BCALL_CONFIGURATION_TRIGGER    (0x07)
+
+// sub function for "DIAG_CMD1_REQ_ECALL_SET_BUTTON_STATUS_IO"
+#define DIAG_CMD2_REQ_ECALL_BUTTON_DBG_ON        (0x01)
+#define DIAG_CMD2_REQ_ECALL_BUTTON_DBG_OFF       (0x00)
+
+// sub function for "DIAG_CMD1_REQ_BCALL_SET_BUTTON_STATUS_IO"
+#define DIAG_CMD2_REQ_BCALL_BUTTON_DBG_ON        (0x01)
+#define DIAG_CMD2_REQ_BCALL_BUTTON_DBG_OFF       (0x00)
+
+// sub function for "DIAG_CMD1_REQ_GET_BUTTON_STATUS"
+#define DIAG_CMD2_NOTDEFINED                     (0x00)
+
+#define DIAG_CMD1_REQ_AIRBAG_TEST                (0x10)
+
+// sub function for "DIAG_CMD1_REQ_AIRBAG_TEST"
+#define DIAG_CMD2_IO_LED_CTRL                    (0x20)
+#define DIAG_CMD2_ECALL_LED_CTRL                 (0x21)
+#define DIAG_CMD2_BCALL_LED_CTRL                 (0x22)
+#define DIAG_CMD2_ECALL_BL_LED_CTRL              (0x23)
+#define DIAG_CMD2_BCALL_BL_LED_CTRL              (0x24)
+// [END] Command for NAD_MOULDE_DIAGNOSTIC_MGR
+
+
+/**
+ *  Start of definitions for the CAN communications
+ */
+// [START] Command for MODULE_CAN
+// transmit
+#define CMD1_REQ_CAN_TRANSMIT               (0x01)
+#define CMD2_UNIV_SIG_TX                    (0x01)
+#define CMD2_INTERNAL_SERV_TX               (0x02)
+
+#define CMD1_REQ_CAN_RESEND_ALLSIGNAL       (0x0C)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_A     (0x01)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_B     (0x02)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_C     (0x03)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_D     (0x04)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_E     (0x05)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_F     (0x06)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_G     (0x07)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_H     (0x08)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_I     (0x09)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_J     (0x0A)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_K     (0x0B)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_L     (0x0C)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_M     (0x0D)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_N     (0x0E)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_O     (0x0F)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_P     (0x10)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_Q     (0x11)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_R     (0x12)
+#define CMD2_REQ_CAN_RESEND_ALLSIGNAL_END   CMD2_REQ_CAN_RESEND_ALLSIGNAL_R
+
+#define CMD1_REQ_CAN_RESEND_SPECIFIC_SIGNAL (0x0D)
+#define CMD2_REQ_CAN_RESEND_SPECIFIC_SIGNAL (0x01)
+
+// receive
+#define CMD1_REQ_CAN_RECEIVE                (0x03)
+#define CMD2_UNIV_SIG_RX                    (0x01)
+#define CMD2_INTERNAL_SERV_RX               (0x02)
+// [END] Command for MODULE_CAN
+#ifdef __cplusplus
+}
+#endif  // __cplusplus
+#endif // SERVICE_LAYER_TCUPROTOCOL_H

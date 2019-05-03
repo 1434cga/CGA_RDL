@@ -15,21 +15,21 @@ SetI : $MODULENAME = KEY
  */
 
 
-#define LOG_TAG "I+<+$MODULENAME+>+Data"
+#define LOG_TAG "I+<+ucfirst($MODULENAME)+>+Data"
 #include "Log.h"
 
-#include "../include/+<+$MODULENAME+>+Command.h"
+#include "../include/+<+ucfirst($MODULENAME)+>+Command.h"
 
 #include <stdio.h>
 
 #define SLDDprintMessage(...) (fprintf(stdout, __VA_ARGS__))
 
-+<+$MODULENAME+>+Data::+<+$MODULENAME+>+Data(const +<+$MODULENAME+>+Data& other)
++<+ucfirst($MODULENAME)+>+Data::+<+ucfirst($MODULENAME)+>+Data(const +<+ucfirst($MODULENAME)+>+Data& other)
 {
     setTo(other);
 }
 
-+<+$MODULENAME+>+Data::~+<+$MODULENAME+>+Data(void)
++<+ucfirst($MODULENAME)+>+Data::~+<+ucfirst($MODULENAME)+>+Data(void)
 {
 ITERATE %xxData +<<+ ITKEY  ITVALUE
     IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
@@ -48,13 +48,13 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
 */
 }
 
-+<+$MODULENAME+>+Data& +<+$MODULENAME+>+Data::operator=(const +<+$MODULENAME+>+Data& other)
++<+ucfirst($MODULENAME)+>+Data& +<+ucfirst($MODULENAME)+>+Data::operator=(const +<+ucfirst($MODULENAME)+>+Data& other)
 {
     setTo(other);
     return *this;
 }
 
-void +<+$MODULENAME+>+Data::setData(
+void +<+ucfirst($MODULENAME)+>+Data::setData(
 ITERATE %xxData +<<+ ITKEY  ITVALUE
     IFEQUAL(ITKEY eq 1)+{{+
         IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
@@ -86,14 +86,14 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
     +}}+
     IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
         if( this->+<+$xxData{ITKEY}{Len}+>+ != 0){
-            this->+<+$xxData{ITKEY}{name}+>+  = new  unit8_t[ m+<+$xxData{ITKEY}{Len}+>+ ];
+            this->+<+$xxData{ITKEY}{name}+>+  = new  uint8_t[ m+<+$xxData{ITKEY}{Len}+>+ ];
             memcpy(this->+<+$xxData{ITKEY}{name}+>+ , m+<+$xxData{ITKEY}{name}+>+ , m+<+$xxData{ITKEY}{Len}+>+ );
         } else {
             int _mSize = 2;
             uint8_t payload[_mSize] = {0,};
-            this->+<+$xxData{ITKEY}{name}+>+  = new  unit8_t[ _mSize ];
+            this->+<+$xxData{ITKEY}{name}+>+  = new  uint8_t[ _mSize ];
             memcpy(this->+<+$xxData{ITKEY}{name}+>+ , payload , _mSize );
-            LOGV("+<+$MODULENAME+>+ this->+<+$xxData{ITKEY}{name}+>+ setData mthis->+<+$xxData{ITKEY}{Len}+>+ is 0");
+            LOGV("+<+ucfirst($MODULENAME)+>+ this->+<+$xxData{ITKEY}{name}+>+ setData mthis->+<+$xxData{ITKEY}{Len}+>+ is 0");
         }
     +}}+
 +>>+
@@ -113,7 +113,7 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
             this->data =  new uint8_t [mSize];
 
             memcpy (this->data, payload, mSize);
-            LOGV("+<+$MODULENAME+>+Data setData mLen is 0");
+            LOGV("+<+ucfirst($MODULENAME)+>+Data setData mLen is 0");
     }
 */
 
@@ -122,7 +122,13 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
 void +<+$MODULENAME+>+Data::setTo(const +<+$MODULENAME+>+Data& other)
 {
 ITERATE %xxData +<<+ ITKEY  ITVALUE
-    this->+<+$xxData{ITKEY}{name}+>+ = other.+<+$xxData{ITKEY}{name}+>+ ; 
+    IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        this->+<+$xxData{ITKEY}{name}+>+ = other.+<+$xxData{ITKEY}{name}+>+ ; 
+    +}}+
+    IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        this->+<+$xxData{ITKEY}{Len}+>+ = other.+<+$xxData{ITKEY}{Len}+>+ ;         // charles : add automatically
+        this->+<+$xxData{ITKEY}{name}+>+ = other.+<+$xxData{ITKEY}{name}+>+ ; 
+    +}}+
 +>>+
 
 /*
@@ -133,7 +139,7 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
 */
 }
 
-error_t +<+$MODULENAME+>+Data::writeToParcel(android::Parcel* parcel)
+error_t +<+ucfirst($MODULENAME)+>+Data::writeToParcel(android::Parcel* parcel)
 {
 ITERATE %xxData +<<+ ITKEY  ITVALUE
     IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
@@ -158,12 +164,18 @@ error_t +<+$MODULENAME+>+Data::readFromParcel(const android::Parcel& parcel)
 {
 ITERATE %xxData +<<+ ITKEY  ITVALUE
     IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
-        this->+<+$xxData{ITKEY}{name}+>+  = (void)parcel.+<+$ArgType1{$xxData{ITKEY}{type}}{read}+>+ (); // ? need static_cast
+        this->+<+$xxData{ITKEY}{name}+>+  = parcel.+<+$ArgType1{$xxData{ITKEY}{type}}{read}+>+ (); // ? need static_cast
     +}}+
     IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
         this->+<+$xxData{ITKEY}{Len}+>+  = parcel.readInt32();
         if( (this->+<+$xxData{ITKEY}{Len}+>+  < 0) || ( this->+<+$xxData{ITKEY}{name}+>+  == NULL) )
             return E_OK;
+
+		if(this->+<+$xxData{ITKEY}{name}+>+ == NULL){
+		            this->+<+$xxData{ITKEY}{name}+>+  = new  uint8_t[ this->+<+$xxData{ITKEY}{Len}+>+ ];
+		}
+		else { LOGE("error: this routine is not reached\n"); }
+   
         parcel.read( this->+<+$xxData{ITKEY}{name}+>+ , this->+<+$xxData{ITKEY}{Len}+>+ );
     +}}+
 +>>+
@@ -198,7 +210,7 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
     if (bytes != NULL)
         memcpy (copyBytes,bytes,tempSize);
     else
-        LOGV("+<+$MODULENAME+>+Data readFromParcel Bytes is null");
+        LOGV("+<+ucfirst($MODULENAME)+>+Data readFromParcel Bytes is null");
     parcel.read(copyBytes,tempSize);
     setData(this->did, this->len, this->att, copyBytes);
     delete [] copyBytes;
@@ -209,74 +221,96 @@ ITERATE %xxData +<<+ ITKEY  ITVALUE
 
 ITERATE %xxData +<<+ ITKEY  ITVALUE
     IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
-        size_t  get+<+ucfirst($xxData{ITKEY}{Len})+>+()
+        size_t  +<+ucfirst($MODULENAME)+>+Data::get+<+ucfirst($xxData{ITKEY}{Len})+>+()
         {
             return this->+<+$xxData{ITKEY}{Len}+>+;
         }
     +}}+
-+<+$xxData{ITKEY}{type}+>+  get+<+ucfirst($xxData{ITKEY}{name})+>+()
++<+$xxData{ITKEY}{type}+>+  +<+ucfirst($MODULENAME)+>+Data::get+<+ucfirst($xxData{ITKEY}{name})+>+()
 {
     return this->+<+$xxData{ITKEY}{name}+>+;
 }
 +>>+
 
 /*
-uint16_t +<+$MODULENAME+>+Data::getDid()
+uint16_t +<+ucfirst($MODULENAME)+>+Data::getDid()
 {
     return this->did;
 }
 
-uint16_t +<+$MODULENAME+>+Data::getLen()
+uint16_t +<+ucfirst($MODULENAME)+>+Data::getLen()
 {
     return this->len;
 }
 
-uint8_t +<+$MODULENAME+>+Data::getAtt()
+uint8_t +<+ucfirst($MODULENAME)+>+Data::getAtt()
 {
     return this->att;
 }
 
-uint8_t * +<+$MODULENAME+>+Data::getData()
+uint8_t * +<+ucfirst($MODULENAME)+>+Data::getData()
 {
     return this->data;
 }
 */
 
-void +<+$MODULENAME+>+Data::toString()
+void +<+ucfirst($MODULENAME)+>+Data::toString()
 {
-    LOGV("============================================================");
-    LOGV("+<+$MODULENAME+>+Data did         = %x", this->did);
-    LOGV("+<+$MODULENAME+>+Data len         = %d", this->len);
-    LOGV("+<+$MODULENAME+>+Data att         = %d", this->att);
+
+    toString(""); // charles : change it
+
+/*
+    LOGV("+<+ucfirst($MODULENAME)+>+Data did         = %x", this->did);
+    LOGV("+<+ucfirst($MODULENAME)+>+Data att         = %d", this->att);
+    LOGV("+<+ucfirst($MODULENAME)+>+Data dataLen         = %d", this->dataLen);
 
     if(this->data !=NULL)
         {
-            if ((this->len) > 0) {
-
-                    for (int32_t i = 0; i<this->len;i++)
-                    LOGV("+<+$MODULENAME+>+Data data [%d] : 0x%02x",i,this->data[i]);
-
+            if ((this->dataLen) > 0) {
+                    for (int32_t i = 0; i<this->dataLen;i++)
+                    LOGV("+<+ucfirst($MODULENAME)+>+Data data [%d] : 0x%02x",i,this->data[i]);
                 }
          }
+*/
     LOGV("============================================================");
 }
 
-void +<+$MODULENAME+>+Data::toString(char* from)
+void +<+ucfirst($MODULENAME)+>+Data::toString(const char* from)
 {
     LOGV("============================================================");
-    LOGV("%s() +<+$MODULENAME+>+Data did         = %x", from, this->did);
-    LOGV("%s() +<+$MODULENAME+>+Data len         = %d", from, this->len);
-    LOGV("%s() +<+$MODULENAME+>+Data att         = %d", from, this->att);
+ITERATE %xxData +<<+ ITKEY  ITVALUE
+    IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        LOGV("%s : +<+ucfirst($MODULENAME)+>+Data-> +<+$xxData{ITKEY}{name}+>+ = 0x%x %d", from, this->+<+$xxData{ITKEY}{name}+>+ , this->+<+$xxData{ITKEY}{name}+>+ );         // charles : add automatically
+    +}}+
+    IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
+        LOGV("%s : +<+ucfirst($MODULENAME)+>+Data-> +<+$xxData{ITKEY}{Len}+>+ = size_t %d", from, this->+<+$xxData{ITKEY}{Len}+>+ );            // charles : add automatically
+        if(this->+<+$xxData{ITKEY}{name}+>+ != NULL)
+        {
+            if ((this->+<+$xxData{ITKEY}{Len}+>+) > 0) {
+                    for (int32_t i = 0; i<this->+<+$xxData{ITKEY}{Len}+>+ ;i++)
+                        LOGV("%s : +<+ucfirst($MODULENAME)+>+Data->+<+$xxData{ITKEY}{name}+>+ [%d] : 0x%02x", from, i,this->+<+$xxData{ITKEY}{name}+>+[i]);
+                }
+         }
+    +}}+
++>>+
+    LOGV("============================================================");
+
+/*
+    LOGV("============================================================");
+    LOGV("%s() +<+ucfirst($MODULENAME)+>+Data did         = %x", from, this->did);
+    LOGV("%s() +<+ucfirst($MODULENAME)+>+Data att         = %d", from, this->att);
+    LOGV("%s() +<+ucfirst($MODULENAME)+>+Data dataLen         = %d", from, this->dataLen);
     if(this->data !=NULL)
         {
-            if ((this->len) > 0) {
+            if ((this->dataLen) > 0) {
 
-                    for (int32_t i = 0; i<this->len;i++)
-                    LOGV("+<+$MODULENAME+>+Data data [%d] : 0x%02x",i,this->data[i]);
+                    for (int32_t i = 0; i<this->dataLen;i++)
+                    LOGV("+<+ucfirst($MODULENAME)+>+Data data [%d] : 0x%02x",i,this->data[i]);
 
                 }
          }
 
     LOGV("============================================================");
+*/
 }
 

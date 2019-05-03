@@ -1,7 +1,7 @@
 stcI_HASH : Module_Name
-stcI_EXTENSION : cpp
-stcI_FILEPREFIX : TTTKEY/I
+stcI_FILEPREFIX : KEYManagerService/lib/I
 stcI_FILEPOSTFIX : ManagerService
+stcI_EXTENSION : cpp
 Set : $iterate_comments = OFF
 SetI : $MODULENAME = KEY
 /*
@@ -14,22 +14,17 @@ SetI : $MODULENAME = KEY
  * \attention Copyright (c) 2015 by LG electronics co, Ltd. All rights reserved.
  */
 
-#define LOG_TAG "I+<+$MODULENAME+>+ManagerService"
+#define LOG_TAG "I+<+ucfirst($MODULENAME)+>+ManagerService"
 #include "Log.h"
 
 #include <binder/Parcel.h>
 
-#include "services/+<+$MODULENAME+>+ManagerService/I+<+$MODULENAME+>+ManagerService.h"
-
+#include "../include/I+<+ucfirst($MODULENAME)+>+ManagerService.h"
 
 #include "Typedef.h"
 #include "utils/Handler.h"
 #include <binder/BinderService.h>
 #include <utils/RefBase.h>
-
-
-
-
 
 enum
 {
@@ -52,19 +47,19 @@ ITERATE %API +<<+ ITKEY  ITVALUE
     OP_REGISTER_SLDD
 };
 
-class Bp+<+$MODULENAME+>+ManagerService: public android::BpInterface<I+<+$MODULENAME+>+ManagerService>
+class Bp+<+ucfirst($MODULENAME)+>+ManagerService: public android::BpInterface<I+<+ucfirst($MODULENAME)+>+ManagerService>
 {
 public:
-    explicit Bp+<+$MODULENAME+>+ManagerService(const android::sp<android::IBinder>& impl) :
-            BpInterface<I+<+$MODULENAME+>+ManagerService>(impl)
+    explicit Bp+<+ucfirst($MODULENAME)+>+ManagerService(const android::sp<android::IBinder>& impl) :
+            BpInterface<I+<+ucfirst($MODULENAME)+>+ManagerService>(impl)
     {
     }
 
-    virtual error_t attachReceiver(serviceid_t id, android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver)
+    virtual error_t attachReceiver(serviceid_t id, android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver>& receiver)
     {
         Parcel data;
         Parcel reply;
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
         LOGV("BP registerReceiver");
 
         (void)data.writeInt32(id);
@@ -73,25 +68,25 @@ public:
         return reply.readInt32();
     }
 
-    virtual error_t unregisterReceiver( const android::sp<I+<+$MODULENAME+>+ManagerReceiver>& receiver)
+    virtual error_t unregisterReceiver( const android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver>& receiver)
     {
         Parcel data;
         Parcel reply;
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
         LOGV("BP registerReceiver");
         data.writeStrongBinder(android::IInterface::asBinder(receiver));
         (void)remote()->transact(OP_REGISTER_UNREGISTER, data, &reply);
         return reply.readInt32();
     }
 
-    virtual error_t requestDataID(android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+    virtual error_t requestDataID(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data)
     {
         Parcel data;
         Parcel reply;
 
         LOGV("requestDataID ");
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
-        (void)mdiagData->writeToParcel(&data);
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
+        (void)m+<+ucfirst($MODULENAME)+>+Data->writeToParcel(&data);
 
 
         (void)remote()->transact(OP_REGISTER_REQUESTDATAID, data, &reply);
@@ -99,15 +94,15 @@ public:
         return reply.readInt32();
     }
 
-    virtual error_t responseDataID (android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+    virtual error_t responseDataID (android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data)
     {
         Parcel data;
         Parcel reply;
 
         LOGV("responseDataID");
 
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
-        (void)mdiagData->writeToParcel(&data);
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
+        (void)m+<+ucfirst($MODULENAME)+>+Data->writeToParcel(&data);
 
         (void)remote()->transact(OP_REGISTER_RESPONSEDATAID, data, &reply);
 
@@ -119,7 +114,7 @@ public:
     {
         Parcel data;
         Parcel reply;
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
         (void)data.writeInt32(request_id);
         LOGV("SLDDRequestDataID");
         (void)remote()->transact(OP_REGISTER_SLDDREQUEST_DATAID, data, &reply);
@@ -141,7 +136,7 @@ public:
         Parcel reply;
 
         LOGV("SLDDResponseDataID");
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
         (void)data.writeInt32(request_id);
 
         if(buf->size()>0){
@@ -158,7 +153,7 @@ public:
         LOGV("BP_SLDD Test CMD");
         Parcel data;
         Parcel reply;
-        (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
+        (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
         (void)data.writeInt32(id);
         (void)data.writeInt32(cmd);
         (void)data.writeInt32(cmd2);
@@ -174,14 +169,14 @@ public:
 /*!! wishtoUseAPI func auto CGA start-------------------------------------------------*/
 
 ITERATE %API +<<+ ITKEY  ITVALUE
-virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData)
+virtual error_t ITKEY(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data)
   {
 	  Parcel data;
 	  Parcel reply;
 
 	  LOGV("ITKEY ");
-	  (void)data.writeInterfaceToken(I+<+$MODULENAME+>+ManagerService::getInterfaceDescriptor());
-	  (void)mdiagData->writeToParcel(&data);
+	  (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
+	  (void)m+<+ucfirst($MODULENAME)+>+Data->writeToParcel(&data);
 
 
 	  (void)remote()->transact(OP_REGISTER_+<+uc(ITKEY)+>+, data, &reply);
@@ -200,18 +195,18 @@ virtual error_t ITKEY(android::sp<+<+$MODULENAME+>+Data>& mdiagData)
 
 };
 
-IMPLEMENT_META_INTERFACE(+<+$MODULENAME+>+ManagerService, "service_layer.I+<+$MODULENAME+>+ManagerService");
+IMPLEMENT_META_INTERFACE(+<+ucfirst($MODULENAME)+>+ManagerService, "service_layer.I+<+ucfirst($MODULENAME)+>+ManagerService");
 
 // ----------------------------------------------------------------------
 
-android::status_t Bn+<+$MODULENAME+>+ManagerService::onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags)
+android::status_t Bn+<+ucfirst($MODULENAME)+>+ManagerService::onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags)
 {
     switch (code) {
         case OP_REGISTER_RECEIVER: {
             LOGV("BN_OP_REGISTER_RECEIVER");
-            CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
+            CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
             appid_t id = data.readInt32();
-            android::sp<I+<+$MODULENAME+>+ManagerReceiver> receiver = android::interface_cast<I+<+$MODULENAME+>+ManagerReceiver>(data.readStrongBinder());
+            android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver> receiver = android::interface_cast<I+<+ucfirst($MODULENAME)+>+ManagerReceiver>(data.readStrongBinder());
             int32_t result = attachReceiver(id, receiver);
             (void)reply->writeInt32(result);
         }
@@ -219,8 +214,8 @@ android::status_t Bn+<+$MODULENAME+>+ManagerService::onTransact(uint32_t code, c
 
         case OP_REGISTER_UNREGISTER: {
             LOGV("BN_OP_REGISTER_UNREGISTER");
-            CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
-            android::sp<I+<+$MODULENAME+>+ManagerReceiver> mReceiver = android::interface_cast<I+<+$MODULENAME+>+ManagerReceiver>(data.readStrongBinder());
+            CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
+            android::sp<I+<+ucfirst($MODULENAME)+>+ManagerReceiver> mReceiver = android::interface_cast<I+<+ucfirst($MODULENAME)+>+ManagerReceiver>(data.readStrongBinder());
             int32_t result =  unregisterReceiver(mReceiver);
             (void)reply->writeInt32(result);
         }
@@ -228,25 +223,25 @@ android::status_t Bn+<+$MODULENAME+>+ManagerService::onTransact(uint32_t code, c
 
         case OP_REGISTER_REQUESTDATAID: {
             LOGV("OP_REGISTER_REQUESTDATAID");
-            CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
-            android::sp<+<+$MODULENAME+>+Data> diagData = new +<+$MODULENAME+>+Data();
-            diagData->readFromParcel((const android::Parcel&)data);
-            (void)reply->writeInt32(requestDataID(diagData));
+            CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
+            android::sp<+<+ucfirst($MODULENAME)+>+Data> m+<+ucfirst($MODULENAME)+>+Data = new +<+ucfirst($MODULENAME)+>+Data();
+            m+<+ucfirst($MODULENAME)+>+Data->readFromParcel((const android::Parcel&)data);
+            (void)reply->writeInt32(requestDataID(m+<+ucfirst($MODULENAME)+>+Data));
         }
             break;
 
         case OP_REGISTER_RESPONSEDATAID: {
             LOGV("OP_REGISTER_RESPONSEDATAID");
-            CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
-            android::sp<+<+$MODULENAME+>+Data> diagData = new +<+$MODULENAME+>+Data();
-            diagData->readFromParcel((const android::Parcel&)data);
-            (void)reply->writeInt32(responseDataID(diagData));
+            CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
+            android::sp<+<+ucfirst($MODULENAME)+>+Data> m+<+ucfirst($MODULENAME)+>+Data = new +<+ucfirst($MODULENAME)+>+Data();
+            m+<+ucfirst($MODULENAME)+>+Data->readFromParcel((const android::Parcel&)data);
+            (void)reply->writeInt32(responseDataID(m+<+ucfirst($MODULENAME)+>+Data));
         }
             break;
 
         case OP_REGISTER_SLDDREQUEST_DATAID: {
             LOGV("OP_REGISTER_SLDDGetDATAID ");
-            CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
+            CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
             uint32_t state = data.readInt32();
             android::sp<Buffer> buf ;
 
@@ -263,7 +258,7 @@ android::status_t Bn+<+$MODULENAME+>+ManagerService::onTransact(uint32_t code, c
 
         case OP_REGISTER_SLDDRESPONSE_DATAID: {
             LOGV("OP_REGISTER_SLDDRESPONSE_DATAID");
-            CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
+            CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
             android::sp<Buffer> buf = new Buffer();
             uint32_t state = data.readInt32();
             error_t results = E_OK;
@@ -279,7 +274,7 @@ android::status_t Bn+<+$MODULENAME+>+ManagerService::onTransact(uint32_t code, c
 
         case OP_REGISTER_SLDD: {
            LOGV("BN_OP_REGISTER_SLDD");
-           CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
+           CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
            uint8_t id = data.readInt32();
            uint8_t cmd = data.readInt32();
            uint8_t cmd2 = data.readInt32();
@@ -299,10 +294,10 @@ android::status_t Bn+<+$MODULENAME+>+ManagerService::onTransact(uint32_t code, c
 ITERATE %API +<<+ ITKEY  ITVALUE
 		case OP_REGISTER_+<+uc(ITKEY)+>+: {
 			 LOGV("ITKEY");
-			 CHECK_INTERFACE(I+<+$MODULENAME+>+ManagerService, data, reply);
-			 android::sp<+<+$MODULENAME+>+Data> diagData = new +<+$MODULENAME+>+Data();
-			 diagData->readFromParcel((const android::Parcel&)data);
-			 (void)reply->writeInt32(ITKEY(diagData));
+			 CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
+			 android::sp<+<+ucfirst($MODULENAME)+>+Data> m+<+ucfirst($MODULENAME)+>+Data = new +<+ucfirst($MODULENAME)+>+Data();
+			 m+<+ucfirst($MODULENAME)+>+Data->readFromParcel((const android::Parcel&)data);
+			 (void)reply->writeInt32(ITKEY(m+<+ucfirst($MODULENAME)+>+Data));
 		 }
 			 break;
 +>>+

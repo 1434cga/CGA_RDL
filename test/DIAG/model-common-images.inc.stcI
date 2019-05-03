@@ -1,0 +1,432 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : meta-file/meta-lge-model/recipes-os/images/
+stcI_FILEBODY : NO
+stcI_FILEPOSTFIX : model-common-images
+stcI_EXTENSION : inc
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+#=======================================================================
+# Tiger core Images Start
+#=======================================================================
+DEBUG_IMAGE = "${@d.getVar('BUILD_VARIANT', True)}"
+SYSTEMD_DEFAULT_TARGET := '${@bb.utils.contains("IMAGE_FEATURES","","graphical.target","graphical.target",d)}'
+
+# Adding servicelayer's lib and bin files
+TIGER_CORE_IMAGE = "servicelayer"
+
+# Adding servicelayer's used files
+TIGER_CORE_IMAGE += "servicelayer-files"
+
+# Adding systemproperty default property files
+TIGER_CORE_IMAGE += "systemproperty-files"
+
+# Tiger's Utils
+TIGER_CORE_IMAGE += "systemproperty"
+
+TIGER_CORE_debug := " \
+	binutils \
+	librank \
+	procrank \
+	libunwind \
+	leaktracer \
+	sldd \
+	tigrisd \
+	bugreport \
+	netkit-telnet \
+	xinetd \
+"
+
+# strace & uftrace has GPLv2 LICENSE
+# TIGER_CORE_debug += "strace"
+# TIGER_CORE_debug += "uftrace"
+
+TIGER_CORE_perf = ""
+TIGER_CORE_perf += "${@oe.utils.conditional('ENABLE_BUGREPORT', 'yes', 'bugreport', '', d)}"
+TIGER_CORE_perf += "${@oe.utils.conditional('ENABLE_TIGRISD', 'yes', 'tigrisd', '', d)}"
+TIGER_CORE_perf += "${@oe.utils.conditional('ENABLE_TIGRISD', 'limited', 'tigrisd', '', d)}"
+TIGER_CORE_perf += "${@oe.utils.conditional('ENABLE_DEBUG_UTILS', 'yes', 'binutils librank procrank leaktracer sldd netkit-telnet xinetd', '', d)}"
+
+TIGER_IMAGE = "${TIGER_CORE_IMAGE}"
+TIGER_IMAGE += "${TIGER_CORE_${BUILD_VARIANT}}"
+
+
+#=======================================================================
+# Tiger core Images End
+#=======================================================================
+
+#=======================================================================
+# Tiger Variant Images Start
+#=======================================================================
+
+# Android system core
+TIGER_VARIANT_IMAGE = "liblog"
+TIGER_VARIANT_IMAGE += "libcutils"
+TIGER_VARIANT_IMAGE += "binder"
+TIGER_VARIANT_IMAGE += "servicemanager"
+TIGER_VARIANT_IMAGE += "system-core"
+TIGER_VARIANT_IMAGE += "system-core-adbd"
+TIGER_VARIANT_IMAGE += "system-core-logd"
+TIGER_VARIANT_IMAGE += "system-core-usb"
+
+# Tiger's Services
+# It can be different an installed service each model.
+TIGER_VARIANT_IMAGE += "alarm-service"
+TIGER_VARIANT_IMAGE += "app-service"
+TIGER_VARIANT_IMAGE += "audio-service"
+TIGER_VARIANT_IMAGE += "config-service"
+TIGER_VARIANT_IMAGE += "diag-service"
+TIGER_VARIANT_IMAGE += "hmi-service"
+TIGER_VARIANT_IMAGE += "lgegnss-service"
+TIGER_VARIANT_IMAGE += "power-service"
+TIGER_VARIANT_IMAGE += "system-service"
+TIGER_VARIANT_IMAGE += "telephony-service"
+TIGER_VARIANT_IMAGE += "time-service"
+TIGER_VARIANT_IMAGE += "vif-service"
+TIGER_VARIANT_IMAGE += "tiger-bootmode"
+TIGER_VARIANT_IMAGE += "lgims-bin"
+TIGER_VARIANT_IMAGE += "posshift-handler"
+
+# Adding service's properties files
+TIGER_VARIANT_IMAGE += "system-service-properties"
+TIGER_VARIANT_IMAGE += "power-service-properties"
+TIGER_VARIANT_IMAGE += "time-service-properties"
+TIGER_VARIANT_IMAGE += "config-service-properties"
+
+# This is the systemd configuration file of services files
+# When using Only systemd, use the code.
+TIGER_VARIANT_IMAGE += "systemd-services"
+
+# WAVE Component
+TIGER_VARIANT_IMAGE += "vsomeip"
+TIGER_VARIANT_IMAGE += "dlt-daemon"
+
+# Set debug option in debug mode
+TIGER_VARIANT_IMAGE += "systemd-dbg-option-files"
+
+TIGER_VARIANT_debug = "\
+	packagegroup-core-tools-profile \
+	systemd-dbg-option \
+	logger-system \
+	logger-system-logger \
+"
+TIGER_VARIANT_perf = ""
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_LOGGER', 'yes', 'logger-system', '', d)}"
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_LOGGER', 'yes', 'logger-system-logger', '', d)}"
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_TIGRISD', 'yes', 'systemd-dbg-option', '', d)}"
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_TIGRISD', 'yes', 'systemd-dbg-option-files', '', d)}"
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_TIGRISD', 'limited', 'systemd-dbg-option', '', d)}"
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_TIGRISD', 'limited', 'systemd-dbg-option-files', '', d)}"
+TIGER_VARIANT_perf += "${@oe.utils.conditional('ENABLE_DEBUG_UTILS', 'yes', 'packagegroup-core-tools-profile', '', d)}"
+
+TIGER_IMAGE += "${TIGER_VARIANT_IMAGE}"
+TIGER_IMAGE += "${TIGER_VARIANT_${BUILD_VARIANT}}"
+
+IMAGE_INSTALL += "${TIGER_IMAGE}"
+#=======================================================================
+# Tiger Variant Images End
+#=======================================================================
+
+IMAGE_INSTALL += "mmc-utils"
+
+# Telematics Proxy
+IMAGE_INSTALL += "nghttp2"
+IMAGE_INSTALL += "curl"
+IMAGE_INSTALL += "vsomeip"
+IMAGE_INSTALL += "capicxx-core-runtime"
+IMAGE_INSTALL += "capicxx-someip-runtime"
+IMAGE_INSTALL += "mosquitto"
+IMAGE_INSTALL += "joynr"
+IMAGE_INSTALL += "iproute2-tc"
+IMAGE_INSTALL += "cpp"
+IMAGE_INSTALL += "tcng"
+
+# aBAC
+IMAGE_INSTALL += "araproxy"
+
+# Ethernet
+IMAGE_INSTALL += "iputils"
+IMAGE_INSTALL += "ethmgr-lib"
+IMAGE_INSTALL += "ethmgr-bin"
+IMAGE_INSTALL += "strongswan"
+IMAGE_INSTALL += "ipsecmgr-lib"
+IMAGE_INSTALL += "ipsecmgr-bin"
+
+# Ethernet Utils (arp, netstat(full version), ethtool)
+IMAGE_INSTALL += "net-tools"
+IMAGE_INSTALL += "ethtool"
+
+# Alsa utils
+IMAGE_INSTALL += "alsa-utils"
+#IMAGE_INSTALL += "alsa-lib"
+IMAGE_INSTALL += "alsa-plugins"
+
+#CB-5861583
+IMAGE_INSTALL += "tftp-hpa"
+
+# FTP enabled for vehicle programming
+IMAGE_INSTALL += "vsftpd"
+
+# tar enabled for vehicle programming
+IMAGE_INSTALL += "tar"
+IMAGE_INSTALL += "bzip2"
+
+# Network Firewall
+IMAGE_INSTALL_append = " \
+	network-firewall \
+"
+
+# Full Disk Encryption
+IMAGE_INSTALL_append = " \
+    cryptsetup \
+    fde-manager \
+"
+
+# Trusted Data Manager
+IMAGE_INSTALL_append = " \
+    tdm \
+"
+
+# Trusted Certificate Manager
+IMAGE_INSTALL_append = " \
+    tcm \
+"
+
+# SMACK
+IMAGE_INSTALL_append = " \
+	audit \
+	smack \
+	smack-setup \
+	smack-test \
+	smack-profiler \
+"
+
+# LGE System Apps
+IMAGE_INSTALL += "progapp"
+
+IMAGE_INSTALL += "lgusbser"
+IMAGE_INSTALL += "mdmdltlogger"
+IMAGE_INSTALL += "codingapp"
+IMAGE_INSTALL += "gscapp"
+IMAGE_INSTALL += "bmwecallapp"
+IMAGE_INSTALL += "psapecallapp"
+IMAGE_INSTALL += "eraecallapp"
+IMAGE_INSTALL += "euecallapp"
+IMAGE_INSTALL += "provisioningapp"
+IMAGE_INSTALL += "variantctl"
+
+# LGE Customer Apps
+IMAGE_INSTALL += "remotesvcapp"
+IMAGE_INSTALL += "carsharingapp"
+IMAGE_INSTALL += "lscapp"
+
+# Network Interface Manager
+IMAGE_INSTALL += "netifmgr-lib"
+IMAGE_INSTALL += "netifmgr-bin"
+IMAGE_INSTALL += "libdns"
+
+IMAGE_INSTALL += "diagctl-handler-lib"
+IMAGE_INSTALL += "diagctl-handler-bin"
+
+# Health Monitor
+IMAGE_INSTALL += "health-monitor-bin"
+IMAGE_INSTALL += "health-monitor-lib"
+
+# Test Manager
+IMAGE_INSTALL += "testmgr-bin"
+IMAGE_INSTALL += "testmgr-lib"
+IMAGE_INSTALL += "stress-ng"
+IMAGE_INSTALL += "cpufrequtils"
+
+# WAVE rootfs
+IMAGE_INSTALL += "wave-rootfs"
+
+IMAGE_INSTALL += "socat"
+
+#QCT - MDM9250 LE2.4 ES3
+# IMAGE_FEATURES += "package-management ssh-server-dropbear"
+IMAGE_INSTALL += "dropbear"
+IMAGE_INSTALL += "packagegroup-telematics-utils"
+IMAGE_INSTALL += "packagegroup-telematics-qti"
+
+#TIMEMGR
+IMAGE_INSTALL += "timemgr-bin"
+IMAGE_INSTALL += "timemgr-lib"
+#SECURITYMGR
+IMAGE_INSTALL += "securitymgr-bin"
+IMAGE_INSTALL += "securitymgr-lib"
+#PROCPS
+IMAGE_INSTALL += "procps"
+
+# Remote Interface Manager
+IMAGE_INSTALL += "remoteifmgr-bin"
+
+# DUMM Interface Manager
+IMAGE_INSTALL += "dummgr-bin"
+
+# eCall Manager
+IMAGE_INSTALL += "ecallmgr-bin"
+
+# SOME/IP Consumer/Provider Manager
+IMAGE_INSTALL += "someipconsumer-lib"
+IMAGE_INSTALL += "someipconsumer-bin"
+IMAGE_INSTALL += "someipprovider-lib"
+IMAGE_INSTALL += "someipprovider-bin"
+
+# SOME/IP Test App
+IMAGE_INSTALL += "someipifmgr-bin"
+
+# Traffic Shaper Manager
+IMAGE_INSTALL += "trafficshapingmgr-bin"
+
+# Power Mode Handler
+IMAGE_INSTALL += "powermode-handler-bin"
+IMAGE_INSTALL += "powermode-handler-lib"
+
+# JoynR Manager
+IMAGE_INSTALL += "joynrmgr-bin"
+
+# VoIP Client
+IMAGE_INSTALL += "voipclient-bin"
+
+#lgeio library
+IMAGE_INSTALL += "liblgeio"
+
+# TIDL added Start
+# +<+lc($MODULENAME)+>+Mgr
+IMAGE_INSTALL += "+<+lc($MODULENAME)+>+mgr-bin"
+IMAGE_INSTALL += "+<+lc($MODULENAME)+>+mgr-lib"
+# TIDL added End
+
+IMAGE_PREPROCESS_COMMAND_append = " servicelayer_data_modules;"
+JOURNAL_OPTION_TIGER = "-l 10m"
+JOURNAL_OPTION_GNSS = "-l 5m"
+MODULE_NAME_TIGER = "bmw-wave-rootfs-nml"
+MODULE_NAME_GNSS = "bmw-wave-rootfs-pos_dr"
+OUTPUT_TIGER_FILE_EXT4 = "${DEPLOY_DIR_IMAGE}/${MODULE_NAME_TIGER}.ext4"
+OUTPUT_GNSS_FILE_EXT4 = "${DEPLOY_DIR_IMAGE}/${MODULE_NAME_GNSS}.ext4"
+
+servicelayer_data_modules() {
+
+    # for service_layer user_data folder
+    mv ${IMAGE_ROOTFS}/data  ${IMAGE_ROOTFS}/usr/share/tiger
+
+    mkdir ${IMAGE_ROOTFS}/var/lib/tiger
+    ln -sf /var/lib/tiger  ${IMAGE_ROOTFS}/data
+
+
+    # for usb gadget driver
+    mkdir ${IMAGE_ROOTFS}/config
+
+    # Delete tiger ext4 file
+    if [ -f ${OUTPUT_TIGER_FILE_EXT4} ]; then
+        rm -rf ${OUTPUT_TIGER_FILE_EXT4}
+    fi
+
+    # Make TempDir for tiger ext4 file
+    mkdir -p ${IMAGE_ROOTFS}/TempDir
+
+    # Delete Tiger bzip2 file
+    if [ -f ${DEPLOY_DIR_IMAGE}/${MODULE_NAME_TIGER}.tar.bz2 ]; then
+        rm -rf ${DEPLOY_DIR_IMAGE}/${MODULE_NAME_TIGER}.tar.bz2
+    fi
+
+    # Delete Gnss bzip2 file
+    if [ -f ${DEPLOY_DIR_IMAGE}/${MODULE_NAME_GNSS}.tar.bz2 ]; then
+        rm -rf ${DEPLOY_DIR_IMAGE}/${MODULE_NAME_GNSS}.tar.bz2
+    fi
+
+    # Move Tiger xxx ManagerService file
+    mv -f ${IMAGE_ROOTFS}/usr/bin/start ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/AlarmManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/ApplicationManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/AudioManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/ConfigurationManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/DiagManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/HMIManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/PowerManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/SystemManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/TelephonyManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/TimeManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/vifManagerService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/propertyd ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/propget ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/propset ${IMAGE_ROOTFS}/usr/bin/tiger/
+
+    if [ "$DEBUG_IMAGE" = "debug" ]; then
+        mv -f ${IMAGE_ROOTFS}/usr/bin/test-persistent-1stage ${IMAGE_ROOTFS}/usr/bin/tiger/
+        mv -f ${IMAGE_ROOTFS}/usr/bin/test-persistent-2stage ${IMAGE_ROOTFS}/usr/bin/tiger/
+        mv -f ${IMAGE_ROOTFS}/usr/bin/test-persistent-basic ${IMAGE_ROOTFS}/usr/bin/tiger/
+    fi
+    mv -f ${IMAGE_ROOTFS}/usr/bin/PosShiftHandler ${IMAGE_ROOTFS}/usr/bin/tiger/
+
+    # Move LGIms
+    mv -f ${IMAGE_ROOTFS}/usr/bin/LGImsService/LGImsService ${IMAGE_ROOTFS}/usr/bin/tiger/
+    mv -f ${IMAGE_ROOTFS}/usr/bin/LGImsService ${IMAGE_ROOTFS}/usr/share/tiger/
+
+    # Move sldd
+    if [ -f ${IMAGE_ROOTFS}/usr/bin/sldd ]; then
+        mv -f ${IMAGE_ROOTFS}/usr/bin/sldd ${IMAGE_ROOTFS}/usr/bin/tiger/
+    fi
+
+    # Move bugreport
+    if [ -f ${IMAGE_ROOTFS}/usr/bin/bugreport ]; then
+        mv -f ${IMAGE_ROOTFS}/usr/bin/bugreport ${IMAGE_ROOTFS}/usr/bin/tiger/
+    fi
+
+    # Move tigrisd
+    if [ -f ${IMAGE_ROOTFS}/usr/bin/tigrisd ]; then
+        mv -f ${IMAGE_ROOTFS}/usr/bin/tigrisd ${IMAGE_ROOTFS}/usr/bin/tiger/
+        mv -f ${IMAGE_ROOTFS}/usr/bin/tigris ${IMAGE_ROOTFS}/usr/bin/tiger/
+    fi
+
+    # Move memory_logger
+    if [ -f ${IMAGE_ROOTFS}/usr/bin/memory_logger ]; then
+        mv -f ${IMAGE_ROOTFS}/usr/bin/memory_logger ${IMAGE_ROOTFS}/usr/bin/tiger/
+    fi
+
+    # make dummy tiger image
+    cd ${IMAGE_ROOTFS}/usr/bin/tiger
+    cp propset dummy_tiger
+
+    mv -f ${IMAGE_ROOTFS}/usr/bin/tiger/dummy_tiger ${IMAGE_ROOTFS}/TempDir
+    cd ${IMAGE_ROOTFS}/TempDir
+
+    # Make tiger ext4 file
+    /usr/bin/make_ext4fs ${JOURNAL_OPTION_TIGER} ${OUTPUT_TIGER_FILE_EXT4} ${IMAGE_ROOTFS}/TempDir
+
+    # Make tiger tar.bz2
+    cd ${IMAGE_ROOTFS}/TempDir
+    tar -cjvf ${MODULE_NAME_TIGER}.tar.bz2 ./*
+    mv -f ${MODULE_NAME_TIGER}.tar.bz2 ${DEPLOY_DIR_IMAGE}
+
+    # Delete TempDir for tiger ext4 file
+    rm -rf ${IMAGE_ROOTFS}/TempDir
+
+    # Delete gnssdr ext4
+    if [ -f ${OUTPUT_GNSS_FILE_EXT4} ]; then
+        rm -rf ${OUTPUT_GNSS_FILE_EXT4}
+    fi
+
+    # Make TempGnssdrDir for gnss ext4 file
+    mkdir -p ${IMAGE_ROOTFS}/TempGnssdrDir
+
+    # Move LocationManagerService file
+    mv -f ${IMAGE_ROOTFS}/usr/bin/LocationManagerService ${IMAGE_ROOTFS}/usr/bin/gnssdr/
+
+    # make dummy gnssdr image
+    cd ${IMAGE_ROOTFS}/usr/bin/tiger
+    cp propset dummy_gnssndr
+    mv -f ${IMAGE_ROOTFS}/usr/bin/tiger/dummy_gnssndr ${IMAGE_ROOTFS}/TempGnssdrDir
+
+    # Make Gnss ext4 file
+    /usr/bin/make_ext4fs ${JOURNAL_OPTION_GNSS} ${OUTPUT_GNSS_FILE_EXT4} ${IMAGE_ROOTFS}/TempGnssdrDir
+
+    # Make Gnss tar.bz2
+    cd ${IMAGE_ROOTFS}/TempGnssdrDir
+    tar -cjvf ${MODULE_NAME_GNSS}.tar.bz2 ./*
+    mv -f ${MODULE_NAME_GNSS}.tar.bz2 ${DEPLOY_DIR_IMAGE}
+
+    # Delete TempDir for gnssdr ext4 file
+    rm -rf ${IMAGE_ROOTFS}/TempGnssdrDir
+}
+

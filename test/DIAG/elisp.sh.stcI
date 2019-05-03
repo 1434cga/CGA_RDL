@@ -1,0 +1,32 @@
+stcI_HASH : Module_Name
+stcI_FILEPREFIX : KEYManagerService/src/
+stcI_FILEBODY : NO
+stcI_FILEPOSTFIX : elisp
+stcI_EXTENSION : sh
+Set : $iterate_comments = OFF
+SetI : $MODULENAME = KEY
+#!/bin/bash
+
+function erase_tab_tailedblank()
+{
+  mv "${1}" "${1}.org1"
+
+  sed 's/\t/    /g' "${1}.org1" > "${1}.org2"
+  sed 's/  *$//' "${1}.org2" > "${1}"
+
+  rm "${1}.org1"
+  rm "${1}.org2"
+
+  echo "${1} done"
+}
+
+echo "========================================================"
+echo "Process erase tailed blank and substitude tab to 4 blank"
+echo "========================================================"
+
+for filename in *
+do
+ erase_tab_tailedblank $filename
+done
+
+
