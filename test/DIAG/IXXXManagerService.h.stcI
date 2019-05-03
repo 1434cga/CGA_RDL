@@ -87,10 +87,9 @@ public:
 	// auto CGA start
 ITERATE %API +<<+ ITKEY  ITVALUE
 	virtual error_t ITKEY(
-    ITKEY
     ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
         IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
-            IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  ne "") && (IT2KEY eq 1))+{{+
+            IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  ne "") )+{{+
                     android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
             +}}+
             IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  eq "")+{{+
@@ -118,9 +117,10 @@ ITERATE %API +<<+ ITKEY  ITVALUE
             +}}+
         +}}+
     +>>+
-    // android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data
-    )=0;
+        )=0;
 +>>+
+    // android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data
+
 	// auto CGA end
 
 	virtual error_t requestDataID(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data) =0;

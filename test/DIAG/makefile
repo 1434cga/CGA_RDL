@@ -33,4 +33,5 @@ all:
 clean:
 	rm -rf *.GV
 	rm -rf *.log
+	rm -rf *.out
 	rm -rf OUTPUT
