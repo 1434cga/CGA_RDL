@@ -568,9 +568,9 @@ sub iterate_equal(){
             }
         }
         #print "before($before$after)\n";
-        open($fh , ">" , "iter" . $cnt . ".out");
-        print $fh "$before$after\n";
-        close $fh;
+        #open($fh , ">" , "iter" . $cnt . ".out");
+        #print $fh "$before$after\n";
+        #close $fh;
         $il = "$before$after";
         $cnt++;
         if($cnt == $end){ return ; }
