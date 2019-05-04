@@ -164,7 +164,7 @@ error_t +<+$MODULENAME+>+Data::readFromParcel(const android::Parcel& parcel)
 {
 ITERATE %xxData +<<+ ITKEY  ITVALUE
     IFNOTEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
-        this->+<+$xxData{ITKEY}{name}+>+  = parcel.+<+$ArgType1{$xxData{ITKEY}{type}}{read}+>+ (); // ? need static_cast
+        this->+<+$xxData{ITKEY}{name}+>+  = static_cast<+<+$xxData{ITKEY}{type}+>+>( parcel.+<+$ArgType1{$xxData{ITKEY}{type}}{read}+>+() ); // ? need static_cast
     +}}+
     IFEQUAL(+<+$xxData{ITKEY}{Len}+>+  ne "")+{{+
         this->+<+$xxData{ITKEY}{Len}+>+  = parcel.readInt32();

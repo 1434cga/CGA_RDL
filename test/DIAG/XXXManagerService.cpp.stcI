@@ -178,9 +178,40 @@ error_t +<+ucfirst($MODULENAME)+>+ManagerService::ServiceStub::queryReceiverById
 }
 
 
-// auto CGA start
+// auto CGA start : wishtoUseAPI
 ITERATE %API +<<+ ITKEY  ITVALUE
-error_t +<+ucfirst($MODULENAME)+>+ManagerService::ServiceStub::ITKEY(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data)
+error_t +<+ucfirst($MODULENAME)+>+ManagerService::ServiceStub::ITKEY(
+    ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData" )+{{+
+                    android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData" )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+        IFEQUAL(IT2KEY ne 1)+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData" )+{{+
+                    , android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData" )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    , size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+    +>>+
+    )
 {
 	LOGV("ServiceStub: ITKEY");
 
@@ -190,7 +221,7 @@ error_t +<+ucfirst($MODULENAME)+>+ManagerService::ServiceStub::ITKEY(android::sp
 }
 +>>+
 
-// auto CGA end
+// auto CGA end : wishtoUseAPI
 
 /*
  * SLDD Use ONLY
