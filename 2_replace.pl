@@ -385,7 +385,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 
 				# 이런식으로 처리하면 많은 %값들을 만들지 않아도 되며, define같은 값들을 지저분하게 군데군데 만들어줄 필요가 없다. 
 				#print DBG "Set Hash 10 : $iterate_lines\n";
-				if(1){      # It is mendatory
+				if(0){      # It is mendatory
 					#  because of processing speed.  when it is replacement , it scans whole string. So I break down into substring.
 					my $iter_lena = length($iterate_lines);
 					my $iterate_lines_org = $iterate_lines;
@@ -400,7 +400,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 					if($stc_debug eq "DEBUG_ON"){ mid_time_log("==MID time_debug 2=="); }
 
 				} else {            # This is old version's code.
-					$iterate_lines = replace_var_with_value($iterate_lines);
+                    #$iterate_lines = replace_var_with_value($iterate_lines);
 				}
 				#print DBG "Set Hash 11 : $iterate_lines\n";
 				print DBG "RETURN \$iterate_lines = \n\[\n$iterate_lines\n\]\n";
@@ -444,6 +444,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		my $iter_len = length($file_output{$tmpKey});
 		my $linesOrg = $file_output{$tmpKey};
 		my $lines ="";
+	    print DBG __SUB__ . " CCCCC = $linesOrg\n";
 		if(0){
 			# for performance
 			for(my $itt = 0;$itt <= $iter_len ; $itt += 1000){
@@ -453,6 +454,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		} else {
 			$lines = iterate_equal($linesOrg);
 		}
+	    print DBG __SUB__ . " DDDDD = $linesOrg\n";
 		$lines = replace_var_with_value($lines);
 		print DBG "FFFF $lines\n";
 		#$lines =~ s/STG_SHARP_/\#/g;
@@ -567,6 +569,8 @@ sub iterate_equal(){
             print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
             print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
         }
+
+		$b_match = replace_var_with_value($b_match);
         if($iif eq "IFEQUAL"){
             $val = eval($b_match);
             print DBG __SUB__ . "$b_match -> val:$val\n";
