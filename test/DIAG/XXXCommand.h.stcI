@@ -51,16 +51,13 @@ SetI : $MODULENAME = KEY
 #define SIGNAL_INTERNAL_+<+uc($MODULENAME)+>+_BASE 0x0001
 
 
-#define DID_WORK_FOR_DEFINE_0  	0x0001
-#define DID_WORK_FOR_DEFINE_1  	0x0002
-#define DID_WORK_FOR_DEFINE_2  	0x0003
-#define DID_WORK_FOR_DEFINE_3  	0x0004
-#define DID_WORK_FOR_DEFINE_4  	0x0005
-#define DID_WORK_FOR_DEFINE_5  	0x0006
-#define DID_WORK_FOR_DEFINE_6  	0x0007
-#define DID_WORK_FOR_DEFINE_7  	0x0008
-#define DID_WORK_FOR_DEFINE_8  	0x0009
-#define DID_WORK_FOR_DEFINE_9  	0x000A
+// #define DID_WORK_FOR_DEFINE_0  	0x0001
+enum {
+    DID_WORK_START = 0;
+ITERATE %Function +<<+ ITKEY  ITVALUE
+    , ITKEY  	
++>>+
+};
 
 #define +<+uc($MODULENAME)+>+DATA_HEAD  (offsetof(+<+lc($MODULENAME)+>+DataFormat, data) )
 

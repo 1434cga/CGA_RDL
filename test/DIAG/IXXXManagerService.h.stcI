@@ -84,15 +84,15 @@ public:
     virtual android::sp<Buffer> SLDDRequestDataID (uint16_t  request_id)=0;
     virtual error_t SLDDResponseDataID (uint16_t request_id, android::sp<Buffer> buf) = 0;
 
-	// auto CGA start
+	// auto CGA start : wishtoUseAPI
 ITERATE %API +<<+ ITKEY  ITVALUE
 	virtual error_t ITKEY(
     ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
         IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
-            IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  ne "") )+{{+
+            IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
                     android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
             +}}+
-            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  eq "")+{{+
+            IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
                 IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
                     +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
                 +}}+
@@ -103,10 +103,10 @@ ITERATE %API +<<+ ITKEY  ITVALUE
             +}}+
         +}}+
         IFEQUAL(IT2KEY ne 1)+{{+
-            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  ne "")+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData" )+{{+
                     , android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
             +}}+
-            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{xxData}+>+"  eq "")+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData" )+{{+
                 IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
                     , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
                 +}}+
@@ -119,7 +119,6 @@ ITERATE %API +<<+ ITKEY  ITVALUE
     +>>+
         )=0;
 +>>+
-    // android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+lc($MODULENAME)+>+Data
 
 	// auto CGA end
 

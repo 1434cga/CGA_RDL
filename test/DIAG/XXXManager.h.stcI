@@ -53,8 +53,40 @@ class +<+ucfirst("$MODULENAME")+>+Manager : public android::RefBase
 		error_t	reAttachReceiver (const uint32_t id );
 		error_t	requestDataID(android::sp<+<+ucfirst("$MODULENAME")+>+Data>& m+<+lc($MODULENAME)+>+Data);
 
+// wishtoUseAPI
 ITERATE %API +<<+ ITKEY  ITVALUE
-		error_t ITKEY(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+		error_t ITKEY(
+    ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
+                    android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+        IFEQUAL(IT2KEY ne 1)+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
+                    , android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    , size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+    +>>+
+            );
 +>>+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

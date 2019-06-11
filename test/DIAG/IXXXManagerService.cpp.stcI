@@ -108,7 +108,7 @@ public:
 
 
         return reply.readInt32();;
-}
+    }
 
     virtual android::sp<Buffer> SLDDRequestDataID (uint16_t  request_id)
     {
@@ -166,31 +166,70 @@ public:
     }
 
 
-/*!! wishtoUseAPI func auto CGA start-------------------------------------------------*/
+    /*!! wishtoUseAPI func auto CGA start-------------------------------------------------*/
 
 ITERATE %API +<<+ ITKEY  ITVALUE
-virtual error_t ITKEY(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data)
-  {
-	  Parcel data;
-	  Parcel reply;
-
-	  LOGV("ITKEY ");
-	  (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
-	  (void)m+<+ucfirst($MODULENAME)+>+Data->writeToParcel(&data);
-
-
-	  (void)remote()->transact(OP_REGISTER_+<+uc(ITKEY)+>+, data, &reply);
-
-	  return reply.readInt32();
-  }
-
+    virtual error_t ITKEY(
+    ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
+                    android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+        IFEQUAL(IT2KEY ne 1)+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
+                    , android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    , size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+    +>>+
+        )
+    {
+	    Parcel data;
+	    Parcel reply;
+    
+	    LOGV("ITKEY ");
+	    (void)data.writeInterfaceToken(I+<+ucfirst($MODULENAME)+>+ManagerService::getInterfaceDescriptor());
+        ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData")+{{+
+	                (void)m+<+ucfirst($MODULENAME)+>+Data->writeToParcel(&+<+$API{ITKEY}{IT2KEY}{name}+>+);
+            +}}+
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData")+{{+
+                IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "") && (+<+$API{ITKEY}{IT2KEY}{name}+>+ ne "") )+{{+
+                    (void)parcel->+<+$ArgType1{$API{ITKEY}{IT2KEY}{type}}{write}+>+ ( +<+$API{ITKEY}{IT2KEY}{name}+>+ );
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    (void)parcel->+<+$ArgType1{$API{ITKEY}{IT2KEY}{type}}{write}+>+ ( +<+$API{ITKEY}{IT2KEY}{Len}+>+ , +<+$API{ITKEY}{IT2KEY}{name}+>+ );
+                +}}+
+            +}}+
+        +>>+
+    
+    
+	    (void)remote()->transact(OP_REGISTER_+<+uc(ITKEY)+>+, data, &reply);
+    
+	    return reply.readInt32();
+    }
+        
 +>>+
-
-/*!! wishtoUseAPI func auto CGA end-------------------------------------------------*/
-
-
-
-
+    
+    /*!! wishtoUseAPI func auto CGA end-------------------------------------------------*/
 
 
 };
@@ -295,9 +334,66 @@ ITERATE %API +<<+ ITKEY  ITVALUE
 		case OP_REGISTER_+<+uc(ITKEY)+>+: {
 			 LOGV("ITKEY");
 			 CHECK_INTERFACE(I+<+ucfirst($MODULENAME)+>+ManagerService, data, reply);
-			 android::sp<+<+ucfirst($MODULENAME)+>+Data> m+<+ucfirst($MODULENAME)+>+Data = new +<+ucfirst($MODULENAME)+>+Data();
-			 m+<+ucfirst($MODULENAME)+>+Data->readFromParcel((const android::Parcel&)data);
-			 (void)reply->writeInt32(ITKEY(m+<+ucfirst($MODULENAME)+>+Data));
+        ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData")+{{+
+			        android::sp<+<+ucfirst($MODULENAME)+>+Data> m+<+ucfirst($MODULENAME)+>+Data = new +<+ucfirst($MODULENAME)+>+Data();
+			        m+<+ucfirst($MODULENAME)+>+Data->readFromParcel((const android::Parcel&)data);
+            +}}+
+            IFEQUAL("+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData")+{{+
+                IFEQUAL( ("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "") && (+<+$API{ITKEY}{IT2KEY}{name}+>+ ne "") )+{{+
+                    this->+<+$API{ITKEY}{IT2KEY}{name}+>+  = static_cast<+<+$API{ITKEY}{IT2KEY}{type}+>+>( parcel.+<+$ArgType1{$API{ITKEY}{IT2KEY}{type}}{read}+>+() ); // ? need static_cast
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    this->+<+$API{ITKEY}{IT2KEY}{Len}+>+  = parcel.readInt32();
+                    if( (this->+<+$API{ITKEY}{IT2KEY}{Len}+>+  < 0) || ( this->+<+$API{ITKEY}{IT2KEY}{name}+>+  == NULL) ){
+		                LOGE("error: this->+<+$API{ITKEY}{IT2KEY}{Len}+>+  < 0  or  this->+<+$API{ITKEY}{IT2KEY}{name}+>+  == NULL");
+                        return E_ERROR;
+                    }
+
+		            if(this->+<+$API{ITKEY}{IT2KEY}{name}+>+ == NULL){
+		                        this->+<+$API{ITKEY}{IT2KEY}{name}+>+  = new  uint8_t[ this->+<+$API{ITKEY}{IT2KEY}{Len}+>+ ];
+		            }
+		            else { LOGE("error: this routine is not reached\n"); }
+   
+                    parcel.read( this->+<+$API{ITKEY}{IT2KEY}{name}+>+ , this->+<+$API{ITKEY}{IT2KEY}{Len}+>+ );
+                +}}+
+            +}}+
+        +>>+
+
+			 (void)reply->writeInt32(
+                ITKEY(
+    ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
+                    android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+        IFEQUAL(IT2KEY ne 1)+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData") )+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData") )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+    +>>+
+                )
+            );
 		 }
 			 break;
 +>>+

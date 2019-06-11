@@ -80,11 +80,42 @@ private:
 		virtual error_t requestDataID(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
 		virtual error_t responseDataID(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
 
-	// auto CGA start
+	// auto CGA start : wishtoUseAPI
 ITERATE %API +<<+ ITKEY  ITVALUE
-	virtual error_t ITKEY(android::sp<+<+ucfirst($MODULENAME)+>+Data>& m+<+ucfirst($MODULENAME)+>+Data);
+	virtual error_t ITKEY(
+    ITERATE %API{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IFEQUAL( (IT2KEY eq 1)&& (IT2KEY eq 1))+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData" )+{{+
+                    android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData" )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+        IFEQUAL(IT2KEY ne 1)+{{+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  eq "xxData" )+{{+
+                    , android::sp<+<+ucfirst($MODULENAME)+>+Data>& +<+$API{ITKEY}{IT2KEY}{name}+>+
+            +}}+
+            IFEQUAL( "+<+$API{ITKEY}{IT2KEY}{type}+>+"  ne "xxData" )+{{+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  eq "")+{{+
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+                IFEQUAL("+<+$API{ITKEY}{IT2KEY}{Len}+>+"  ne "")+{{+
+                    , size_t +<+$API{ITKEY}{IT2KEY}{Len}+>+  
+                    , +<+$API{ITKEY}{IT2KEY}{type}+>+ +<+$API{ITKEY}{IT2KEY}{name}+>+  
+                +}}+
+            +}}+
+        +}}+
+    +>>+
+        );
 +>>+
-	// auto CGA end
+	// auto CGA end : wishtoUseAPI
 
 #ifdef +<+uc($MODULENAME)+>+_SLDD_TEST
 		virtual error_t SlddTestCmd(uint8_t, uint8_t, uint8_t, android::sp<Buffer>);

@@ -9,6 +9,20 @@ our %local_var_set;
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
 
+sub plus {
+    my $num = shift @_;
+    my $cnt = shift @_;
+    $num += $cnt;
+    return  $num;
+}
+
+sub minus {
+    my $num = shift @_;
+    my $cnt = shift @_;
+    $num -= $cnt;
+    return  $num;
+}
+
 sub start_time_log {
 	my $tmpLogInit = shift @_;
 	($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time) ;
@@ -57,7 +71,6 @@ sub IChange
 	my $in;
 	my $in_start;
 	my $in_end;
-	my $iterate_cnt = 0;
 	my $stcI_filename_input ;
 	my $stcI_filename_output ;
 	my $stcI_output_dir;
@@ -372,7 +385,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 
 				# 이런식으로 처리하면 많은 %값들을 만들지 않아도 되며, define같은 값들을 지저분하게 군데군데 만들어줄 필요가 없다. 
 				#print DBG "Set Hash 10 : $iterate_lines\n";
-				if(1){      # It is mendatory
+				if(0){      # It is mendatory
 					#  because of processing speed.  when it is replacement , it scans whole string. So I break down into substring.
 					my $iter_lena = length($iterate_lines);
 					my $iterate_lines_org = $iterate_lines;
@@ -387,7 +400,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 					if($stc_debug eq "DEBUG_ON"){ mid_time_log("==MID time_debug 2=="); }
 
 				} else {            # This is old version's code.
-					$iterate_lines = replace_var_with_value($iterate_lines);
+                    #$iterate_lines = replace_var_with_value($iterate_lines);
 				}
 				#print DBG "Set Hash 11 : $iterate_lines\n";
 				print DBG "RETURN \$iterate_lines = \n\[\n$iterate_lines\n\]\n";
@@ -431,6 +444,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		my $iter_len = length($file_output{$tmpKey});
 		my $linesOrg = $file_output{$tmpKey};
 		my $lines ="";
+	    print DBG __SUB__ . " CCCCC = $linesOrg\n";
 		if(0){
 			# for performance
 			for(my $itt = 0;$itt <= $iter_len ; $itt += 1000){
@@ -440,6 +454,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		} else {
 			$lines = iterate_equal($linesOrg);
 		}
+	    print DBG __SUB__ . " DDDDD = $linesOrg\n";
 		$lines = replace_var_with_value($lines);
 		print DBG "FFFF $lines\n";
 		#$lines =~ s/STG_SHARP_/\#/g;
@@ -554,6 +569,8 @@ sub iterate_equal(){
             print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
             print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
         }
+
+		$b_match = replace_var_with_value($b_match);
         if($iif eq "IFEQUAL"){
             $val = eval($b_match);
             print DBG __SUB__ . "$b_match -> val:$val\n";
@@ -801,7 +818,7 @@ sub Iterator_recursion
 			else {
 #print DBG "SUB_ITERATE 40 : $iterate_cnt : $it_line\n";
 				if(0 == $iterate_cnt){
-					$it_line = replace_var_with_value($it_line);
+                    #$it_line = replace_var_with_value($it_line);
 #print DBG "SUB_ITERATE 41 : $iterate_cnt : $it_line\n";
 					$result .= $it_line . "\n";
 				} else {
@@ -821,7 +838,7 @@ sub replace_var_with_value
 	my $in_cnt = 0;
 	$replace_in = shift @_;
 
-	#print DBG __SUB__ . ":" . __LINE__ . " AAAA : before $replace_in\n";
+    #print DBG __SUB__ . ":" . __LINE__ . " AAAA : before $replace_in\n";
 	while($replace_in =~ /(\d+)\s*\+\+\+\+/){		# 	++++     1을 더해 준다. 
 		my $temp_num;
 		$temp_num = $1;
@@ -853,12 +870,12 @@ sub replace_var_with_value
 	{
 		my $match = $&;
 		my $val = eval($1);
-		print DBG __SUB__ . ":" . " $match =>  $val\n";
+		print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
 		$replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
 		$in_cnt ++;
 	};
 	#print DBG __SUB__ . ":" . __LINE__ . " +<+ \$... +>+ : in_cnt $in_cnt\n";
-	#print DBG __SUB__ . ":" . __LINE__ . " AAAA : after $replace_in\n";
+    #print DBG __SUB__ . ":" . __LINE__ . " AAAA : after $replace_in\n";
 
 	return $replace_in;
 }
