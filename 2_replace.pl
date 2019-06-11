@@ -9,6 +9,20 @@ our %local_var_set;
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
 
+sub plus {
+    my $num = shift @_;
+    my $cnt = shift @_;
+    $num += $cnt;
+    return  $num;
+}
+
+sub minus {
+    my $num = shift @_;
+    my $cnt = shift @_;
+    $num -= $cnt;
+    return  $num;
+}
+
 sub start_time_log {
 	my $tmpLogInit = shift @_;
 	($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time) ;
@@ -57,7 +71,6 @@ sub IChange
 	my $in;
 	my $in_start;
 	my $in_end;
-	my $iterate_cnt = 0;
 	my $stcI_filename_input ;
 	my $stcI_filename_output ;
 	my $stcI_output_dir;
@@ -801,7 +814,7 @@ sub Iterator_recursion
 			else {
 #print DBG "SUB_ITERATE 40 : $iterate_cnt : $it_line\n";
 				if(0 == $iterate_cnt){
-					$it_line = replace_var_with_value($it_line);
+                    #$it_line = replace_var_with_value($it_line);
 #print DBG "SUB_ITERATE 41 : $iterate_cnt : $it_line\n";
 					$result .= $it_line . "\n";
 				} else {
@@ -821,7 +834,7 @@ sub replace_var_with_value
 	my $in_cnt = 0;
 	$replace_in = shift @_;
 
-	#print DBG __SUB__ . ":" . __LINE__ . " AAAA : before $replace_in\n";
+    #print DBG __SUB__ . ":" . __LINE__ . " AAAA : before $replace_in\n";
 	while($replace_in =~ /(\d+)\s*\+\+\+\+/){		# 	++++     1을 더해 준다. 
 		my $temp_num;
 		$temp_num = $1;
@@ -853,12 +866,12 @@ sub replace_var_with_value
 	{
 		my $match = $&;
 		my $val = eval($1);
-		print DBG __SUB__ . ":" . " $match =>  $val\n";
+		print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
 		$replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
 		$in_cnt ++;
 	};
 	#print DBG __SUB__ . ":" . __LINE__ . " +<+ \$... +>+ : in_cnt $in_cnt\n";
-	#print DBG __SUB__ . ":" . __LINE__ . " AAAA : after $replace_in\n";
+    #print DBG __SUB__ . ":" . __LINE__ . " AAAA : after $replace_in\n";
 
 	return $replace_in;
 }

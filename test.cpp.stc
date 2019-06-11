@@ -28,11 +28,17 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 }
 
 ITERATE %MODULE +<<+ ITKEY  ITVALUE
-	ITKEY -> 
+	ITKEY // +<+$g_y = 0+>+
+    +<+$g_y+>+      // set +<+ $g_y=plus($g_y,1) +>+     
 	ITERATE %MODULE{ITKEY} +<<+ IT2KEY  IT2VALUE
 		IT2KEY
+        duration type 1: +<+$MODULE{ITKEY}{IT2KEY}{duration}+>+    => +<+$g_y+>+ // set +<+ $g_y=plus($g_y,1) +>+ 
+        duration type 2: +<+$MODULE{"ITKEY"}{IT2KEY}{duration}+>+     => +<+$g_y+>+ // set +<+$g_y=plus($g_y,1)+>+
+        duration type 3: +<+$MODULE{"ITKEY"}{"IT2KEY"}{duration}+>+   => +<+$g_y+>+ // set +<+$g_y=plus($g_y,1)+>+ 
+        x1 +<+$MODULE{ITKEY}{IT2KEY}{x1}+>+
+        y1 +<+$MODULE{ITKEY}{IT2KEY}{y1}+>+         cnt : +<+$g_y+>+
+        Remark +<+$MODULE{ITKEY}{IT2KEY}{Remark}+>+
 	+>>+
-
 +>>+
 
 
