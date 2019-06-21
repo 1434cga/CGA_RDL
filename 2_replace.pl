@@ -444,7 +444,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		my $iter_len = length($file_output{$tmpKey});
 		my $linesOrg = $file_output{$tmpKey};
 		my $lines ="";
-	    print DBG __SUB__ . " CCCCC = $linesOrg\n";
+        #print DBG __SUB__ . " CCCCC IFEQUAL = $linesOrg\n";
 		if(0){
 			# for performance
 			for(my $itt = 0;$itt <= $iter_len ; $itt += 1000){
@@ -454,8 +454,9 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 		} else {
 			$lines = iterate_equal($linesOrg);
 		}
-	    print DBG __SUB__ . " DDDDD = $linesOrg\n";
+        #print DBG __SUB__ . " DDDDD IFEQUAL = $linesOrg\n";
 		$lines = replace_var_with_value($lines);
+        $lines = recover_special_code($lines);
 		print DBG "FFFF $lines\n";
 		#$lines =~ s/STG_SHARP_/\#/g;
 		if($stc_debug eq "DEBUG_ON"){ mid_time_log("==MID equal end =="); }
