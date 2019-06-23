@@ -8,6 +8,10 @@ all:
 test: test.pl test.xlsx
 	perl test.pl --input=test.xlsx
 	perl 2_replace.pl default.GV test.cpp.stc
+test_recover: 3_recover.sh
+	sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
+3:
+	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 clean:
 	rm -rf *.log
 	rm -rf OUTPUT

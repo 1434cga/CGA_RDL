@@ -18,20 +18,15 @@
 #include <services/ApplicationManagerService/IApplicationManagerService.h>
 #include <services/ApplicationManagerService/IApplicationManagerServiceType.h>
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
-
 /*!! vif Inheritance CGA start-------------------------------------------------*/		
 #include <services/vifManagerService/IvifManagerService.h>
 #include <services/vifManagerService/IvifManagerReceiver.h>
 #include <services/vifManagerService/IvifManagerServiceType.h>
 /*!! vif Inheritance CGA end-------------------------------------------------*/
-
-
 /*!! hmi Inheritance CGA start-------------------------------------------------*/		
 #include <services/HMIManagerService/IHMIManagerService.h>
 #include <services/HMIManagerService/IHMIManagerServiceType.h>
 /*!! hmi Inheritance CGA end-------------------------------------------------*/
-
-
 /*!! Audio Inheritance CGA start-------------------------------------------------*/ 
 #include <services/AudioManagerService/IAudioManagerService.h>
 #include <services/AudioManagerService/IAudioManagerServiceType.h>
@@ -55,21 +50,16 @@ DiagInputManager::DiagInputManager(android::sp<DiagManagerService> diagMgrServic
 	mAppManager = NULL;
     mSystemPostReceiver = NULL;
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
-
 /*!! audio Inheritance CGA start-------------------------------------------------*/		
 	mAudioManager = NULL;
     mAudioReceiver = NULL;
     mAudioPostReceiver = NULL;
 /*!! audio Inheritance CGA end-------------------------------------------------*/
-
 /*!! hmi Inheritance CGA start-------------------------------------------------*/		
 	mHmiManager = NULL;
     mHmiReceiver = NULL;
     mHmiPostReceiver = NULL;
 /*!! hmi Inheritance CGA end-------------------------------------------------*/
-
-
-
 /*!! vif Inheritance CGA start-------------------------------------------------*/		
 	mVifManager = NULL;
     mVifReceiver = NULL;
@@ -101,7 +91,6 @@ error_t DiagInputManager::init()
 /*!! appmgr Inheritance CGA start-------------------------------------------------*/		
     connectToAppMgr();
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
-
 /*!! audio Inheritance CGA start-------------------------------------------------*/		
     connectToAudioMgr();
 /*!! audio Inheritance CGA end-------------------------------------------------*/
@@ -160,7 +149,6 @@ void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>
 	    mDiagInputMgr.TimerStart();
 	    break;	
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
-
 /*!! audio Inheritance CGA start-------------------------------------------------*/		
     case MSG_CONNECT_TO_AUDIOMGR:
         LOGV("handleMessage MSG_CONNECT_TO_AUDIOMGR");
@@ -297,7 +285,6 @@ void DiagInputManager::connectToAppMgr(void)
     mAppManager->registerSystemPostReceiver(mSystemPostReceiver, SYS_POST_BOOT_COMPLETED);
 }
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
-
 /*!! audio Inheritance CGA start-------------------------------------------------*/ 
 void DiagInputManager::connectToAudioMgr(void)
 {
@@ -324,6 +311,13 @@ void DiagInputManager::connectToAudioMgr(void)
         LOGV("Already mAudioReceiver was created.");
     }
 
+// CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToAudioMgr(void):variant START
+
+    /*  
+     * Write your own code 
+    */
+
+// CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToAudioMgr(void):variant END
 }
 /*!! audio Inheritance CGA end-------------------------------------------------*/
 /*!! hmi Inheritance CGA start-------------------------------------------------*/ 
@@ -352,20 +346,12 @@ void DiagInputManager::connectToHmiMgr(void)
         LOGV("Already mHmiReceiver was created.");
     }
 
-// CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToPPP(void):variant START
-    uint32_t Sigid;
-    Sigid = SIGNAL_INTERNAL_DIAG_BASE;
-    Sigid = (uint32_t)(CH_RPMSG<<24)| Sigid;
-    mHmiManager->registerReceiver(Sigid, hmi_received_always, mHmiReceiver);
-	 Do Something to regist Receiver
-// CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToPPP(void):variant END
-
 // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToHmiMgr(void):variant START
-    uint32_t Sigid;
-    Sigid = SIGNAL_INTERNAL_DIAG_BASE;
-    Sigid = (uint32_t)(CH_RPMSG<<24)| Sigid;
-    mHmiManager->registerReceiver(Sigid, hmi_received_always, mHmiReceiver);
-	 Do Something to regist Receiver
+
+    /*  
+     * Write your own code 
+    */
+
 // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToHmiMgr(void):variant END
 }
 /*!! hmi Inheritance CGA end-------------------------------------------------*/
@@ -397,7 +383,9 @@ void DiagInputManager::connectToVifMgr(void)
 
 // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void):variant START
 
-	// Do Something to regist Receiver
+    /*  
+     * Write your own code 
+    */
 
 // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void):variant END
 }
@@ -410,7 +398,6 @@ void DiagInputManager::onServiceBinderDied(const android::wp<android::IBinder>& 
         LOGW("killed AppManager!!");
         connectToAppMgr();
 /*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
-
 /*!! audio Inheritance CGA start-------------------------------------------------*/ 
     } else if (mAudioManager != NULL && android::IInterface::asBinder(mAudioManager) == who) {
         LOGW("killed mAudioManager!!");

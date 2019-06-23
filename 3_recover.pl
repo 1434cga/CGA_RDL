@@ -2,6 +2,7 @@
 
 use 5.010;
 use File::Basename qw(dirname);
+use File::Path qw(make_path remove_tree);
 use Cwd  qw(abs_path);
 use lib dirname(dirname abs_path $0) . '/perllib';
 use lib abs_path . '/perllib';
@@ -37,31 +38,33 @@ die help() . "Must have different file name among input and output files.\n" if 
 die help() . "Must have different file name among input and output files.\n" if ($templateFile eq $mergeFile);
 
 our %gBlock;
-open(INPUTWORK , "<$workingFile");
+our %gBlockMatchedCnt;  # matched count bwtween working and template
+open(INPUTWORK , "<$workingFile") or die "Can't open < $workingFile as working input: $!";
 my $myBlockData = "";
 my $myBlockName = "";
 my $myFlag = 0;
 my $myLineCount = 0;
 while($in = <INPUTWORK>){
 	$myLineCount++;
-	if($in =~ /^\s*\/\/\@\s*(CGA_VARIANT\s*:.*)\s*start\s*$/){
+	if($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*START\s*$/){
 		die "[WORK] $myLineCount:$in $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
-		print "v1 $myBlockName START\n";
+		#;; print "v1 $myBlockName START\n";
 		die "[WORK] $myLineCount:$in $myBlockName already existed.\n" unless ($gBlock{$myBlockName} eq "");
-	} elsif($in =~ /^\s*\/\/\@\s*(CGA_VARIANT\s*:.*)\s*end\s*$/){
+	} elsif($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*END\s*$/){
 		my $myMatch = removeSpace($1);
-		print "v2 $myMatch [$myBlockName] END\n";
+		#;; print "v2 $myMatch [$myBlockName] END\n";
 		if($myBlockName ne $myMatch){
 			$myBlockData .= $in;
 			die "[WORK] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
 		} else {
 			die "[WORK] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
 			$gBlock{$myBlockName} = $myBlockData;
-			print "v2 $myBlockName END\n";
-			print "v2 $myBlockData";
+			$gBlockUsedCnt{$myBlockName} = 0;
+			#;; print "v2 $myBlockName END\n";
+			#;; print "v2 $myBlockData";
 			$myFlag = 0;
 			$myBlockName = "";
 			$myBlockData = "";
@@ -73,45 +76,55 @@ while($in = <INPUTWORK>){
 
 die "[WORK] End of File : $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 
+print "\n\n==== [WORK] Table Initiate\n";
+my $cnt=1;
 foreach my $key (sort keys %gBlock){
-	print "\n||| [gBlock->$key]\n";
-	print "==> [$gBlock{$key}]";
+	print "[WORK:$cnt] KEY : [gBlock->$key]\n";
+	print "[WORK:$cnt] Source==> [$gBlock{$key}]\n";
+	print "[WORK:$cnt] UsedCnt==> [$gBlockUsedCnt{$key}]\n";
+    $cnt++;
 }
 
 close(INPUTWORK);
 
-open(TEMPLATE, "<$templateFile");
-open(MERGE, ">$mergeFile");
+open(TEMPLATE, "<$templateFile") or die "Can't open < $templateFile as template input: $!";
+
+#print $mergeFile;
+#print dirname($mergeFile);
+make_path  dirname($mergeFile);
+
+open(MERGE, ">$mergeFile") or die "Can't open > $mergeFile as merge output: $!";
 $myBlockData = "";
 $myBlockName = "";
 $myFlag = 0;
 $myLineCount = 0;
 while($in = <TEMPLATE>){
 	$myLineCount++;
-	if($in =~ /^\s*\/\/\@\s*(CGA_VARIANT\s*:.*)\s*start\s*$/){
+	if($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*START\s*$/){
 		die "[TEMPLATE] $myLineCount:$in $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
-		print "v3 $myBlockName START\n";
+		#;; print "v3 $myBlockName START\n";
 		print MERGE $in;
-	} elsif($in =~ /^\s*\/\/\@\s*(CGA_VARIANT\s*:.*)\s*end\s*$/){
+	} elsif($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*END\s*$/){
 		my $myMatch = removeSpace($1);
-		print "v4 $myMatch [$myBlockName] END\n";
+		#;; print "v4 $myMatch [$myMatch] END\n";
 		if($myBlockName ne $myMatch){
 			$myBlockData .= $in;
-			die "[TEMPLATE] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
+			die "[TEMPLATE] $myLineCount: Block Name is not matched.\n\tSTART: $myBlockName\n\tEND  : $myMatch\n";
 		} else {
-			die "[TEMPLATE] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
-			print "v4 [$myBlockName] END\n";
-			print "v4 [$myBlockData]\n";
-			print "v4 [$gBlock{$myBlockName}]\n";
+			die "[TEMPLATE] $myLineCount:$in Block Name($myMatch) is not started. (no start)\n" unless ($myFlag == 1);
+			#;; print "v4 [$myBlockName] END\n";
+			#;; print "v4 [$myBlockData]\n";
+			#;; print "v4 [$gBlock{$myBlockName}]\n";
+            $gBlockUsedCnt{$myBlockName} ++;
 			if($gBlock{$myBlockName} eq ""){
 				print MERGE "$myBlockData";
 			} else {
-				print MERGE "#if 0\n";
-				print MERGE "$myBlockData";
-				print MERGE "#endif //if 0\n";
+				#;; print MERGE "#if 0\n";
+				#;; print MERGE "$myBlockData";
+				#;; print MERGE "#endif //if 0\n";
 				print MERGE "$gBlock{$myBlockName}";
 			}
 			print MERGE $in;
@@ -132,6 +145,20 @@ die "[TEMPLATE] End of File : $myBlockName is not finished. (no end)\n" unless (
 close(TEMPLATE);
 close(MERGE);
 
+print "\n\n==== [MATCHED] Table\n";
+my $cnt=1;
+foreach my $key (sort keys %gBlock){
+	print "[MATCHED:$cnt] KEY : [gBlock->$key]\n";
+	print "[MATCHED:$cnt] Source==> [$gBlock{$key}]\n";
+	print "[MATCHED:$cnt] UsedCnt==> [$gBlockUsedCnt{$key}]\n";
+    if($gBlockUsedCnt{$key} == 0){
+        print "\n** ERROR: this KEY does not exist in Template. => $key\n\n";
+    }
+    if($gBlockUsedCnt{$key} > 1){
+        print "\n** ERROR: this KEY used so many in Template. => $key\n\n";
+    }
+    $cnt++;
+}
 
 
 sub removeSpace {
