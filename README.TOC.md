@@ -5,7 +5,10 @@ Table of Contents
    * [CGA_RDL](#cga_rdl)
       * [RDL](#rdl)
       * [Explanation](#explanation)
-      * [Description](#description)
+      * [Description of Syntax (2_replace.pl)](#description-of-syntax-2_replacepl)
+         * [Special case of use  &lt;  ....   &gt; ](#special-case-of-use----)
+         * [Control and Programming in RDL](#control-and-programming-in-rdl)
+      * [recover (3_recover.sh 3_recover.pl)](#recover-3_recoversh-3_recoverpl)
    * [Purpose](#purpose)
    * [Environment](#environment)
       * [read excel](#read-excel)
@@ -56,11 +59,65 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 ![Mapping between excel and database](png/Slide5.PNG)
 ![Summary How to map](png/Slide6.PNG)
 
-## Description
+## Description of Syntax (2_replace.pl)
 - This is replacement tool with special syntax.
 	- ITERATE %Hash +<<+   ....   +>>+
 	- IFEQUAL(A eq B)+{{+  ....   +}}+
 	- +<+ ....  +>+
+
+### Special case of use +<+ ....  +>+
+- we can add perl expression in +<+ .. +>+
+    - ex) +<+ uc($fish) +>+ : convert $ fish to upper characters
+- add " " to use string as a key of hash in condition of IFEQUAL
+    - ex) IFEQUAL("ITKEY" eq +<+ $fish{"IT2KEY"} +>+
+
+### Control and Programming in RDL
+- for make index of sequencial count
+    - ex) test.cpp.stc
+    - make test
+```text
+ITERATE %MODULE +<<+ ITKEY  ITVALUE
+    ITKEY // +<+$g_y = 0+>+             <-- this is not a program so it will be comments. $ g_y = 0
+    +<+$g_y+>+                          <-- print the value
+    // set +<+ $g_y=plus($g_y,1) +>+        <-- comments : increment $g_y   +<> are special characters, so I support plus function instead of +
+    ITERATE %MODULE{ITKEY} +<<+ IT2KEY  IT2VALUE
+        IT2KEY
+        x1 : +<+$MODULE{"ITKEY"}{"IT2KEY"}{x1}+>+
+        IFNOTEQUAL(+<+$MODULE{"ITKEY"}{"IT2KEY"}{x1}+>+ < 5)+{{+
+            not under 5 : duration type 1: +<+$MODULE{ITKEY}{IT2KEY}{duration}+>+    => +<+$g_y+>+ // set +<+ $g_y=plus($g_y,1) +>+     <-- print variable and increment the variable
+            not under 5 :  duration type 2: +<+$MODULE{"ITKEY"}{IT2KEY}{duration}+>+     => +<+$g_y+>+ // set +<+$g_y=plus($g_y,1)+>+
+            not under 5 :  duration type 3: +<+$MODULE{"ITKEY"}{"IT2KEY"}{duration}+>+   => +<+$g_y+>+ // set +<+$g_y=plus($g_y,1)+>+
+            not under 5 :  x1 +<+$MODULE{"ITKEY"}{"IT2KEY"}{x1}+>+
+        +}}+
+        IFEQUAL(+<+$MODULE{"ITKEY"}{"IT2KEY"}{x1}+>+ > 3)+{{+
+            duration type 1: +<+$MODULE{ITKEY}{IT2KEY}{duration}+>+    => +<+$g_y+>+ // set +<+ $g_y=plus($g_y,1) +>+
+            duration type 2: +<+$MODULE{"ITKEY"}{IT2KEY}{duration}+>+     => +<+$g_y+>+ // set +<+$g_y=plus($g_y,1)+>+
+            duration type 3: +<+$MODULE{"ITKEY"}{"IT2KEY"}{duration}+>+   => +<+$g_y+>+ // set +<+$g_y=plus($g_y,1)+>+
+            x1 +<+$MODULE{"ITKEY"}{"IT2KEY"}{x1}+>+
+        +}}+
+        y1 +<+$MODULE{ITKEY}{IT2KEY}{y1}+>+         cnt : +<+$g_y+>+
+        Remark +<+$MODULE{ITKEY}{IT2KEY}{Remark}+>+
+
+    +>>+
++>>+
+```
+
+## recover (3_recover.sh 3_recover.pl)
+- 3_recover.pl (make 3)
+    - Each file has unique key each file.
+    - Rule : ```if($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*START\s*$/){```
+        - ex) // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToPPP(void):variant START
+    - run 3_recover.pl 
+	    - perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
+- 3_recover.sh (make test_recover)
+    - use when you have many files in several directories.
+    - arguments
+        - $1 : TEMPLATE BASE DIRECTORY  (OUTPUT/stc)
+        - $2 : WORKING  BASE DIRECTORY  (test_recover/working)
+        - $3 : MERGED   BASE DIRECTORY  (test_recover/merged)
+	- ex) sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
+- when you show difference between two directories
+    - ```$ diff -r A_directory B_directory```
 
 # Purpose
 - Reduce the wasting time for tedious repetitive works
