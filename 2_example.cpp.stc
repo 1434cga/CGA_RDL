@@ -283,13 +283,13 @@ void DiagInputManager::connectTo+<+ucfirst("ITKEY")+>+Mgr(void)
         LOGV("Already m+<+ucfirst(ITKEY)+>+Receiver was created.");
     }
 
-//@CGA_VARIANT:+<+$iterateInputFileName+>+:DiagInputManager:connectTo+<+ucfirst("ITKEY")+>+Mgr(void):variant start
-    //uint32_t Sigid;
-    //Sigid = SIGNAL_INTERNAL_DIAG_BASE;
-    //Sigid = (uint32_t)(CH_RPMSG<<24)| Sigid;
-    //m+<+ucfirst("ITKEY")+>+Manager->registerReceiver(Sigid, ITKEY_received_always, m+<+ucfirst("ITKEY")+>+Receiver);
-	// Do Something to regist Receiver
-//@CGA_VARIANT:+<+$iterateInputFileName+>+:DiagInputManager:connectTo+<+ucfirst("ITKEY")+>+Mgr(void):variant end
+// CGA_VARIANT:+<+$iterateInputFileName+>+:DiagInputManager:connectTo+<+ucfirst("ITKEY")+>+Mgr(void):variant START
+
+    /*  
+     * Write your own code 
+    */
+
+// CGA_VARIANT:+<+$iterateInputFileName+>+:DiagInputManager:connectTo+<+ucfirst("ITKEY")+>+Mgr(void):variant END
 }
 /*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
