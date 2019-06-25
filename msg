@@ -1,10 +1,11 @@
-add recover function
+add recovery function when you update newer version
 
-## Description of Syntax (2_replace.pl)
-### Special case of use +<+ ....  +>+
-    - ex) +<+ uc($fish) +>+ : convert $ fish to upper characters
-### Control and Programming in RDL
-    - ex) test.cpp.stc
-## recover (3_recover.sh 3_recover.pl)
-    - Rule : ```if($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*START\s*$/){```
-        - ex) // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToPPP(void):variant START
+- 3_recover.pl : add this funciton.  merge file between template and (working or worked) file
+    - usage : show makefile
+- 3_recover.sh : merge directories
+    - $ 3_recover.sh [template based generated dir] [working(modified) base dir] [merged(output) dir]
+        - when we add template , our merged directory will have result file from template.
+        - if some files exist in working dir only , they will be copied into  merged(output) dir.
+        - finally merged(output) dir will have all files both working(modified) directory and template based generated directory.
+- README.TOC.md with numbered TOC
+    - make toc
