@@ -1,39 +1,33 @@
+1\.  [CGA_RDL](#cga_rdl)  
+1.1\.  [RDL](#rdl)  
+1.2\.  [Explanation](#explanation)  
+1.3\.  [Description of Syntax (2_replace.pl)](#descriptionofsyntax2_replace.pl)  
+1.3.1\.  [Special case of use +<+ ....  +>+](#specialcaseofuse+<+....+>+)  
+1.3.2\.  [Control and Programming in RDL](#controlandprogramminginrdl)  
+1.4\.  [recover (3_recover.sh 3_recover.pl)](#recover3_recover.sh3_recover.pl)  
+2\.  [Purpose](#purpose)  
+3\.  [Environment](#environment)  
+3.1\.  [read excel](#readexcel)  
+3.2\.  [Install](#install)  
+3.2.1\.  [perl module install](#perlmoduleinstall)  
+4\.  [How to run the test](#howtorunthetest)  
+4.1\.  [example1 (test)](#example1test)  
+4.2\.  [example2 (stc)](#example2stc)  
+4.3\.  [example3 (stcI)](#example3stci)  
+5\.  [Process](#process)  
+6\.  [Relationship between each processes (excel & database & stc file )](#relationshipbetweeneachprocessesexcel&database&stcfile)  
+6.1\.  [Explanation of Example 1 (1_example.xlsx)](#explanationofexample11_example.xlsx)  
+6.1.1\.  [Excel](#excel)  
+6.1.2\.  [DataBase](#database)  
+6.1.3\.  [stc or stcI 's replacement](#stcorstci'sreplacement)  
+6.2\.  [Enhanced Example 2 with multiple [HEADER] for multi-dimension](#enhancedexample2withmultiple[header]formulti-dimension)  
+6.2.1\.  [Excel](#excel-1)  
+6.2.2\.  [DataBase](#database-1)  
+6.3\.  [Syntax and Explanation of RDL](#syntaxandexplanationofrdl)  
 
-Table of Contents
-=================
+<a name="cga_rdl"></a>
 
-   * [CGA_RDL](#cga_rdl)
-      * [RDL](#rdl)
-      * [Explanation](#explanation)
-      * [Description of Syntax (2_replace.pl)](#description-of-syntax-2_replacepl)
-         * [Special case of use  &lt;  ....   &gt; ](#special-case-of-use----)
-         * [Control and Programming in RDL](#control-and-programming-in-rdl)
-      * [recover (3_recover.sh 3_recover.pl)](#recover-3_recoversh-3_recoverpl)
-   * [Purpose](#purpose)
-   * [Environment](#environment)
-      * [read excel](#read-excel)
-      * [Install](#install)
-         * [perl module install](#perl-module-install)
-   * [How to run the test](#how-to-run-the-test)
-      * [example1 (test)](#example1-test)
-      * [example2 (stc)](#example2-stc)
-      * [example3 (stcI)](#example3-stci)
-   * [Process](#process)
-   * [Relationship between each processes (excel &amp; database &amp; stc file )](#relationship-between-each-processes-excel--database--stc-file-)
-      * [Explanation of Example 1 (1_example.xlsx)](#explanation-of-example-1-1_examplexlsx)
-         * [Excel](#excel)
-         * [DataBase](#database)
-         * [stc or stcI 's replacement](#stc-or-stci-s-replacement)
-      * [Enhanced Example 2 with multiple [HEADER] for multi-dimension](#enhanced-example-2-with-multiple-header-for-multi-dimension)
-         * [Excel](#excel-1)
-         * [DataBase](#database-1)
-      * [Syntax and Explanation of RDL](#syntax-and-explanation-of-rdl)
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-
-
-
-# CGA_RDL
+# 1\. CGA_RDL
 ```
 
    _____ _____            _____  _____  _
@@ -47,11 +41,15 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 ```
 
-## RDL
+<a name="rdl"></a>
+
+## 1.1\. RDL
 - Replacement Definition Language
 - Reduce the wasting time for tedious repetitive works
 
-## Explanation
+<a name="explanation"></a>
+
+## 1.2\. Explanation
 ![Architecture](png/Slide1.PNG)
 ![Syntax 1 of 2](png/Slide2.PNG)
 ![Syntax 2 of 2](png/Slide3.PNG)
@@ -59,19 +57,25 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 ![Mapping between excel and database](png/Slide5.PNG)
 ![Summary How to map](png/Slide6.PNG)
 
-## Description of Syntax (2_replace.pl)
+<a name="descriptionofsyntax2_replace.pl"></a>
+
+## 1.3\. Description of Syntax (2_replace.pl)
 - This is replacement tool with special syntax.
 	- ITERATE %Hash +<<+   ....   +>>+
 	- IFEQUAL(A eq B)+{{+  ....   +}}+
 	- +<+ ....  +>+
 
-### Special case of use +<+ ....  +>+
+<a name="specialcaseofuse+<+....+>+"></a>
+
+### 1.3.1\. Special case of use +<+ ....  +>+
 - we can add perl expression in +<+ .. +>+
     - ex) +<+ uc($fish) +>+ : convert $ fish to upper characters
 - add " " to use string as a key of hash in condition of IFEQUAL
     - ex) IFEQUAL("ITKEY" eq +<+ $fish{"IT2KEY"} +>+
 
-### Control and Programming in RDL
+<a name="controlandprogramminginrdl"></a>
+
+### 1.3.2\. Control and Programming in RDL
 - for make index of sequencial count
     - ex) test.cpp.stc
     - make test
@@ -102,7 +106,9 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 +>>+
 ```
 
-## recover (3_recover.sh 3_recover.pl)
+<a name="recover3_recover.sh3_recover.pl"></a>
+
+## 1.4\. recover (3_recover.sh 3_recover.pl)
 - 3_recover.pl (make 3)
     - Each file has unique key each file.
     - Rule : ```if($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*START\s*$/){```
@@ -116,10 +122,18 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
         - $2 : WORKING  BASE DIRECTORY  (test_recover/working)
         - $3 : MERGED   BASE DIRECTORY  (test_recover/merged)
 	- ex) sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
+        - $ 3_recover.sh [template based generated dir] [working(modified) base dir] [merged(output) dir]
+        - when we add template , our merged directory will have result file from template.
+        - if some files exist in working dir only , they will be copied into  merged(output) dir.
+        - finally merged(output) dir will have all files both working(modified) directory and template based generated directory.
+
 - when you show difference between two directories
     - ```$ diff -r A_directory B_directory```
+    - use merge tool (beyond compare or arxis merge) to compare
 
-# Purpose
+<a name="purpose"></a>
+
+# 2\. Purpose
 - Reduce the wasting time for tedious repetitive works
 	- Generally we have a lot of tedious repetitive job.  So in case of android , android supports to make a AIDL (Android Interface Definition Language) to make binder bn,bp services. So we can use easily with this template. But , it is just for android application.
 	- I wanna make a tool for more general purpose. So We will support simple definition. The simple definitions are Loop and Condition and Replacement's statements.
@@ -129,21 +143,33 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 	- repeted works (iteration) of if ... elseif  ... else ...
 	- repeted works (iteration) of lists
 
-# Environment
+<a name="environment"></a>
+
+# 3\. Environment
 - install perl module (cpan)
 - library MY::CHARLES in perllib directory
-## read excel
+<a name="readexcel"></a>
+
+## 3.1\. read excel
 https://perlmaven.com/read-an-excel-file-in-perl
-## Install
-### perl module install
+<a name="install"></a>
+
+## 3.2\. Install
+<a name="perlmoduleinstall"></a>
+
+### 3.2.1\. perl module install
 - cpan
 	- install Spreadsheet::Read
 		- When I run read.pl , I meet the following msg “Parser for XLSX is not installed at read.pl line 9.”
 	- install Spreadsheet::XLSX
 
 
-# How to run the test
-## example1 (test)
+<a name="howtorunthetest"></a>
+
+# 4\. How to run the test
+<a name="example1test"></a>
+
+## 4.1\. example1 (test)
 - cd CGA_RDL
 - make test
 	- Description
@@ -153,7 +179,9 @@ https://perlmaven.com/read-an-excel-file-in-perl
 		- 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
 			input : default.GV , test.cpp.stc
 			output : OUTPUT/stc/test.cpp
-## example2 (stc)
+<a name="example2stc"></a>
+
+## 4.2\. example2 (stc)
 - cd CGA_RDL
 - make
 	- Description
@@ -167,7 +195,9 @@ https://perlmaven.com/read-an-excel-file-in-perl
 			input : OUTPUT/stc/2_example.cpp , 3_working.cpp.data
 			output : 3_merge.cpp
 	- result : OUTPUT/stc/* and 3_merge.cpp
-## example3 (stcI)
+<a name="example3stci"></a>
+
+## 4.3\. example3 (stcI)
 - cd CGA_RDL/test/DIAG
 - make
 	- Description
@@ -181,7 +211,9 @@ https://perlmaven.com/read-an-excel-file-in-perl
 			output : OUTPUT/stc/*
 	- result : OUTPUT/stc/*
 
-# Process
+<a name="process"></a>
+
+# 5\. Process
 - Excel ---(1_exce.pl)---> Hash Data -----+
 - _________________________stc(I) File ---+--(2_replace.pl)---> output c/cpp files
 
@@ -280,11 +312,17 @@ Changed -down-> 3_recover.pl
 @enduml
 ```
 
-# Relationship between each processes (excel & database & stc file )
+<a name="relationshipbetweeneachprocessesexcel&database&stcfile"></a>
+
+# 6\. Relationship between each processes (excel & database & stc file )
 - The Headers in excel are related to variable name in stc file.
 
-## Explanation of Example 1 (1_example.xlsx)
-### Excel
+<a name="explanationofexample11_example.xlsx"></a>
+
+## 6.1\. Explanation of Example 1 (1_example.xlsx)
+<a name="excel"></a>
+
+### 6.1.1\. Excel
 - Header starts with "[HEADER]"
 - Excel file
 	- [Header]MODULENAME
@@ -303,7 +341,9 @@ $Related_Manager{audio}{Related_Manager} = audio
 $Related_Manager{audio}{VALUE} = X
 ```
 
-### DataBase
+<a name="database"></a>
+
+### 6.1.2\. DataBase
 - default.GV
 ```perl
   $Related_Manager{vif}{Related_Manager} = vif
@@ -312,7 +352,9 @@ $Related_Manager{audio}{VALUE} = X
   $Related_Manager{audio}{VALUE} = X
 ```
 
-### stc or stcI 's replacement
+<a name="stcorstci'sreplacement"></a>
+
+### 6.1.3\. stc or stcI 's replacement
 - stc
 ```cpp
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
@@ -333,8 +375,12 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
   - IFEQUAL(A eq B)+{{+ ......  +}}+
     - if A equals B , print .... in output file
 
-## Enhanced Example 2 with multiple [HEADER] for multi-dimension
-### Excel
+<a name="enhancedexample2withmultiple[header]formulti-dimension"></a>
+
+## 6.2\. Enhanced Example 2 with multiple [HEADER] for multi-dimension
+<a name="excel-1"></a>
+
+### 6.2.1\. Excel
 - Header starts with "[HEADER]"
 - Excel file
 	- example of excel
@@ -363,7 +409,9 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
     $MODULE{vif}{CAN}{y1} = 70
 ```
 
-### DataBase
+<a name="database-1"></a>
+
+### 6.2.2\. DataBase
 - default.GV
 ```perl
     $MODULE{telltale}{LEFT}{MODULE} = telltale
@@ -402,7 +450,9 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 ```
 
 
-## Syntax and Explanation of RDL
+<a name="syntaxandexplanationofrdl"></a>
+
+## 6.3\. Syntax and Explanation of RDL
 - stc
 	- FileName : DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc
 	- FileName : src/DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc/src

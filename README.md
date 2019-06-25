@@ -81,8 +81,14 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
         - $2 : WORKING  BASE DIRECTORY  (test_recover/working)
         - $3 : MERGED   BASE DIRECTORY  (test_recover/merged)
 	- ex) sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
+        - $ 3_recover.sh [template based generated dir] [working(modified) base dir] [merged(output) dir]
+        - when we add template , our merged directory will have result file from template.
+        - if some files exist in working dir only , they will be copied into  merged(output) dir.
+        - finally merged(output) dir will have all files both working(modified) directory and template based generated directory.
+
 - when you show difference between two directories
     - ```$ diff -r A_directory B_directory```
+    - use merge tool (beyond compare or arxis merge) to compare
 
 # Purpose
 - Reduce the wasting time for tedious repetitive works

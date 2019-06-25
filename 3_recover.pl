@@ -7,8 +7,6 @@ use Cwd  qw(abs_path);
 use lib dirname(dirname abs_path $0) . '/perllib';
 use lib abs_path . '/perllib';
 use lib abs_path . '/../perllib';
-use MY::CHARLES qw(traverse_tree_to_file);
-use MY::CHARLES qw(traverse_hash_tree);
 
 use Getopt::Long;
 my $workingFile   = "./3_working.cpp";
