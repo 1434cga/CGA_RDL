@@ -75,6 +75,7 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 	foreach my $i (1 .. scalar @rows) {
 		print " $i  $rows[$i-1][0] \n";
 		next if($rows[$i-1][0] =~ /^\s*$/) ;
+		next if($rows[$i-1][0] =~ /^\s*#/) ;
 		checkHeader($rows[$i-1][0]);
 		if($rows[$i-1][0] =~ /^\s*\[HEADER\]\s*(\S*)/){
 			$headerCnt = 0;
