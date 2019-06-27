@@ -1,4 +1,7 @@
-add comments when first column starts with #.
+Support a single variable. $VARIABLE{?}
 
-- 1_excel.pl : # this is comments.  (1_excel.pl ignores this row as comments when starts with #.)
-- 1_example.xlsx : example
+- Issue : I wanna get single variable not hash. #12
+	- modified:   1_example.xlsx
+        - example  [VARIABLE]Name
+	- modified:   1_excel.pl
+        - process [VARIABLE]tag
