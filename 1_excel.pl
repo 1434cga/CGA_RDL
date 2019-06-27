@@ -41,6 +41,7 @@ die "input file $input_file is not exist\n" unless (-e $input_file);
 print "excel input file = $input_file /  output file = $output_file\n";
 
 our %gTitle;
+our %VARIABLE;
 
 my $book = ReadData($input_file);
 
@@ -67,6 +68,9 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 	#for my $i (0 .. $#row) {
 		#say "$book->[1]{label} sheet Header:" . chr(65+$i) . (1) . ' ' . ($row[$i] // '');
 	#}
+    #
+    # Title Row starts with [VARIABLE].
+    # this is a single varialbe. so we will make %VARIABLE
 	my @rows = Spreadsheet::Read::rows($book->[1]);
 	my @title;
 	my $headerCnt = 0;
@@ -77,7 +81,10 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 		next if($rows[$i-1][0] =~ /^\s*$/) ;
 		next if($rows[$i-1][0] =~ /^\s*#/) ;
 		checkHeader($rows[$i-1][0]);
-		if($rows[$i-1][0] =~ /^\s*\[HEADER\]\s*(\S*)/){
+		if($rows[$i-1][0] =~ /^\s*\[VARIABLE\]\s*(\S*)/){
+            $gTitle{VARIABLE}{$1} = $rows[$i-1][1];
+            $VARIABLE{$1} = $rows[$i-1][1];
+        } elsif($rows[$i-1][0] =~ /^\s*\[HEADER\]\s*(\S*)/){
 			$headerCnt = 0;
 			$titleCnt = 0;
 			delete @title[0 .. $#title];
