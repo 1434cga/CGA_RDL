@@ -78,7 +78,9 @@ sub IChange
 	my $stcI_extension="";
 	my $stcI_filepostfix="";
 	my $stcI_fileprefix="";
-	my $stcI_filebody="";
+	my $stcI_filebody="YES";
+	my $stcI_file_lower = "NO";
+    my $stcI_all_lower = "NO";
 	my $stcI_lines = "";
 	my @stcI_lines;
 	my $stcfilename="";
@@ -131,6 +133,10 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
         }
 		$stcfilename =~ s/KEY/$temp/g;
 		$stcfilename =~ s/VALUE/$$stcI_for{$temp}/g;
+        print "final file name 1 : $stcfilename";
+		$stcfilename = replace_var_with_value($stcfilename);
+        print "final file name 2 : $stcfilename";
+		$ttt = replace_var_with_value($ttt);
         if($stcI_all_lower eq "YES"){ $stcfilename = lc($stcfilename); }
         my $stcNoDirectoryName = $stcfilename;
         $stcNoDirectoryName =~ s/\//_/g;
