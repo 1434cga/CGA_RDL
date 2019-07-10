@@ -1,9 +1,9 @@
 stcI_HASH : Module_Name
-stcI_FILEPREFIX : KEYManagerService/include/I
+stcI_FILEPREFIX : +<+uc(KEY)+>+ManagerService/include/I
 stcI_FILEPOSTFIX : ManagerService
 stcI_EXTENSION : h
 Set : $iterate_comments = OFF
-SetI : $MODULENAME = KEY
+SetI : $MODULENAME = +<+uc(KEY)+>+
 // FileName - I+<+ucfirst($MODULENAME)+>+ManagerService.h
 /**
  * \file    I+<+ucfirst($MODULENAME)+>+ManagerService.h
