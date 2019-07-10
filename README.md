@@ -382,15 +382,30 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 - stcI
 	- stcI_HASH : PPP    -> generate multiple files from hash PPP (PPP is Header name in excel file.)
 		- generated multiple file in example -> ???type???.???   , ???length???.???
-	- stcI_EXTENSION : cpp
-		- generated multiple file in example -> ???type???.cpp   , ???length???.cpp
+	- stcI_FILEBODY = "YES"  or "NO" : default => YES  , + is concatenation
+		- if stcI_FILEBODY is YES , file name is made by following order : stcI_FILEPREFIX + **KEY** + stcI_FILEPOSTFIX . stcI_EXTENTION
+		- if stcI_FILEBODY is NO , file name is made by following order : stcI_FILEPREFIX + stcI_FILEPOSTFIX . stcI_EXTENTION
+	- stcI_FILE_LOWER = "NO"  or "YES" : default => NO  , + is concatenation
+		- if stcI_FILEBODY is YES (default) && stcI_FILE_LOWER is YES , file name is made by following order : stcI_FILEPREFIX + **lc(KEY)** + stcI_FILEPOSTFIX . stcI_EXTENTION
+			- lc(KEY) means lower characters.
+	- stcI_ALL_LOWER = "NO"  or "YES" : default => NO  , + is concatenation
+		- if stcI_ALL_LOWER is YES ,  all file name is made by following order : lc(stcI_FILEPREFIX + KEY + stcI_FILEPOSTFIX . stcI_EXTENTION)
+			- lc(...) means lower characters.		
+	- stcI_EXTENSION : **cpp**
+		- generated multiple file in example -> ???type???.**cpp**   , ???length???.**cpp**
 	- stcI_FILEPREFIX : I
 		- generated multiple file in example -> Itype???.cpp   , Ilength???.cpp
+		- use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
+			- stcI_FILEPREFIX:+<+lc(KEY)+>+I  =>  wifiI
 	- stcI_FILEPOSTFIX : Manager
 		- generated multiple file in example -> ItypeManager.cpp   , IlengthManager.cpp
+		- use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
+			- stcI_FILEPOSTFIX:+<+uc(KEY)+>+man  =>  WIFIman
 	- SetI : $MODULENAME = KEY
 		- $MODULENAME=type in ItypeManaager.cpp
 		- $MODULENAME=length in IlengthManaager.cpp
+		- use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
+			- SetI : $MODULENAME = +<+uc(KEY)+>+    =>   $MODULENAME = WIFI
 	- example 1 (test/DIAG/IXXXManagerService.h.stcI)
 		- Module_Name has 2 keys : Diag and Antenna
 			- stcI_HASH : Module_Name
