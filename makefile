@@ -16,7 +16,7 @@ test_recover: 3_recover.sh
 3:
 	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 toc:
-	markdown-pp README.mdpp -o README.TOC.md
+	markdown-pp README.mdpp -o README.md
 clean:
 	rm -rf *.log
 	rm -rf OUTPUT
