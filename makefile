@@ -8,6 +8,9 @@ all:
 test: test.pl test.xlsx
 	perl test.pl --input=test.xlsx
 	perl 2_replace.pl default.GV test.cpp.stc
+test2: test/TIDL.xlsx test/test2.cpp.stcI
+	perl 1_excel.pl --input=./test/TIDL.xlsx
+	perl 2_replace.pl default.GV test/test2.cpp.stcI
 test_recover: 3_recover.sh
 	sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
 3:
