@@ -18,37 +18,37 @@ if [ -z "$3" ]; then
     exit 1
 fi
 
-FILE="/home/vivek/lighttpd.tar.gz"
-basename "$FILE"
-f="$(basename -- $FILE)"
-echo "result : $f"
+#FILE="/home/vivek/lighttpd.tar.gz"
+#basename "$FILE"
+#f="$(basename -- $FILE)"
+#echo "result : $f"
+#
 
-
-file="/home/vivek/.gpass/passwd.enc"
-basename $file 
-echo "result : ${file##*/}"
-
-file="/home/vivek/.gpass/passwd.enc"
-basename $file .enc
-## without using basename ##
-t="${t%.enc}"
-echo "$t"
+#file="/home/vivek/.gpass/passwd.enc"
+#basename $file 
+#echo "result : ${file##*/}"
+#
+#file="/home/vivek/.gpass/passwd.enc"
+#basename $file .enc
+### without using basename ##
+#t="${t%.enc}"
+#echo "$t"
 
 _self="${0##*/}"
 echo "$_self is called"
 
-FILE="/home/vivek/lighttpd.tar.gz"
-echo "${FILE#*.}"     # print tar.gz
-echo "${FILE##*.}"    # print gz
-ext="${FILE#*.}"      # store output in a shell variable 
-echo "$FILE has $ext" # display it
+#FILE="/home/vivek/lighttpd.tar.gz"
+#echo "${FILE#*.}"     # print tar.gz
+#echo "${FILE##*.}"    # print gz
+#ext="${FILE#*.}"      # store output in a shell variable 
+#echo "$FILE has $ext" # display it
 
-echo ${FILE} | grep -o '[^/]*$'
-echo "this ${FILE}" | grep -o '^[^/]*$'
-pwd | awk -F / '{print $NF}'
+#echo ${FILE} | grep -o '[^/]*$'
+#echo "this ${FILE}" | grep -o '^[^/]*$'
+#pwd | awk -F / '{print $NF}'
 
-DIR=$(dirname "${FILE}")
-echo "directory ${DIR}"
+#DIR=$(dirname "${FILE}")
+#echo "directory ${DIR}"
 
 
 EXE_DIR=$(dirname $0)
@@ -77,6 +77,12 @@ tput sgr0
 #exit 0
 
 cdir=`pwd`
+
+if test "$1" = "$3"
+then
+    echo "ERROR : You should different directory between template and merged result directory!"
+    exit 4
+fi
 
 echo "==== cp -r ${cdir}/$2   ${cdir}/$3" 
 cp -r "${cdir}/$2"   "${cdir}/$3" 
