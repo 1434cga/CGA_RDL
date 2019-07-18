@@ -18,6 +18,26 @@ if [ -z "$3" ]; then
     exit 1
 fi
 
+if [ -d "$1" ]; then
+    tput setaf 3
+    echo "### $1 exist ###"
+    tput sgr0
+else
+    echo "ERROR : $1 does not exist ###"
+    exit 4
+fi
+
+if [ -d "$2" ]; then
+    tput setaf 3
+    echo "### $2 exist ###"
+    tput sgr0
+else
+    echo "ERROR : $2 does not exist ###"
+    exit 4
+fi
+
+mkdir -p $3
+
 #FILE="/home/vivek/lighttpd.tar.gz"
 #basename "$FILE"
 #f="$(basename -- $FILE)"
@@ -74,8 +94,6 @@ tput sgr0
 ## 7    white     COLOR_WHITE     1,1,1
 ## sgr0 Reset text format to the terminal's default
 
-#exit 0
-
 cdir=`pwd`
 
 if test "$1" = "$3"
@@ -85,8 +103,10 @@ then
 fi
 
 echo "==== cp -r ${cdir}/$2   ${cdir}/$3" 
-cp -r "${cdir}/$2"   "${cdir}/$3" 
+cp -rf "${cdir}/$1/*"   "${cdir}/$3" 
+cp -rf "${cdir}/$2/*"   "${cdir}/$3" 
 
+rm -f recover.log
 cd $1
 for i in `find . -type f -print`
 do
@@ -98,8 +118,9 @@ do
     if [ -e "${cdir}/$2/${i}" ]
     then
         echo "perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i}"
+        echo "perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i}" >> recover.log
         tput sgr0
-        perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i}
+        perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i} >> recover.log
         #perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
     else
         echo "cp -f ${cdir}/$1/${i}   ${cdir}/$3/${i}" 
