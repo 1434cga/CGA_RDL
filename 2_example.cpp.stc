@@ -3,39 +3,39 @@ Set : $iterateInputFileName = DiagInputManager.cpp
 Set : $iterate_comments = OFF
 
 IFEQUAL(+<+$Related_Manager{vif}{VALUE}+>+  eq "O")+{{+
-/*!! vif Inheritance CGA start-------------------------------------------------*/		
+/* vif Inheritance CGA start-------------------------------------------------*/		
 #include <services/vifManagerService/IvifManagerService.h>
 #include <services/vifManagerService/IvifManagerReceiver.h>
 #include <services/vifManagerService/IvifManagerServiceType.h>
-/*!! vif Inheritance CGA end-------------------------------------------------*/ 
+/* vif Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 
 IFEQUAL(+<+$Related_Manager{system}{VALUE}+>+  eq "O")+{{+
 #include <services/SystemManagerService/ISystemReceiver.h>
 #include <services/SystemManagerService/ISystemManagerService.h>
 #include <services/SystemManagerService/ISystemManagerServiceType.h>
-/*!! system Inheritance CGA end-------------------------------------------------*/ 
+/* system Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 
 IFEQUAL(+<+$Related_Manager{hmi}{VALUE}+>+  eq "O")+{{+
-/*!! hmi Inheritance CGA start-------------------------------------------------*/		
+/* hmi Inheritance CGA start-------------------------------------------------*/		
 #include <services/HMIManagerService/IHMIManagerService.h>
 #include <services/HMIManagerService/IHMIManagerServiceType.h>
-/*!! hmi Inheritance CGA end-------------------------------------------------*/ 
+/* hmi Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 
 IFEQUAL(+<+$Related_Manager{loc}{VALUE}+>+  eq "O")+{{+
-/*!! loc Inheritance CGA start-------------------------------------------------*/		
+/* loc Inheritance CGA start-------------------------------------------------*/		
 #include <services/LocationManagerService/ILocationManagerService.h>
 #include <services/LocationManagerService/ILocationManagerServiceType.h>
-/*!! loc Inheritance CGA end-------------------------------------------------*/ 
+/* loc Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 
 IFEQUAL(+<+$Related_Manager{audio}{VALUE}+>+  eq "O")+{{+
-/*!! Audio Inheritance CGA start-------------------------------------------------*/ 
+/* Audio Inheritance CGA start-------------------------------------------------*/ 
 #include <services/AudioManagerService/IAudioManagerService.h>
 #include <services/AudioManagerService/IAudioManagerServiceType.h>
-/*!! Audio Inheritance CGA end-------------------------------------------------*/	
+/* Audio Inheritance CGA end-------------------------------------------------*/	
 +}}+
 
 #include <utils/watchdog/watchdog_client.h>
@@ -71,22 +71,26 @@ class DiagInputManager {
 };
 
 
+/**
+ * @CGA_VARIANT_START{"DiagInputManager::DiagconnectToAudioMgr(void)"}
+ * @CGA_VARIANT_END{"DiagInputManager::DiagconnectToAudioMgr(void)"}
+ */
 DiagInputManager::DiagInputManager(android::sp<DiagManagerService> diagMgrService)
 		: mDiagMgrService(diagMgrService), each_packet_ptr(0), mDiagInputMgrTimer(NULL)
 {
 
-/*!! appmgr Inheritance CGA start-------------------------------------------------*/		
+/* appmgr Inheritance CGA start-------------------------------------------------*/		
 	mAppManager = NULL;
     mSystemPostReceiver = NULL;
-/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
+/* appmgr Inheritance CGA end-------------------------------------------------*/ 
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
-/*!! ITKEY Inheritance CGA start-------------------------------------------------*/		
+/* ITKEY Inheritance CGA start-------------------------------------------------*/		
 	m+<+ucfirst("ITKEY")+>+Manager = NULL;
     m+<+ucfirst("ITKEY")+>+Receiver = NULL;
     m+<+ucfirst("ITKEY")+>+PostReceiver = NULL;
-/*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
+/* ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 
 +>>+
@@ -96,6 +100,11 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 
 }
 
+/**
+ * @brief destructor
+ * @CGA_VARIANT_START{"DiagInputManager::DiagconnectToAudioMgr(void)"}
+ * @CGA_VARIANT_END{"DiagInputManager::DiagconnectToAudioMgr(void)"}
+ */
 DiagInputManager::~DiagInputManager()
 {
     if (mDiagInputMgrTimer != NULL) {
@@ -103,6 +112,7 @@ DiagInputManager::~DiagInputManager()
     }
 }
 
+// @brief init
 error_t DiagInputManager::init()
 {
     error_t result = E_OK;
@@ -112,15 +122,15 @@ error_t DiagInputManager::init()
     result = mProcessDataManager->init();
     mMyHandler = new DiagHandler(mDiagMgrService->looper(), *this);
 
-/*!! appmgr Inheritance CGA start-------------------------------------------------*/		
+/* appmgr Inheritance CGA start-------------------------------------------------*/		
     connectToAppMgr();
-/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
+/* appmgr Inheritance CGA end-------------------------------------------------*/ 
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
-/*!! ITKEY Inheritance CGA start-------------------------------------------------*/		
+/* ITKEY Inheritance CGA start-------------------------------------------------*/		
     connectTo+<+ucfirst("ITKEY")+>+Mgr();
-/*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
+/* ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 +>>+
 
@@ -147,7 +157,7 @@ void DiagInputManager::handleMessage(const android::sp<sl::Message>& msg)
 
     switch (what) {
 
-/*!! appmgr Inheritance CGA start-------------------------------------------------*/		
+/* appmgr Inheritance CGA start-------------------------------------------------*/		
 	case MSG_CONNECT_TO_APPMGR:
         LOGV("handleMessage MSG_CONNECT_TO_APPMGR");
         mDiagInputMgr.connectToAppMgr();
@@ -157,11 +167,11 @@ void DiagInputManager::handleMessage(const android::sp<sl::Message>& msg)
 	    LOGV("handleMessage MSG_RECEIVE_BOOT_COMPLETE");
 	    mDiagInputMgr.TimerStart();
 	    break;	
-/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
+/* appmgr Inheritance CGA end-------------------------------------------------*/ 
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
-/*!! ITKEY Inheritance CGA start-------------------------------------------------*/		
+/* ITKEY Inheritance CGA start-------------------------------------------------*/		
     case MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR:
         LOGV("handleMessage MSG_CONNECT_TO_+<+uc(ITKEY)+>+MGR");
         mDiagInputMgr.connectTo+<+ucfirst("ITKEY")+>+Mgr();
@@ -171,11 +181,11 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 		LOGV("handleMessage MSG_RECEIVE_FROM_+<+uc(ITKEY)+>+ sigID : %x", msg->arg1);
 		mDiagInputMgr.messagefrom+<+ucfirst("ITKEY")+>+((uint16_t)msg->arg1, buf);
 		break;
-/*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
+/* ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 +>>+
 
-/*!! DID_WORK_FOR_DEFINE_? case CGA start-------------------------------------------------*/
+/* DID_WORK_FOR_DEFINE_? case CGA start-------------------------------------------------*/
     //case MSG_DID_WORK_FOR_DEFINE_1:
         //LOGV("handleMessage MSG_DID_WORK_FOR_DEFINE_1");
         //mDiagInputMgr.DID_WORK_FOR_DEFINE(msg->arg1);
@@ -186,7 +196,7 @@ ITERATE %Function +<<+ ITKEY  ITVALUE
         mDiagInputMgr.ITKEY(msg->arg1);
         break;
 +>>+
-/*!! DID_WORK_FOR_DEFINE_? case CGA end-------------------------------------------------*/
+/* DID_WORK_FOR_DEFINE_? case CGA end-------------------------------------------------*/
 
     case MSG_DIAGDATA_QUEUE:
         LOGV("handleMessage MSG_DIAGDATA_QUEUE");
@@ -258,19 +268,19 @@ void DiagInputManager::connectTo+<+ucfirst("ITKEY")+>+Mgr(void)
 
 void DiagInputManager::onServiceBinderDied(const android::wp<android::IBinder>& who)
 {
-/*!! appmgr Inheritance CGA start-------------------------------------------------*/ 		
+/* appmgr Inheritance CGA start-------------------------------------------------*/ 		
     if (mAppManager != NULL && android::IInterface::asBinder(mAppManager) == who) {
         LOGW("killed AppManager!!");
         connectToAppMgr();
-/*!! appmgr Inheritance CGA end-------------------------------------------------*/ 
+/* appmgr Inheritance CGA end-------------------------------------------------*/ 
 
 ITERATE %Related_Manager +<<+ ITKEY  ITVALUE
 IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
-/*!! ITKEY Inheritance CGA start-------------------------------------------------*/ 
+/* ITKEY Inheritance CGA start-------------------------------------------------*/ 
     } else if (m+<+ucfirst("ITKEY")+>+Manager != NULL && android::IInterface::asBinder(m+<+ucfirst("ITKEY")+>+Manager) == who) {
         LOGW("killed m+<+ucfirst("ITKEY")+>+Manager!!");
         connectTo+<+ucfirst("ITKEY")+>+Mgr();
-/*!! ITKEY Inheritance CGA end-------------------------------------------------*/ 
+/* ITKEY Inheritance CGA end-------------------------------------------------*/ 
 +}}+
 +>>+
     } else {
@@ -279,13 +289,13 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 }
 
 ITERATE %Function +<<+ ITKEY  ITVALUE
-/*!! ITKEY func body CGA start-------------------------------------------------*/
+/* ITKEY func body CGA start-------------------------------------------------*/
 error_t DiagInputManager::ITKEY(android::sp<DiagData>& mdiagData)
 {
 	error_t result = E_OK;
 	return result;
 }
-/*!! ITKEY func body CGA end-------------------------------------------------*/
+/* ITKEY func body CGA end-------------------------------------------------*/
 
 +>>+
 
