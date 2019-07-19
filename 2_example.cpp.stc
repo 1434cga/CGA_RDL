@@ -48,6 +48,29 @@ IFEQUAL(+<+$Related_Manager{audio}{VALUE}+>+  eq "O")+{{+
 
 #include "HMIType.h"
 
+
+class DiagInputManager {
+    DiagInputManager(android::sp<DiagManagerService> diagMgrService);
+    ~DiagInputManager();
+    error_t init();
+    void handleMessage(const android::sp<sl::Message>& msg);
+    void connectToAudioMgr(void);
+    void connectToHmiMgr(void);
+    void connectToVifMgr(void);
+    void onServiceBinderDied(const android::wp<android::IBinder>& who);
+    error_t DID_WORK_FOR_DEFINE_0(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_1(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_2(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_3(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_4(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_5(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_6(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_7(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_8(android::sp<DiagData>& mdiagData);
+    error_t DID_WORK_FOR_DEFINE_9(android::sp<DiagData>& mdiagData);
+};
+
+
 DiagInputManager::DiagInputManager(android::sp<DiagManagerService> diagMgrService)
 		: mDiagMgrService(diagMgrService), each_packet_ptr(0), mDiagInputMgrTimer(NULL)
 {
@@ -113,7 +136,7 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
     return result;
 }
 
-void DiagInputManager::DiagHandler::handleMessage(const android::sp<sl::Message>& msg)
+void DiagInputManager::handleMessage(const android::sp<sl::Message>& msg)
 {
     const int32_t what = msg->what;
 
