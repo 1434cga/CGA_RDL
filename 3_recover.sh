@@ -102,9 +102,10 @@ then
     exit 4
 fi
 
-echo "==== cp -r ${cdir}/$2   ${cdir}/$3" 
-cp -rf "${cdir}/$1/*"   "${cdir}/$3" 
-cp -rf "${cdir}/$2/*"   "${cdir}/$3" 
+echo "==== cp -r ${cdir}/$1/*   ${cdir}/$3" 
+cp -rf ${cdir}/$1/*   ${cdir}/$3 
+echo "==== cp -r ${cdir}/$2/*   ${cdir}/$3" 
+cp -rf ${cdir}/$2/*   ${cdir}/$3 
 
 rm -f recover.log
 cd $1
@@ -124,7 +125,7 @@ do
         #perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
     else
         echo "cp -f ${cdir}/$1/${i}   ${cdir}/$3/${i}" 
-        cp -f "${cdir}/$1/${i}" "${cdir}/$3/${i}" 
+        cp -f ${cdir}/$1/${i} ${cdir}/$3/${i} 
     fi
 done
 cd ..
