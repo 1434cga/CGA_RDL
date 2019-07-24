@@ -115,13 +115,19 @@ do
     cd ${cdir}
     tput setaf 3
     echo "#### filename : $i ####"
-    tput setaf 4
+    tput sgr0
     if [ -e "${cdir}/$2/${i}" ]
     then
         echo "perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i}"
         echo "perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i}" >> recover.log
         tput sgr0
         perl ${EXE_DIR}/3_recover.pl --template=${cdir}/$1/${i} --working=${cdir}/$2/${i} --merge=${cdir}/$3/${i} >> recover.log
+        if [ $? -ne "0" ]; then
+            tput setaf 1
+            echo "ERROR : $?"
+            tput sgr0
+            exit 4
+        fi
         #perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
     else
         echo "cp -f ${cdir}/$1/${i}   ${cdir}/$3/${i}" 

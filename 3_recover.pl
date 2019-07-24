@@ -165,9 +165,12 @@ foreach my $key (sort keys %gBlock){
 	print "[MATCHED:$cnt] UsedCnt==> [$gBlockUsedCnt{$key}]\n";
     if($gBlockUsedCnt{$key} == 0){
         print "\n** ERROR: this KEY does not exist in Template. => $key\n\n";
+        print STDERR "\n** ERROR: this KEY does not exist in Template. => $key\n\n";
     }
     if($gBlockUsedCnt{$key} > 1){
         print "\n** ERROR: this KEY used so many in Template. => $key\n\n";
+        print STDERR "\n** ERROR: this KEY used so many in Template. => $key\n\n";
+        exit 4;
     }
     $cnt++;
 }
