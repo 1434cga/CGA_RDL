@@ -51,14 +51,14 @@ while($in = <INPUTWORK>){
         $in = "$1\@CGA_VARIANT_END\{\"$2\"\}\n";
     }
 
-	if($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_START\{\"([^"}]*)\"\}\s*$/){
+	if($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		die "[WORK] $myLineCount:$in $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
 		#;; print "v1 $myBlockName START\n";
 		die "[WORK] $myLineCount:$in $myBlockName already existed.\n" unless ($gBlock{$myBlockName} eq "");
-	} elsif($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_END\{\"([^"}]*)\"\}\s*$/){
+	} elsif($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		my $myMatch = removeSpace($1);
 		#;; print "v2 $myMatch [$myBlockName] END\n";
 		if($myBlockName ne $myMatch){
@@ -112,14 +112,14 @@ while($in = <TEMPLATE>){
         $in = "$1\@CGA_VARIANT_END\{\"$2\"\}\n";
     }
 
-	if($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_START\{\"([^"}]*)\"\}\s*$/){
+	if($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		die "[TEMPLATE] $myLineCount:$in $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
 		#;; print "v3 $myBlockName START\n";
 		print MERGE $in;
-	} elsif($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_END\{\"([^"}]*)\"\}\s*$/){
+	} elsif($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		my $myMatch = removeSpace($1);
 		#;; print "v4 $myMatch [$myMatch] END\n";
 		if($myBlockName ne $myMatch){
@@ -164,10 +164,13 @@ foreach my $key (sort keys %gBlock){
 	print "[MATCHED:$cnt] Source==> [$gBlock{$key}]\n";
 	print "[MATCHED:$cnt] UsedCnt==> [$gBlockUsedCnt{$key}]\n";
     if($gBlockUsedCnt{$key} == 0){
-        print "\n** ERROR: this KEY does not exist in Template. => $key\n\n";
+        print "\n** WARNING : this KEY does not exist in Template. But, work has it. => $key\n\n";
+        print STDERR "\n** WARNING : this KEY does not exist in Template. But, work has it. => $key\n\n";
     }
     if($gBlockUsedCnt{$key} > 1){
         print "\n** ERROR: this KEY used so many in Template. => $key\n\n";
+        print STDERR "\n** ERROR: this KEY used so many in Template. => $key\n\n";
+        exit 4;
     }
     $cnt++;
 }
