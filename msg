@@ -1,12 +1,8 @@
-Solve the issue #17
+generate [ModuleName].module file
 
-we need the merging syntax in doxygen comments.
-// CGA_VARIANT .. syntax does not wok well in doxygen syntax.
+[ModuleName].module  includes csv file name
+It will be used to copy this csv in proper area (directory).
+- csv_copy.pl 
 
-- 3_recover.pl change the CGA_VARIANT type
-    - ```// @CGA_VARIANT:xxxx START```  ->  ```// @CGA_VARIANT_START{xxxx}``` : in C++
-    - ``` * @CGA_VARIANT:xxxx START```  ->  ``` * @CGA_VARIANT_START{xxxx}``` : in doxygen comments
-
-	modified:   2_example.cpp.stc
-	modified:   3_recover.pl
-	modified:   3_working.cpp.data
+	modified:   1_excel.pl
+	modified:   makefile

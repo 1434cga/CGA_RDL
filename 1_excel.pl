@@ -191,6 +191,14 @@ foreach my $key (sort keys %gTitle){
 	traverse_tree_to_file(\%$key,"$key",">>",$output_file);
 }
 
+foreach $mn (keys %Module_Name){
+    my $lmn = lc($mn) . ".modulename";
+    open(my $mnfh, ">", $lmn)
+     or die "Can't open > $lmn : $!";
+    print $mnfh "$csv_file";
+    close($mnfh);
+}
+
 sub FixXML {
     $parm = $_[0];
     $parm =~ s/&amp;/&/g;

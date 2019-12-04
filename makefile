@@ -21,6 +21,7 @@ toc:
 	markdown-pp README.mdpp -o README.md
 clean:
 	rm -rf *.log
+	rm -rf *.modulename
 	rm -rf *.csv
 	rm -rf OUTPUT
 	rm -rf *.GV
