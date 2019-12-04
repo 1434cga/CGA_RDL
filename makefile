@@ -13,12 +13,15 @@ test2: test/TIDL.xlsx test/test2.cpp.stcI
 	perl 2_replace.pl default.GV test/test2.cpp.stcI
 test_recover: 3_recover.sh
 	sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
+1:
+	perl 1_excel.pl --input=./test/TIDL.xlsx --csv_out=1.csv
 3:
 	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 toc:
 	markdown-pp README.mdpp -o README.md
 clean:
 	rm -rf *.log
+	rm -rf *.csv
 	rm -rf OUTPUT
 	rm -rf *.GV
 	rm -rf 3_merge.cpp

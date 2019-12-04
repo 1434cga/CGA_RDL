@@ -22,10 +22,12 @@ use MY::CHARLES qw(traverse_hash_tree);
 use Getopt::Long;
 my $input_file   = "./1_example.xlsx";
 my $output_file = "./default.GV";
+my $csv_file = "./1_example.csv";
 my $help=0;
 my $verbose;
 GetOptions ("output=s" => \$output_file,    # string
 		"input=s"   => \$input_file,      # string
+		"csv_output=s"   => \$csv_file,      # string
 		"verbose|help"  => sub { $help = 1 })   # flag
 or  die(help() . "Error in command line arguments\n");
 
@@ -38,12 +40,14 @@ print "[" . abs_path . "]\n";
 
 die "input file $input_file is not exist\n" unless (-e $input_file);
 
-print "excel input file = $input_file /  output file = $output_file\n";
+print "excel input file = $input_file /  output file = $output_file / csv out file = $csv_file\n";
 
 our %gTitle;
 our %VARIABLE;
 
 my $book = ReadData($input_file);
+open(my $csvfh, ">", $csv_file)
+    or die "Can't open > $csv_file : $!";
 
 say '[0] A1: ' . $book->[0]{A1};
 say '[1] A1: ' . $book->[1]{A1};
@@ -77,7 +81,14 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 	my $titleCnt = 0;
 	my $titleName = "";
 	foreach my $i (1 .. scalar @rows) {
-		print " $i  $rows[$i-1][0] \n";
+		print "RAW $i  $rows[$i-1][0] \n";
+        {
+			my @row = Spreadsheet::Read::row($book->[1], $i);
+			for my $j (0 .. $#row) {
+                print $csvfh "\"" . FixXML($row[$j]) . "\",";
+            }
+            print $csvfh "\n";
+        }
 		next if($rows[$i-1][0] =~ /^\s*$/) ;
 		next if($rows[$i-1][0] =~ /^\s*#/) ;
 		checkHeader($rows[$i-1][0]);
@@ -174,11 +185,10 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 hashTraverseSTDOUT();
 
 # $gPrintHashName{"LXID_ROTATE"} = "telltale of type ROTATE";
-$file = "./default.GV";
-unlink $file;  # or warn "Could not unlink $file: $!";
-traverse_tree_to_file(\%gTitle,"gTitle",">>",$file);
+unlink $output_file;  # or warn "Could not unlink $output_file: $!";
+traverse_tree_to_file(\%gTitle,"gTitle",">>",$output_file);
 foreach my $key (sort keys %gTitle){
-	traverse_tree_to_file(\%$key,"$key",">>",$file);
+	traverse_tree_to_file(\%$key,"$key",">>",$output_file);
 }
 
 sub FixXML {
@@ -259,5 +269,7 @@ sub help
 	printf("\t\t  default input file name : $input_file\n");
 	printf("\t--output=[output file with global variables]\n");
 	printf("\t\t  default output file name : $output_file\n");
+	printf("\t--csv_out=[csv output file]\n");
+	printf("\t\t  default csv output file name : $csv_file\n");
 	printf("\t--help\n");
 }
