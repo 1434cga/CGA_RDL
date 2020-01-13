@@ -23,6 +23,16 @@ sub minus {
     return  $num;
 }
 
+sub ifthisthenthat {
+    my $my_if = shift @_;
+    my $my_this = shift @_;
+    my $my_that = shift @_;
+    #print STDERR "my_if : $my_if\n";
+    #print STDERR "my_this : $my_this\n";
+    if($my_if){ return $my_this; }
+    else { return $my_that; }
+}
+
 sub start_time_log {
 	my $tmpLogInit = shift @_;
 	($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time) ;
