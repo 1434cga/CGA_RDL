@@ -51,19 +51,19 @@ while($in = <INPUTWORK>){
         $in = "$1\@CGA_VARIANT_END\{\"$2\"\}\n";
     }
 
-	if($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
+	if($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		die "[WORK] $myLineCount:$in $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
-		#;; print "v1 $myBlockName START\n";
+		;; print "$myLineCount : v1 $myBlockName START\n";
 		die "[WORK] $myLineCount:$in $myBlockName already existed.\n" unless ($gBlock{$myBlockName} eq "");
-	} elsif($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
+	} elsif($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		my $myMatch = removeSpace($1);
-		#;; print "v2 $myMatch [$myBlockName] END\n";
+		;; print "$myLineCount : v2 $myMatch [$myBlockName] END\n";
 		if($myBlockName ne $myMatch){
 			$myBlockData .= $in;
-			die "[WORK] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
+			die "[WORK] $myLineCount: Block Name is not matched.\n\tSTART: $myBlockName\n\tEND  : $myMatch\n";
 		} else {
 			die "[WORK] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
 			$gBlock{$myBlockName} = $myBlockData;
@@ -112,14 +112,14 @@ while($in = <TEMPLATE>){
         $in = "$1\@CGA_VARIANT_END\{\"$2\"\}\n";
     }
 
-	if($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
+	if($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		die "[TEMPLATE] $myLineCount:$in $myBlockName is not finished. (no end)\n" unless ($myFlag == 0);
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
 		#;; print "v3 $myBlockName START\n";
 		print MERGE $in;
-	} elsif($in =~ /^\s*[\/\*]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
+	} elsif($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		my $myMatch = removeSpace($1);
 		#;; print "v4 $myMatch [$myMatch] END\n";
 		if($myBlockName ne $myMatch){
