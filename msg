@@ -1,8 +1,4 @@
-generate [ModuleName].module file
+error gives the wrong number and message. solve #21
 
-[ModuleName].module  includes csv file name
-It will be used to copy this csv in proper area (directory).
-- csv_copy.pl 
-
-	modified:   1_excel.pl
-	modified:   makefile
+solev #21
+- when we meet mismatch between START and END , he will give the error for worked file.
