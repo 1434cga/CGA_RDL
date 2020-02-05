@@ -46,7 +46,7 @@ print STDERR "version file : $version_input_file\n";
 if($version_input_file ne ""){
     open(my $verfh, "<", $version_input_file);
     my $s = <$verfh>;
-    $s =~ /\s*v\s*(\d+)\.(\d+)\.(\d+)\s*/;
+    $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
     $verMajor = $1;
     $verMinor = $2;
     $verDev = $3;
@@ -207,7 +207,7 @@ if($version_input_file ne ""){
     my $tmpMinor = 0;
     my $tmpDev = 0;
     my $s = $gTitle{"VARIABLE"}{"Excel_Version"};
-    $s =~ /\s*v\s*(\d+)\.(\d+)\.(\d+)\s*/;
+    $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
     $tmpMajor = $1;
     $tmpMinor = $2;
     $tmpDev = $3;
