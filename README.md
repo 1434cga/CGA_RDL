@@ -61,9 +61,9 @@
 
 ## 1.3\. Description of Syntax (2_replace.pl)
 - This is replacement tool with special syntax.
-	- ITERATE %Hash +<<+   ....   +>>+
-	- IFEQUAL(A eq B)+{{+  ....   +}}+
-	- +<+ ....  +>+
+    - ITERATE %Hash +<<+   ....   +>>+
+    - IFEQUAL(A eq B)+{{+  ....   +}}+
+    - +<+ ....  +>+
 
 <a name="specialcaseofuse+<+....+>+"></a>
 
@@ -110,18 +110,29 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 
 ## 1.4\. recover (3_recover.sh 3_recover.pl)
 - 3_recover.pl (make 3)
-    - Each file has unique key each file.
-    - Rule : ```if($in =~ /^\s*\/\/\s*(CGA_VARIANT\s*:.*)\s*START\s*$/){```
-        - ex) // CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToPPP(void):variant START
+    - Each file has unique key each file to use merge function.
+    - Rule : CGA_VARIANT_START to CGA_VARIANT___END
+        - Basic Rule : START ~ END
+            - START syntax : ```if($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/)```
+            - END syntax : ```if($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT___END\{[\"]?([^"}]*)[\"]?\}\s*$/)```
+        - code area in *.cpp / h file
+            - ```// @CGA_VARIANT_START{"TIDLManagerService:TIDL_COMMON_API_3"}```
+            - ```// @CGA_VARIANT___END{"TIDLManagerService:TIDL_COMMON_API_3"}```
+        - comments area in *.cpp / h file
+            - ```* @CGA_VARIANT_START{"DOXYGEN:TIDLManagerService::TIDL_COMMON_API_6()_SRS"}```
+            - ```* @CGA_VARIANT___END{"DOXYGEN:TIDLManagerService::TIDL_COMMON_API_6()_SRS"}```
+        - code area in *.sh file
+            - ```# @CGA_VARIANT_START{"tidl_api_test_shell"}```
+            - ```# @CGA_VARIANT___END{"tidl_api_test_shell"}```
     - run 3_recover.pl 
-	    - perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
+        - perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 - 3_recover.sh (make test_recover)
     - use when you have many files in several directories.
     - arguments
         - $1 : TEMPLATE BASE DIRECTORY  (OUTPUT/stc)
         - $2 : WORKING  BASE DIRECTORY  (test_recover/working)
         - $3 : MERGED   BASE DIRECTORY  (test_recover/merged)
-	- ex) sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
+    - ex) sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
         - $ 3_recover.sh [template based generated dir] [working(modified) base dir] [merged(output) dir]
         - when we add template , our merged directory will have result file from template.
         - if some files exist in working dir only , they will be copied into  merged(output) dir.
@@ -135,13 +146,13 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 
 # 2\. Purpose
 - Reduce the wasting time for tedious repetitive works
-	- Generally we have a lot of tedious repetitive job.  So in case of android , android supports to make a AIDL (Android Interface Definition Language) to make binder bn,bp services. So we can use easily with this template. But , it is just for android application.
-	- I wanna make a tool for more general purpose. So We will support simple definition. The simple definitions are Loop and Condition and Replacement's statements.
+    - Generally we have a lot of tedious repetitive job.  So in case of android , android supports to make a AIDL (Android Interface Definition Language) to make binder bn,bp services. So we can use easily with this template. But , it is just for android application.
+    - I wanna make a tool for more general purpose. So We will support simple definition. The simple definitions are Loop and Condition and Replacement's statements.
 - example
-	- repeted works (iteration) of cases in switch
-	- repeted works (iteration) of functions
-	- repeted works (iteration) of if ... elseif  ... else ...
-	- repeted works (iteration) of lists
+    - repeted works (iteration) of cases in switch
+    - repeted works (iteration) of functions
+    - repeted works (iteration) of if ... elseif  ... else ...
+    - repeted works (iteration) of lists
 
 <a name="environment"></a>
 
@@ -159,9 +170,9 @@ https://perlmaven.com/read-an-excel-file-in-perl
 
 ### 3.2.1\. perl module install
 - cpan
-	- install Spreadsheet::Read
-		- When I run read.pl , I meet the following msg “Parser for XLSX is not installed at read.pl line 9.”
-	- install Spreadsheet::XLSX
+    - install Spreadsheet::Read
+        - When I run read.pl , I meet the following msg “Parser for XLSX is not installed at read.pl line 9.”
+    - install Spreadsheet::XLSX
 
 
 <a name="howtorunthetest"></a>
@@ -172,44 +183,49 @@ https://perlmaven.com/read-an-excel-file-in-perl
 ## 4.1\. example1 (test)
 - cd CGA_RDL
 - make test
-	- Description
-		- 1_excel.pl  ->  generate default.GV (perl hash database) from excel file
-			input : test.xlsx (EXCEL)
-			output : default.GV
-		- 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
-			input : default.GV , test.cpp.stc
-			output : OUTPUT/stc/test.cpp
+    - Description
+        - 1_excel.pl  ->  generate default.GV (perl hash database) from excel file
+            input : test.xlsx (EXCEL)
+            output : default.GV
+        - 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
+            input : default.GV , test.cpp.stc
+            output : OUTPUT/stc/test.cpp
 <a name="example2stc"></a>
 
 ## 4.2\. example2 (stc)
 - cd CGA_RDL
 - make
-	- Description
-		- 1_excel.pl  ->  generate default.GV (perl hash database) from excel file
-			input : 1_example.xlsx (EXCEL)
-			output : default.GV
-		- 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
-			input : default.GV , 2_example.cpp.stc
-			output : OUTPUT/stc/2_example.cpp
-		- 3_recover.pl -> merge working file from template file
-			input : OUTPUT/stc/2_example.cpp , 3_working.cpp.data
-			output : 3_merge.cpp
-	- result : OUTPUT/stc/* and 3_merge.cpp
+    - Description
+        - 1_excel.pl  ->  generate default.GV (perl hash database) from excel file
+            - ```perl 1_excel.pl --input=1_example.xlsx --csv_output=1_example.csv --version_input=./excel_version```
+                - input : 1_example.xlsx (EXCEL)
+                - output csv file : 1_example.csv    <- this file will be used to compare as text and use as backup.
+                - excel_verion check : compare between [VARIABLE]Excel_Version in excel and contents in excel_version file.
+                    - generally we should synchonize between excel version and current git repository version. 
+                    - if you do not need to check version,  remove --version_input option.
+                - output : default.GV
+        - 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
+            input : default.GV , 2_example.cpp.stc
+            output : OUTPUT/stc/2_example.cpp
+        - 3_recover.pl -> merge working file from template file
+            input : OUTPUT/stc/2_example.cpp , 3_working.cpp.data
+            output : 3_merge.cpp
+    - result : OUTPUT/stc/* and 3_merge.cpp
 <a name="example3stci"></a>
 
 ## 4.3\. example3 (stcI)
 - cd CGA_RDL/test/DIAG
 - make
-	- Description
-		- 1_excel.pl  ->  generate default.GV (perl hash database) from excel file
-			input : diag.xlsx (EXCEL)
-			output : default.GV
-		- 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
-			- stc : Stencil Template C/Cpp
-			- stcI : Stencil Template C/Cpp Iterator -> make multiple file from stcI file
-			input : default.GV , *.stc , *.stcI
-			output : OUTPUT/stc/*
-	- result : OUTPUT/stc/*
+    - Description
+        - 1_excel.pl  ->  generate default.GV (perl hash database) from excel file
+            input : diag.xlsx (EXCEL)
+            output : default.GV
+        - 2_replace.pl -> generate OUTPUT/stc/* (template file)  from stc extension file with default.GV(perl hash database)
+            - stc : Stencil Template C/Cpp
+            - stcI : Stencil Template C/Cpp Iterator -> make multiple file from stcI file
+            input : default.GV , *.stc , *.stcI
+            output : OUTPUT/stc/*
+    - result : OUTPUT/stc/*
 
 <a name="process"></a>
 
@@ -223,9 +239,9 @@ https://perlmaven.com/read-an-excel-file-in-perl
 |       |                | stc(I) File | -(2_replace.pl)-> | output c/cpp files |
 
 - This is plantuml. You can see plantuml through editor vscode or atom with Markdown-Preview_Enhanced Module.
-	- install vscode or atom
-	- install java
-	- install graphviz
+    - install vscode or atom
+    - install java
+    - install graphviz
 ![Process_01](png/screen01.png)
 ```puml
 @startuml
@@ -234,14 +250,14 @@ folder Update {
 }
 
 folder STC {
-	artifact template.stc
-	artifact template.stcI
+    artifact template.stc
+    artifact template.stcI
 }
 
 folder Template {
-	artifact Template.hpp
-	artifact Template.CPP
-	artifact Template.etc
+    artifact Template.hpp
+    artifact Template.CPP
+    artifact Template.etc
 }
 
 database Hash_Data [
@@ -256,9 +272,9 @@ Hash_Data -down-> 2_replace.pl
 @enduml
 ```
 - If you want to reuse your works after changing your excel file ,
-	- Update Excel ---(1_exce.pl)---> Hash Data -----+
-	- ________________________________stc(I) File ---+--(2_replace.pl)---> Updated output c/cpp file ---+
-	- __________________________________________________________Worked(Changed) file from c/cpp file ---+--(3_recover.pl)---> Merged file
+    - Update Excel ---(1_exce.pl)---> Hash Data -----+
+    - ________________________________stc(I) File ---+--(2_replace.pl)---> Updated output c/cpp file ---+
+    - __________________________________________________________Worked(Changed) file from c/cpp file ---+--(3_recover.pl)---> Merged file
 
 | Data         | Execute        | Data        | Execute           | Data                                  | Execute           | Data        |
 | ------------ | -------------- | ----------- | ----------------- | ------------------------------------- | ----------------- | ----------- |
@@ -274,14 +290,14 @@ folder Update {
 }
 
 folder STC {
-	artifact template.stc
-	artifact template.stcI
+    artifact template.stc
+    artifact template.stcI
 }
 
 folder Template {
-	artifact Template.hpp
-	artifact Template.CPP
-	artifact Template.etc
+    artifact Template.hpp
+    artifact Template.CPP
+    artifact Template.etc
 }
 
 database Hash_Data [
@@ -289,15 +305,15 @@ Hash DataBase from 1_excel
 ]
 
 folder Changed {
-	artifact working.hpp
-	artifact working.CPP
-	artifact working.etc
+    artifact working.hpp
+    artifact working.CPP
+    artifact working.etc
 }
 
 folder Merge {
-	artifact Merged.hpp
-	artifact Merged.CPP
-	artifact Merged.etc
+    artifact Merged.hpp
+    artifact Merged.CPP
+    artifact Merged.etc
 }
 
 
@@ -325,9 +341,9 @@ Changed -down-> 3_recover.pl
 ### 6.1.1\. Excel
 - Header starts with "[HEADER]"
 - Excel file
-	- [Header]MODULENAME
-		- You can use MODULENAME name as variable name in stc/stcI file
-	- example of excel
+    - [Header]MODULENAME
+        - You can use MODULENAME name as variable name in stc/stcI file
+    - example of excel
 
 | [HEADER]Related_Manager | VALUE |
 | ----------------------- | ----- |
@@ -383,7 +399,7 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 ### 6.2.1\. Excel
 - Header starts with "[HEADER]"
 - Excel file
-	- example of excel
+    - example of excel
 
 | [HEADER]MODULE | [HEADER]DPID | duration | x1  | y1  |
 | -------------- | ------------ | -------- | --- | --- |
@@ -454,77 +470,77 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 
 ## 6.3\. Syntax and Explanation of RDL
 - stc
-	- FileName : DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc
-	- FileName : src/DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc/src
-	- FileName : ../DiagInputManager.cpp   -> generate file name in ./OUTPUT/
-	- FileName : /tmp/DiagInputManager.cpp   -> generate file name in /tmp
+    - FileName : DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc
+    - FileName : src/DiagInputManager.cpp   -> generate file name in ./OUTPUT/stc/src
+    - FileName : ../DiagInputManager.cpp   -> generate file name in ./OUTPUT/
+    - FileName : /tmp/DiagInputManager.cpp   -> generate file name in /tmp
 - stcI
-	- stcI_HASH : PPP    -> generate multiple files from hash PPP (PPP is Header name in excel file.)
-		- generated multiple file in example -> ???type???.???   , ???length???.???
-	- stcI_FILEBODY = "YES"  or "NO" : default => YES  , + is concatenation
-		- if stcI_FILEBODY is YES , file name is made by following order : stcI_FILEPREFIX + **KEY** + stcI_FILEPOSTFIX . stcI_EXTENTION
-		- if stcI_FILEBODY is NO , file name is made by following order : stcI_FILEPREFIX + stcI_FILEPOSTFIX . stcI_EXTENTION
-	- stcI_FILE_LOWER = "NO"  or "YES" : default => NO  , + is concatenation
-		- if stcI_FILEBODY is YES (default) && stcI_FILE_LOWER is YES , file name is made by following order : stcI_FILEPREFIX + **lc(KEY)** + stcI_FILEPOSTFIX . stcI_EXTENTION
-			- lc(KEY) means lower characters.
-	- stcI_ALL_LOWER = "NO"  or "YES" : default => NO  , + is concatenation
-		- if stcI_ALL_LOWER is YES ,  all file name is made by following order : lc(stcI_FILEPREFIX + KEY + stcI_FILEPOSTFIX . stcI_EXTENTION)
-			- lc(...) means lower characters.		
-	- stcI_EXTENSION : **cpp**
-		- generated multiple file in example -> ???type???.**cpp**   , ???length???.**cpp**
-	- stcI_FILEPREFIX : I
-		- generated multiple file in example -> Itype???.cpp   , Ilength???.cpp
-		- use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
-			- stcI_FILEPREFIX:+<+lc(KEY)+>+I  =>  wifiI
-	- stcI_FILEPOSTFIX : Manager
-		- generated multiple file in example -> ItypeManager.cpp   , IlengthManager.cpp
-		- use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
-			- stcI_FILEPOSTFIX:+<+uc(KEY)+>+man  =>  WIFIman
-	- SetI : $MODULENAME = KEY
-		- $MODULENAME=type in ItypeManaager.cpp
-		- $MODULENAME=length in IlengthManaager.cpp
-		- use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
-			- SetI : $MODULENAME = +<+uc(KEY)+>+    =>   $MODULENAME = WIFI
-	- example 1 (test/DIAG/IXXXManagerService.h.stcI)
-		- Module_Name has 2 keys : Diag and Antenna
-			- stcI_HASH : Module_Name
-			- stcI_EXTENSION : h
-			- stcI_FILEPREFIX : TTT/I
-			- stcI_FILEPOSTFIX : ManagerService
-			- Set : $iterate_comments = OFF
-			- SetI : $MODULENAME = KEY
-		- output : 
-			- OUTPUT/stc/TTT/I**Diag**ManagerService.h
-			- OUTPUT/stc/TTT/I**Antenna**ManagerService.h
-	- example 2 (test/DIAG/IXXXManagerService.cpp.stcI)
-		- Module_Name has 2 keys : Diag and Antenna
-			- stcI_HASH : Module_Name
-			- stcI_EXTENSION : h
-			- stcI_FILEPREFIX : TTTKEY/I
-			- stcI_FILEPOSTFIX : ManagerService
-			- Set : $iterate_comments = OFF
-			- SetI : $MODULENAME = KEY
-		- output : 
-			- OUTPUT/stc/TTT**Diag**/I**Diag**ManagerService.h
-			- OUTPUT/stc/TTT**Antenna**/I**Antenna**ManagerService.h
+    - stcI_HASH : PPP    -> generate multiple files from hash PPP (PPP is Header name in excel file.)
+        - generated multiple file in example -> ???type???.???   , ???length???.???
+    - stcI_FILEBODY = "YES"  or "NO" : default => YES  , + is concatenation
+        - if stcI_FILEBODY is YES , file name is made by following order : stcI_FILEPREFIX + **KEY** + stcI_FILEPOSTFIX . stcI_EXTENTION
+        - if stcI_FILEBODY is NO , file name is made by following order : stcI_FILEPREFIX + stcI_FILEPOSTFIX . stcI_EXTENTION
+    - stcI_FILE_LOWER = "NO"  or "YES" : default => NO  , + is concatenation
+        - if stcI_FILEBODY is YES (default) && stcI_FILE_LOWER is YES , file name is made by following order : stcI_FILEPREFIX + **lc(KEY)** + stcI_FILEPOSTFIX . stcI_EXTENTION
+            - lc(KEY) means lower characters.
+    - stcI_ALL_LOWER = "NO"  or "YES" : default => NO  , + is concatenation
+        - if stcI_ALL_LOWER is YES ,  all file name is made by following order : lc(stcI_FILEPREFIX + KEY + stcI_FILEPOSTFIX . stcI_EXTENTION)
+            - lc(...) means lower characters.       
+    - stcI_EXTENSION : **cpp**
+        - generated multiple file in example -> ???type???.**cpp**   , ???length???.**cpp**
+    - stcI_FILEPREFIX : I
+        - generated multiple file in example -> Itype???.cpp   , Ilength???.cpp
+        - use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
+            - stcI_FILEPREFIX:+<+lc(KEY)+>+I  =>  wifiI
+    - stcI_FILEPOSTFIX : Manager
+        - generated multiple file in example -> ItypeManager.cpp   , IlengthManager.cpp
+        - use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
+            - stcI_FILEPOSTFIX:+<+uc(KEY)+>+man  =>  WIFIman
+    - SetI : $MODULENAME = KEY
+        - $MODULENAME=type in ItypeManaager.cpp
+        - $MODULENAME=length in IlengthManaager.cpp
+        - use +<+...+>+ (replacement syntax)   (ex. KEY=Wifi)
+            - SetI : $MODULENAME = +<+uc(KEY)+>+    =>   $MODULENAME = WIFI
+    - example 1 (test/DIAG/IXXXManagerService.h.stcI)
+        - Module_Name has 2 keys : Diag and Antenna
+            - stcI_HASH : Module_Name
+            - stcI_EXTENSION : h
+            - stcI_FILEPREFIX : TTT/I
+            - stcI_FILEPOSTFIX : ManagerService
+            - Set : $iterate_comments = OFF
+            - SetI : $MODULENAME = KEY
+        - output : 
+            - OUTPUT/stc/TTT/I**Diag**ManagerService.h
+            - OUTPUT/stc/TTT/I**Antenna**ManagerService.h
+    - example 2 (test/DIAG/IXXXManagerService.cpp.stcI)
+        - Module_Name has 2 keys : Diag and Antenna
+            - stcI_HASH : Module_Name
+            - stcI_EXTENSION : h
+            - stcI_FILEPREFIX : TTTKEY/I
+            - stcI_FILEPOSTFIX : ManagerService
+            - Set : $iterate_comments = OFF
+            - SetI : $MODULENAME = KEY
+        - output : 
+            - OUTPUT/stc/TTT**Diag**/I**Diag**ManagerService.h
+            - OUTPUT/stc/TTT**Antenna**/I**Antenna**ManagerService.h
 
 
 - common in stc and stcI
-	- Set : $iterateInputFileName = DiagInputManager.cpp	-> use as variable. $ means variable.
-		- +<+$iterateInputFileName+>+ replaces with "DiagInputManager.cpp".
-	- +<+$variable+>+   ...  +<+ $hash{key} +>+
-		- +<+ $variable +>+  means replacement with it.
-		- you can use perl hash variable as a variable..
-	- IFEQUAL(+<+$Related_Manager{vif}{VALUE}+>+  eq "O")+{{+
-	          .......
-			  ......
-	  +}}+
-		- condition statement
-		- if true , show ........
-	- ITERATE %hash +<<+ ITKEY  ITVALUE
-	            ITKEY
-				ITVALUE
-	  +>>+
-		- iterator with hash variable
-		- ITKEY is key of hash (keys %hash in perl)
-		- ITVALUE is value of hash ($hash{key} in perl). But, we use +<+$hash{ITKEY}??+>+ instead of ITVALUE.
+    - Set : $iterateInputFileName = DiagInputManager.cpp    -> use as variable. $ means variable.
+        - +<+$iterateInputFileName+>+ replaces with "DiagInputManager.cpp".
+    - +<+$variable+>+   ...  +<+ $hash{key} +>+
+        - +<+ $variable +>+  means replacement with it.
+        - you can use perl hash variable as a variable..
+    - IFEQUAL(+<+$Related_Manager{vif}{VALUE}+>+  eq "O")+{{+
+              .......
+              ......
+      +}}+
+        - condition statement
+        - if true , show ........
+    - ITERATE %hash +<<+ ITKEY  ITVALUE
+                ITKEY
+                ITVALUE
+      +>>+
+        - iterator with hash variable
+        - ITKEY is key of hash (keys %hash in perl)
+        - ITVALUE is value of hash ($hash{key} in perl). But, we use +<+$hash{ITKEY}??+>+ instead of ITVALUE.
