@@ -72,8 +72,9 @@ class DiagInputManager {
 
 
 /**
- * @CGA_VARIANT_START{"DiagInputManager::DiagconnectToAudioMgr(void)"}
- * @CGA_VARIANT_END{"DiagInputManager::DiagconnectToAudioMgr(void)"}
+ * @CGA_VARIANT_START{"DiagInputManager::DiagInputManager(void)"}
+ * AAA
+ * @CGA_VARIANT___END{"DiagInputManager::DiagInputManager(void)"}
  */
 DiagInputManager::DiagInputManager(android::sp<DiagManagerService> diagMgrService)
 		: mDiagMgrService(diagMgrService), each_packet_ptr(0), mDiagInputMgrTimer(NULL)
@@ -102,8 +103,9 @@ IFEQUAL(+<+$Related_Manager{ITKEY}{VALUE}+>+  eq "O")+{{+
 
 /**
  * @brief destructor
- * @CGA_VARIANT_START{"DiagInputManager::DiagconnectToAudioMgr(void)"}
- * @CGA_VARIANT_END{"DiagInputManager::DiagconnectToAudioMgr(void)"}
+ * @CGA_VARIANT_START{"DiagInputManager::~DiagInputManager(void)"}
+ * BBB
+ * @CGA_VARIANT_END{"DiagInputManager::~DiagInputManager(void)"}
  */
 DiagInputManager::~DiagInputManager()
 {

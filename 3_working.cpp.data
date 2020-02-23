@@ -312,13 +312,13 @@ void DiagInputManager::connectToVifMgr(void)
         LOGV("Already mVifReceiver was created.");
     }
 
-// CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void):variant START
+// @CGA_VARIANT_START{"DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void)"}
 
     /*  
      * variant code for you
     */
 
-// CGA_VARIANT:DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void):variant END
+// @CGA_VARIANT___END{"DiagInputManager.cpp:DiagInputManager:connectToVifMgr(void)"}
 }
 /*!! vif Inheritance CGA end-------------------------------------------------*/
 

@@ -48,7 +48,13 @@ while($in = <INPUTWORK>){
         $in = "$1\@CGA_VARIANT_START\{\"$2\"\}\n";
     }
 	if($in =~ /^(\s*\/\/\s*)CGA_VARIANT\s*:(.*)\s+END\s*$/){
-        $in = "$1\@CGA_VARIANT_END\{\"$2\"\}\n";
+        $in = "$1\@CGA_VARIANT___END\{\"$2\"\}\n";
+    }
+	if($in =~ /^(\s*[\/\*\#]*\s*\@)(CGA_VARIANT_END)(\{)/){
+        #print "in1 : $in\n";
+        #print "[$1] [$2] [$3] $'";
+        $in = "$1CGA_VARIANT___END$3$'";
+        #print "in : $in\n";
     }
 
 	if($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
@@ -56,16 +62,20 @@ while($in = <INPUTWORK>){
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
-		;; print "$myLineCount : v1 $myBlockName START\n";
+		;; print "working file $workingFile : $myLineCount : v1 [$myBlockName] START\n";
 		die "[WORK] $myLineCount:$in $myBlockName already existed.\n" unless ($gBlock{$myBlockName} eq "");
-	} elsif($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
+	} elsif($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT___END\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		my $myMatch = removeSpace($1);
-		;; print "$myLineCount : v2 $myMatch [$myBlockName] END\n";
+		;; print "working file $workingFile : $myLineCount : v2 [$myBlockName] END\n";
 		if($myBlockName ne $myMatch){
 			$myBlockData .= $in;
 			die "[WORK] $myLineCount: Block Name is not matched.\n\tSTART: $myBlockName\n\tEND  : $myMatch\n";
 		} else {
 			die "[WORK] $myLineCount:$in Block($myBlockName) is not started. (no start)\n" unless ($myFlag == 1);
+            if($gBlock{$myBlockName}){
+                die "this block name ( $myBlockName ) is already used. so you change the name of block in $workingFile : $myLineCount\n";
+                exit 4;
+            }
 			$gBlock{$myBlockName} = $myBlockData;
 			$gBlockUsedCnt{$myBlockName} = 0;
 			#;; print "v2 $myBlockName END\n";
@@ -109,7 +119,13 @@ while($in = <TEMPLATE>){
         $in = "$1\@CGA_VARIANT_START\{\"$2\"\}\n";
     }
 	if($in =~ /^(\s*\/\/\s*)CGA_VARIANT\s*:(.*)\s+END\s*$/){
-        $in = "$1\@CGA_VARIANT_END\{\"$2\"\}\n";
+        $in = "$1\@CGA_VARIANT___END\{\"$2\"\}\n";
+    }
+	if($in =~ /^(\s*[\/\*\#]*\s*\@)(CGA_VARIANT_END)(\{)/){
+        #print "in1 : $in\n";
+        #print "[$1] [$2] [$3]\n";
+        $in = "$1CGA_VARIANT___END$3$'";
+        #print "in : $in\n";
     }
 
 	if($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_START\{[\"]?([^"}]*)[\"]?\}\s*$/){
@@ -117,11 +133,11 @@ while($in = <TEMPLATE>){
 		$myFlag = 1;
 		$myBlockData = "";
 		$myBlockName = removeSpace($1);
-		#;; print "v3 $myBlockName START\n";
+		;; print "template file $templateFile : $myLineCount : v3 [$myBlockName] START\n";
 		print MERGE $in;
-	} elsif($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT_END\{[\"]?([^"}]*)[\"]?\}\s*$/){
+	} elsif($in =~ /^\s*[\/\*\#]*\s*\@CGA_VARIANT___END\{[\"]?([^"}]*)[\"]?\}\s*$/){
 		my $myMatch = removeSpace($1);
-		#;; print "v4 $myMatch [$myMatch] END\n";
+		;; print "template file $templateFile : $myLineCount : v4 [$myBlockName] END\n";
 		if($myBlockName ne $myMatch){
 			$myBlockData .= $in;
 			die "[TEMPLATE] $myLineCount: Block Name is not matched.\n\tSTART: $myBlockName\n\tEND  : $myMatch\n";
@@ -131,6 +147,12 @@ while($in = <TEMPLATE>){
 			#;; print "v4 [$myBlockData]\n";
 			#;; print "v4 [$gBlock{$myBlockName}]\n";
             $gBlockUsedCnt{$myBlockName} ++;
+            if($gBlockTemplate{$myBlockName}){
+                die "this block name ( $myBlockName ) is already used. so you change the name of block in $templateFile : $myLineCount\n";
+                exit 4;
+            } else {
+                $gBlockTemplate{$myBlockName} = $myBlockName;
+            }
 			if($gBlock{$myBlockName} eq ""){
 				print MERGE "$myBlockData";
 			} else {
