@@ -33,6 +33,16 @@ sub ifthisthenthat {
     else { return $my_that; }
 }
 
+sub substitute {
+    my $my_s = shift @_;
+    my $my_from = shift @_;
+    my $my_to = shift @_;
+    #print STDERR "my_from : $my_from\n";
+    #print STDERR "my_to : $my_to\n";
+    $my_s =~ s/$my_from/$my_to/g;
+    return $my_s;
+}
+
 sub start_time_log {
 	my $tmpLogInit = shift @_;
 	($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time) ;
