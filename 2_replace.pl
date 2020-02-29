@@ -517,7 +517,8 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 	if($stc_debug eq "DEBUG_ON"){ end_time_log("==END CChange =="); }
 }
 
-sub iterate_equal(){
+sub iterate_equal()
+{
 	# Rules
 	# IFEQUAL | IFNOTEQUAL ( condition with general rules :&& ,|| ,etc)  /#       
 	#       Contents with multiple lines
@@ -602,13 +603,13 @@ sub iterate_equal(){
             $val = eval($b_match);
             print DBG __SUB__ . "$b_match -> val:$val\n";
             if($val ne ""){
-                $before .= "\n$final";
+                if($final ne ""){ $before .= "\n$final"; }
             }
         } else {
             $val = eval($b_match);
             print DBG __SUB__ . "$b_match -> val:$val\n";
             if($val eq ""){
-                $before .= "\n$final";
+                if($final ne ""){ $before .= "\n$final"; }
             }
         }
         #print "before($before$after)\n";
@@ -617,7 +618,7 @@ sub iterate_equal(){
         #close $fh;
         $il = "$before$after";
         $cnt++;
-        if($cnt == $end){ return ; }
+        if($cnt == $end){ return ""; }
         print DBG __SUB__ . "cnt $cnt , end $end\n";
 	    print DBG __SUB__ . " RD1 $il]]]]]\n";
     };
