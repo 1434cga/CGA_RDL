@@ -120,7 +120,9 @@ print_fp( "structg : Ichange START ($stcI_filename_input) - $Month-$Day-$Year : 
 $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 
 	while ($in = <STCI_INPUT>) {
-		if($in =~ /^stcI_HASH\s*\:\s*(\S+)\s*$/){
+		if($in =~ /^\s*###/){
+            next;
+        } elsif($in =~ /^stcI_HASH\s*\:\s*(\S+)\s*$/){
 			$stcI_for = $1;
 		} elsif($in =~ /^stcI_EXTENSION\s*\:\s*(\S+)\s*$/){
 			$stcI_extension = $1;
