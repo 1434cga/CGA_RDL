@@ -43,6 +43,17 @@ sub substitute {
     return $my_s;
 }
 
+sub countKey {
+    my $my_s = shift @_;
+    my $my_count = 0;
+    foreach my $my_key (sort_keys($my_s)){
+        #print STDERR "countKey : KEY : $my_key\n";
+        $my_count++;
+    }
+    #print STDERR "countKey : $my_s : $my_count\n";
+    return $my_count;
+}
+
 sub start_time_log {
 	my $tmpLogInit = shift @_;
 	($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time) ;
