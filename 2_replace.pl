@@ -580,9 +580,9 @@ sub iterate_equal()
 	$il = shift @_;
 
 
-	open(STF , ">temp.cpp");
-    print STF $il;
-    close(STF);
+	#open(STF , ">temp.cpp");
+    #print STF $il;
+    #close(STF);
 
     $tcnt++;
     print __SUB__ . "\n our iterate_equal $tcnt\n";
@@ -597,21 +597,21 @@ sub iterate_equal()
             $before = $`;
             $match = $&;
             $after = $';
-            print DBG __SUB__ . "ND1-1 match[$match]\n";
+            #print DBG __SUB__ . "ND1-1 match[$match]\n";
             @a = split(/\+\{\{\+/,$match);
-            print DBG __SUB__ . "ND1-1 \n";
+            #print DBG __SUB__ . "ND1-1 \n";
             for($i=0;$i<= $#a;$i++) {
-                print DBG __SUB__ . "$i:($a[$i])\n";
+                #print DBG __SUB__ . "$i:($a[$i])\n";
             }
             $final = $a[$#a];
             delete $a[$#a];
             for($i=0;$i<= $#a;$i++) {
-                print DBG __SUB__ . "$i:($a[$i])\n";
+                #print DBG __SUB__ . "$i:($a[$i])\n";
             }
 
             $final =~ s/^\s*\n//;
             $final =~ s/(\n)?\s*\+\}\}\+\s*$//;
-            print DBG __SUB__ . "final:($final)\n";
+            #print DBG __SUB__ . "final:($final)\n";
             #print "before($before)\n";
             for($i=0;$i< $#a;$i++) {
                 $before .= $a[$i] . $pttn;
@@ -622,9 +622,9 @@ sub iterate_equal()
             $i_match = $&;
             $i_after = $';
             $iif = $1;
-            print DBG __SUB__ . "ND1-2 i_before[$iif:$i_before]\n";
-            print DBG __SUB__ . "ND1-2 i_match[$i_match]\n";
-            #print DBG __SUB__ . "ND1-2 i_after[$i_after]\n";
+            #print DBG __SUB__ . "ND1-2 i_before[$iif:$i_before]\n";
+            #print DBG __SUB__ . "ND1-2 i_match[$i_match]\n";
+            ##print DBG __SUB__ . "ND1-2 i_after[$i_after]\n";
             $i_before =~ s/\n\s*$//;
             $before .= $i_before;
         } else {
@@ -633,49 +633,49 @@ sub iterate_equal()
                 $i_match = $&;
                 $i_after = $';
                 $iif = $1;
-                print DBG __SUB__ . "ND1-3 i_before[$iif:$i_before]\n";
-                print DBG __SUB__ . "ND1-3 i_match[$i_match]\n";
-                #print DBG __SUB__ . "ND1-3 i_after[$i_after]\n";
+                #print DBG __SUB__ . "ND1-3 i_before[$iif:$i_before]\n";
+                #print DBG __SUB__ . "ND1-3 i_match[$i_match]\n";
+                ##print DBG __SUB__ . "ND1-3 i_after[$i_after]\n";
                 $i_before =~ s/\n\s*$//;
                 $before = $i_before;
             } 
         }
-        print DBG __SUB__ . "before($before)\n";
+        #print DBG __SUB__ . "before($before)\n";
         if($i_after =~ m/(\(([^\(\)]|(?R))*\))/){
             $b_before = $`;
             $b_match = $&;
             $b_after = $';
-            print DBG __SUB__ . "ND1-2 b_before[$b_before]\n";
-            print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
-            #print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
+            #print DBG __SUB__ . "ND1-2 b_before[$b_before]\n";
+            #print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
+            ##print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
         }
 
 		$b_match = replace_var_with_value($b_match);
         if($iif eq "IFEQUAL"){
             $val = eval($b_match);
-            print DBG __SUB__ . "$b_match -> val:$val\n";
+            #print DBG __SUB__ . "$b_match -> val:$val\n";
             if($val ne ""){
                 if($final ne ""){ $before .= "\n$final"; }
             }
         } else {
             $val = eval($b_match);
-            print DBG __SUB__ . "$b_match -> val:$val\n";
+            #print DBG __SUB__ . "$b_match -> val:$val\n";
             if($val eq ""){
                 if($final ne ""){ $before .= "\n$final"; }
             }
         }
-        #print "before($before$after)\n";
+        ##print "before($before$after)\n";
         #open($fh , ">" , "iter" . $cnt . ".out");
-        #print $fh "$before$after\n";
+        ##print $fh "$before$after\n";
         #close $fh;
         $il = "$before$after";
         $cnt++;
         if($cnt == $end){ return ""; }
-        print DBG __SUB__ . "cnt $cnt , end $end\n";
-        #print DBG __SUB__ . " RD1 $il]]]]]\n";
+        #print DBG __SUB__ . "cnt $cnt , end $end\n";
+        ##print DBG __SUB__ . " RD1 $il]]]]]\n";
     };
 
-    print "iterate_equal loop count $cnt end\n";
+    #print "iterate_equal loop count $cnt end\n";
 
 	return $il;
 }
