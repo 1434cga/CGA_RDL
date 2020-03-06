@@ -1,13 +1,42 @@
 #!/bin/perl
+use 5.010;
 
 use File::Path qw(make_path);
+use Getopt::Long;
+use File::Basename qw(dirname);
+use Cwd  qw(abs_path);
+use lib dirname(dirname abs_path $0) . '/perllib';
 
-our $tttime;
-our $cchange_start_time;
-our $outputdir = "OUTPUT";
-our %local_var_set;
+
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
+
+sub versionMismatch {
+	print STDERR "Version Mismatch between excel file and this git repository\n";
+	print STDERR "1.check Version of CGA_RDL in $cga_rdl_version_input_file file\n";
+	print STDERR "Please update your CGA_RDL version and Excel version.\n";
+    exit(4);
+}
+
+
+sub help 
+{
+	printf("Help :\n");
+	printf("\t--inputstci=[stcI or stc file]\n");
+	printf("\t\t  default input stc or stcI file name : $stcfilename\n");
+	printf("\t--outputdb=[output file]\n");
+	printf("\t\t  default output DB file name : $filename\n");
+	printf("\t--cga_rdl_version_input=[version file name]\n");
+	printf("\t\t  default input version file name : $cga_rdl_version_input_file\n");
+	printf("\t\t  if null , we ignore the version between excel version input file and [VARIABLE]Excel_Version  in excel file ($cga_rdl_version_input_file)\n");
+	printf("\t--debug");
+	printf("\t\t  add stcI syntax on output file\n");
+	printf("\t--performance");
+	printf("\t\t  run performance mode\n");
+	printf("\t--nolog");
+	printf("\t\t  print log into /dev/null\n");
+	printf("\t--help\n");
+}
 
 sub plus {
     my $num = shift @_;
@@ -425,6 +454,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 				# 이런식으로 처리하면 많은 %값들을 만들지 않아도 되며, define같은 값들을 지저분하게 군데군데 만들어줄 필요가 없다. 
 				#print DBG "Set Hash 10 : $iterate_lines\n";
 				if(0){      # It is mendatory
+                    # for performance
 					#  because of processing speed.  when it is replacement , it scans whole string. So I break down into substring.
 					my $iter_lena = length($iterate_lines);
 					my $iterate_lines_org = $iterate_lines;
@@ -551,7 +581,7 @@ sub iterate_equal()
     
     my $cnt = 0;
     while ($il =~ m/\+\{\{\+(\s*(.*?|\n)*\s*)+\}\}\+/){   # recursion for nesting
-        print("cnt $cnt , end $end\n");
+        #print("cnt $cnt , end $end\n");
 
         $pttn = "\+\{\{\+";
         if($il =~ m/\+\{\{\+(\s*(.*?|\n)*\s*)+\}\}\+/){   # recursion for nesting
@@ -957,23 +987,80 @@ sub traverse_hash_tree {
 	traverse_hash_tree_to_recover_special_code($TAXA_TREE,$vn,$lstr,$fh);
 }
 
+#
+#======= main MAIN ==============
+#
+
+print STDERR "perlscript=$0\n";
+
+our $tttime;
+our $cchange_start_time;
+our $outputdir = "OUTPUT";
+our %local_var_set;
+our $optionDebug=0;
+our $optionPerformance=0;
+our $optionNoLog=0;
+my $filename="default.GV";
+my $stcfilename="default.stc";
+our $cga_rdl_version_input_file   = "";
+our $cgaRdlVersionMajor;
+our $cgaRdlVersionMinor;
+our $cgaRdlVersionDev;
+
+GetOptions (
+		"inputstci=s"   => \$stcfilename,      # string
+		"outputdb=s"   => \$filename,      # string
+		"cga_rdl_version_input=s"   => \$cga_rdl_version_input_file,      # string
+        "debug" => sub { $optionDebug = 1 },   # flag
+        "performance" => sub { $optionPerformance = 1 },   # flag
+        "nolog" => sub { $optionNoLog = 1 },   # flag
+		"verbose|help"  => sub { $help = 1 })   # flag
+or  die(help() . "Error in command line arguments\n");
+
+if($help == 1){
+	help();
+	exit();
+}
+
+if($cga_rdl_version_input_file ne ""){
+    my $_dir = dirname($0);
+    if(open(my $verfh, "<", "$_dir\/$cga_rdl_version_input_file")){
+        my $s = <$verfh>;
+        $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
+        $cgaRdlVersionMajor = $1;
+        $cgaRdlVersionMinor = $2;
+        $cgaRdlVersionDev = $3;
+        print STDERR "CGA_RDL CURRENT VERSION $s => Major $cgaRdlVersionMajor, Minor $cgaRdlVersionMinor, Dev $cgaRdlVersionDev\n";
+        close($verfh);
+    } else {
+        print STDERR "cga rdl version file ($_dir\/$cga_rdl_version_input_file) does not exist.\n";
+        $cga_rdl_version_input_file = "";
+    }
+}
+
 
 mkdir "OUTPUT";
 mkdir "OUTPUT/stc";
 mkdir "OUTPUT/tmp";
 # set the variables from file
-print "arguments count : $#ARGV\n";
-print STDERR "arguments count : $#ARGV\n";
-($filename,$stcfilename) = (@ARGV);
-if($stcfilename eq ""){
-	$filename = "default.GVm";
-	$stcfilename = "default.stc";
-}
+#print "arguments count : $#ARGV\n";
+#print STDERR "arguments count : $#ARGV\n";
+#($filename,$stcfilename) = (@ARGV);
+#if($stcfilename eq ""){
+#$filename = "default.GVm";
+#$stcfilename = "default.stc";
+#}
 
 ## init file open
-open(DBG,">debug.log");
-open(TIME_DBG,">time_debug.log");
-open(VAR_DBG,">var_debug.log");
+if($optionNoLog){
+    open(DBG,">/dev/null");
+    open(TIME_DBG,">/dev/null");
+    open(VAR_DBG,">/dev/null");
+} else {
+    open(DBG,">debug.log");
+    open(TIME_DBG,">time_debug.log");
+    open(VAR_DBG,">var_debug.log");
+}
 
 
 print "fname = $filename , stc fname = $stcfilename\n";
@@ -993,6 +1080,24 @@ while(<FH>){
 	#$lcnt++;
 }
 close(FH);
+
+
+if($cga_rdl_version_input_file ne ""){
+    my $tmpMajor = 0;
+    my $tmpMinor = 0;
+    my $tmpDev = 0;
+    my $s = $gTitle{"VARIABLE"}{"CGA_RDL_Version"};
+    $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
+    $tmpMajor = $1;
+    $tmpMinor = $2;
+    $tmpDev = $3;
+    print STDERR "cga_rdl FILE VERSION $s => Major $tmpMajor, Minor $tmpMinor, Dev $tmpDev\n";
+    if($cgaRdlVersionMajor != $tmpMajor){ versionMismatch(); exit(4); }
+    if($cgaRdlVersionMinor != $tmpMinor){ versionMismatch(); exit(4); }
+    if($cgaRdlVersionDev != $tmpDev){ versionMismatch(); exit(4); }
+}
+
+
 foreach my $key (keys %gVariables){
 	$$key = $gVariables{$key};
 }
