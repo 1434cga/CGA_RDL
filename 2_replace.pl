@@ -560,6 +560,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 	if($stc_debug eq "DEBUG_ON"){ end_time_log("==END CChange =="); }
 }
 
+our $tcnt;
 sub iterate_equal()
 {
 	# Rules
@@ -577,6 +578,14 @@ sub iterate_equal()
     my $if_eval = "";
 
 	$il = shift @_;
+
+
+	open(STF , ">temp.cpp");
+    print STF $il;
+    close(STF);
+
+    $tcnt++;
+    print __SUB__ . "\n our iterate_equal $tcnt\n";
 
     
     my $cnt = 0;
@@ -615,7 +624,7 @@ sub iterate_equal()
             $iif = $1;
             print DBG __SUB__ . "ND1-2 i_before[$iif:$i_before]\n";
             print DBG __SUB__ . "ND1-2 i_match[$i_match]\n";
-            print DBG __SUB__ . "ND1-2 i_after[$i_after]\n";
+            #print DBG __SUB__ . "ND1-2 i_after[$i_after]\n";
             $i_before =~ s/\n\s*$//;
             $before .= $i_before;
         } else {
@@ -626,7 +635,7 @@ sub iterate_equal()
                 $iif = $1;
                 print DBG __SUB__ . "ND1-3 i_before[$iif:$i_before]\n";
                 print DBG __SUB__ . "ND1-3 i_match[$i_match]\n";
-                print DBG __SUB__ . "ND1-3 i_after[$i_after]\n";
+                #print DBG __SUB__ . "ND1-3 i_after[$i_after]\n";
                 $i_before =~ s/\n\s*$//;
                 $before = $i_before;
             } 
@@ -638,7 +647,7 @@ sub iterate_equal()
             $b_after = $';
             print DBG __SUB__ . "ND1-2 b_before[$b_before]\n";
             print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
-            print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
+            #print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
         }
 
 		$b_match = replace_var_with_value($b_match);
@@ -663,8 +672,10 @@ sub iterate_equal()
         $cnt++;
         if($cnt == $end){ return ""; }
         print DBG __SUB__ . "cnt $cnt , end $end\n";
-	    print DBG __SUB__ . " RD1 $il]]]]]\n";
+        #print DBG __SUB__ . " RD1 $il]]]]]\n";
     };
+
+    print "iterate_equal loop count $cnt end\n";
 
 	return $il;
 }
@@ -907,7 +918,66 @@ sub replace_var_with_value
 {
 	my $replace_in;
 	my $in_cnt = 0;
-	$replace_in = shift @_;
+	my $nn_cnt = 0;
+	my $replace_in = shift @_;
+
+    my $ln = length($replace_in);
+
+    if($ln > 10000){
+        print "length = " . length($replace_in) . "\n";
+    }
+
+	#print DBG __SUB__ . ":" . __LINE__ . " ---- : in_cnt $in_cnt\n";
+	#while(
+	#($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\+>\+/$$1/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\[\s*(\d*)\s*\]\s*\+>\+/$$1[$2]/)	# +<+$typedef_name[54]+>+  ==> COMBI_Accum
+	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\{\s*([^\}]+)\s*\}\s*\+>\+/$$1{"$2"}/) 	# +<+$HASH_KEY_TYPE{uiIP}+>+ ==> IP4
+	#){
+	#print DBG __SUB__ . __LINE__ . " BBBB : 1 $replace_in\n";
+	#$in_cnt ++;
+	#print DBG "Set Hash replace2 in_cnt=$in_cnt: $replace_in \n";
+	#}			# +<+$type{+<+$HASH_KEY_TYPE{uiIP}+>+}+>+  ==> int
+
+	#####  while($replace_in =~ /\+<\+\s*(\$[\w\d\.\)\(]+\s*[^\+>]*)\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	if($optionPerformance){      
+        # for performance
+		my $iter_lena = length($replace_in);
+		my $replace_org  = $replace_in;
+        my $replace_tmp;
+        $replace_in = "";
+		for(my $itt = 0;$itt <= $iter_lena ; $itt += 1000){
+		    $replace_tmp = substr($replace_org, $itt, 1000);
+            #if($ln > 10000){
+            #print "[[[$replace_tmp]]]\n";
+            #}
+	        while($replace_tmp =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	        {
+                #my $match = $&;
+		        my $val = eval($1);
+                #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+		        $replace_tmp =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+                $in_cnt ++;
+	        }
+            $replace_in = $replace_in . $replace_tmp;
+		}
+	    while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	    {
+            #my $match = $&;
+	        my $val = eval($1);
+            #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+	        $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+	        $nn_cnt ++;
+	    }
+    } else {        # this is basic
+        while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+        {
+            #my $match = $&;
+            my $val = eval($1);
+            #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+            $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+            $in_cnt ++;
+        }
+    }
 
     #print DBG __SUB__ . ":" . __LINE__ . " AAAA : before $replace_in\n";
 	while($replace_in =~ /(\d+)\s*\+\+\+\+/){		# 	++++     1을 더해 준다. 
@@ -925,28 +995,12 @@ sub replace_var_with_value
 		$replace_in =~ s/\d+\s*\-\-\-\-/$temp_num/;
 		$in_cnt ++;
 	}
-	#print DBG __SUB__ . ":" . __LINE__ . " ---- : in_cnt $in_cnt\n";
-	#while(
-	#($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\+>\+/$$1/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\[\s*(\d*)\s*\]\s*\+>\+/$$1[$2]/)	# +<+$typedef_name[54]+>+  ==> COMBI_Accum
-	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\{\s*([^\}]+)\s*\}\s*\+>\+/$$1{"$2"}/) 	# +<+$HASH_KEY_TYPE{uiIP}+>+ ==> IP4
-	#){
-	#print DBG __SUB__ . __LINE__ . " BBBB : 1 $replace_in\n";
-	#$in_cnt ++;
-	#print DBG "Set Hash replace2 in_cnt=$in_cnt: $replace_in \n";
-	#}			# +<+$type{+<+$HASH_KEY_TYPE{uiIP}+>+}+>+  ==> int
 
-	#####  while($replace_in =~ /\+<\+\s*(\$[\w\d\.\)\(]+\s*[^\+>]*)\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	{
-		my $match = $&;
-		my $val = eval($1);
-		print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
-		$replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
-		$in_cnt ++;
-	};
 	#print DBG __SUB__ . ":" . __LINE__ . " +<+ \$... +>+ : in_cnt $in_cnt\n";
     #print DBG __SUB__ . ":" . __LINE__ . " AAAA : after $replace_in\n";
+    if($ln > 10000){
+        print "in_cnt matched = $in_cnt $nn_cnt\n";
+    }
 
 	return $replace_in;
 }
