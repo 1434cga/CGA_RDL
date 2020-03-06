@@ -31,8 +31,8 @@ sub help
 	printf("\t\t  if null , we ignore the version between excel version input file and [VARIABLE]Excel_Version  in excel file ($cga_rdl_version_input_file)\n");
 	printf("\t--debug");
 	printf("\t\t  add stcI syntax on output file\n");
-	printf("\t--performance");
-	printf("\t\t  run performance mode\n");
+	printf("\t--original");
+	printf("\t\t  run NO performance mode\n");
 	printf("\t--nolog");
 	printf("\t\t  print log into /dev/null\n");
 	printf("\t--help\n");
@@ -521,7 +521,11 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 			}
 			$lines = iterate_equal($lines);
 		} else {
-			$lines = iterate_equal($linesOrg);
+            if($optionPerformance){
+			    $lines = iterate_equal_performance($linesOrg);
+            } else {
+			    $lines = iterate_equal($linesOrg);
+            }
 		}
         #print DBG __SUB__ . " DDDDD IFEQUAL = $linesOrg\n";
 		$lines = replace_var_with_value($lines);
@@ -560,7 +564,164 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 	if($stc_debug eq "DEBUG_ON"){ end_time_log("==END CChange =="); }
 }
 
-our $tcnt;
+sub iterate_equal_performance()
+{
+	# Rules
+	# IFEQUAL | IFNOTEQUAL ( condition with general rules :&& ,|| ,etc)  /#       
+	#       Contents with multiple lines
+	# #/
+	my $il="";
+	my $ifequal_one="";
+	my $ifequal_two="";
+	my $ifequal_parm="";
+	my $len;
+	my $if_before="";
+	my $if_match="";
+	my $if_after="";
+    my $if_eval = "";
+
+	$il = shift @_;
+
+
+	open(STF , ">temp.cpp.stc");
+    print STF $il;
+    close(STF);
+
+    my $cnt = 0;
+
+    
+    my @ll = split(/\n/,$il);
+    print DBG $ll[0] . "\n";
+    print DBG $ll[1] . "\n";
+    my $startll = @ll;
+    my $sbrace;
+    my $ebrace;
+    my @stack;
+    print $startll . "\n";
+    while($startll >= 0){
+        print DBG "While startll $startll\n";
+        if($ll[$startll] =~ m/\+\}\}\+/){
+            push @stack , $startll;
+            print DBG " stack:@stack   , count $#stack\n";
+            $startll--;
+        } elsif($ll[$startll] =~ m/\+\{\{\+/){
+            $sbrace = $startll;
+            print DBG "stack:" . "@stack \n";
+            $ebrace = pop @stack;
+            print DBG "startll $startll  , sbrace $sbrace , ebrace $ebrace\n";
+            print DBG "stack:" . "$#stack : @stack \n";
+            if($ll[$startll] =~ m/(IFEQUAL|IFNOTEQUAL)/){
+                my $order = $&;
+                my $after = $';
+                my $condition;
+                my $val;
+                if($after =~ m/(\(([^\(\)]|(?R))*\))/){
+                    $condition = $&;
+                    print DBG "$startll : $order  condition = $condition\n";
+                }
+		        $condition = replace_var_with_value($condition);
+                $val = eval($condition);
+                print DBG "$startll : $order  condition = $condition , value:$val\n";
+                if($order eq "IFEQUAL"){
+                    if($val ne ""){
+                        print DBG "==1==\n";
+                        for($i=15;$i>=-15;$i--){
+                            if( ($sbrace <= ($startll-$i) ) && (($startll-$i) <= $ebrace) ){
+                                print DBG "o| ";
+                            } else {
+                                print DBG ">> ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        splice(@ll , $ebrace , 1);
+                        splice(@ll , $sbrace , 1);
+                        for($i=15;$i>=-15;$i--){
+                            if( ($sbrace <= ($startll-$i) ) && (($startll-$i) <= ($ebrace-2)) ){
+                                print DBG "o| ";
+                            } else {
+                                print DBG "<< ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        for($i=0;$i<=$#stack;$i++){
+                            print DBG "old stack : [$i] $stack[$i] -> ";
+                            $stack[$i] = $stack[$i] - 2;
+                            print DBG "new stack : [$i] $stack[$i]\n";
+                        }
+                        $startll = $startll -1;
+                        print DBG "mid startll : $startll\n";
+                    } else {
+                        print DBG "==2==\n";
+                        for($i=15;$i>=-15;$i--){
+                            if( ($sbrace <= ($startll-$i) ) && (($startll-$i) <= $ebrace) ){
+                                print DBG "x| ";
+                            } else {
+                                print DBG ">> ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        splice(@ll , $sbrace , $ebrace - $sbrace +1);
+                        for($i=15;$i>=-15;$i--){
+                            if( ($sbrace == ($startll-$i) ) ){
+                                print DBG "x| ";
+                            } else {
+                                print DBG "<< ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        for($i=0;$i<=$#stack;$i++){
+                            print DBG "old stack : [$i] $stack[$i] -> ";
+                            $stack[$i] = $stack[$i] - ($ebrace - $sbrace +1);
+                            print DBG "new stack : [$i] $stack[$i]\n";
+                        }
+                        $startll = $startll - 1 ;
+                        print DBG "mid startll : $startll\n";
+                    }
+                } elsif($order eq "IFNOTEQUAL"){
+                    if($val eq ""){
+                        splice(@ll , $ebrace , 1);
+                        splice(@ll , $sbrace , 1);
+                        for($i=0;$i<=$#stack;$i++){
+                            $stack[$i] = $stack[$i] - 2;
+                        }
+                        $startll = $startll -1;
+                    } else {
+                        splice(@ll , $sbrace , $ebrace - $sbrace +1);
+                        for($i=0;$i<=$#stack;$i++){
+                            $stack[$i] = $stack[$i] - ($ebrace - $sbrace +1);
+                        }
+                        $startll = $startll -($ebrace - $sbrace);
+                    }
+                }
+            } else {
+                print STDERR "(temp.cpp.stc) line:" . $startll+1 . " does not have IF command\n";
+                exit(4);
+            }
+            if($#stack >= 0){
+                $startll = pop @stack;
+            } else {
+                #$startll--;
+            }
+            #for($i=10;$i>=-5;$i--){
+                #print DBG ">> " . ($startll - $i) . " : $ll[$startll-$i]\n";
+            #}
+            print DBG ">end stack count:" . "$#stack \n";
+            print DBG "end stack : @stack \n";
+            print DBG "end startll : $startll \n";
+        } else {
+            $startll--;
+        }
+    }
+
+    $il = join("\n",@ll);
+
+	open(STF , ">temp.cpp");
+    print STF $il;
+    close(STF);
+
+    return $il;
+} 
+
 sub iterate_equal()
 {
 	# Rules
@@ -1052,7 +1213,7 @@ our $cchange_start_time;
 our $outputdir = "OUTPUT";
 our %local_var_set;
 our $optionDebug=0;
-our $optionPerformance=0;
+our $optionPerformance=1;
 our $optionNoLog=0;
 my $filename="default.GV";
 my $stcfilename="default.stc";
@@ -1066,7 +1227,7 @@ GetOptions (
 		"outputdb=s"   => \$filename,      # string
 		"cga_rdl_version_input=s"   => \$cga_rdl_version_input_file,      # string
         "debug" => sub { $optionDebug = 1 },   # flag
-        "performance" => sub { $optionPerformance = 1 },   # flag
+        "original" => sub { $optionPerformance = 0 },   # flag
         "nolog" => sub { $optionNoLog = 1 },   # flag
 		"verbose|help"  => sub { $help = 1 })   # flag
 or  die(help() . "Error in command line arguments\n");
