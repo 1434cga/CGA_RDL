@@ -21,17 +21,16 @@ use MY::CHARLES qw(traverse_hash_tree);
 
 use Getopt::Long;
 our $input_file   = "./1_example.xlsx";
-our $version_input_file   = "";
+our $excel_version_input_file   = "";
 our $output_file = "./default.GV";
 our $csv_file = "./1_example.csv";
 our $help=0;
-our $verbose;
-our $verMajor;
-our $verMinor;
-our $verDev;
+our $excelVersionMajor;
+our $excelVersionMinor;
+our $excelVersionDev;
 GetOptions ("output=s" => \$output_file,    # string
 		"input=s"   => \$input_file,      # string
-		"version_input=s"   => \$version_input_file,      # string
+		"excel_version_input=s"   => \$excel_version_input_file,      # string
 		"csv_output=s"   => \$csv_file,      # string
 		"verbose|help"  => sub { $help = 1 })   # flag
 or  die(help() . "Error in command line arguments\n");
@@ -41,16 +40,16 @@ if($help == 1){
 	exit();
 }
 
-print STDERR "version file : $version_input_file\n";
+print STDERR "version file : $excel_version_input_file\n";
 
-if($version_input_file ne ""){
-    open(my $verfh, "<", $version_input_file);
+if($excel_version_input_file ne ""){
+    open(my $verfh, "<", $excel_version_input_file);
     my $s = <$verfh>;
     $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
-    $verMajor = $1;
-    $verMinor = $2;
-    $verDev = $3;
-    print STDERR "CURRENT VERSION $s => Major $verMajor, Minor $verMinor, Dev $verDev\n";
+    $excelVersionMajor = $1;
+    $excelVersionMinor = $2;
+    $excelVersionDev = $3;
+    print STDERR "excel CURRENT VERSION $s => Major $excelVersionMajor, Minor $excelVersionMinor, Dev $excelVersionDev\n";
     close($verfh);
 }
 
@@ -202,7 +201,7 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 
 hashTraverseSTDOUT();
 
-if($version_input_file ne ""){
+if($excel_version_input_file ne ""){
     my $tmpMajor = 0;
     my $tmpMinor = 0;
     my $tmpDev = 0;
@@ -212,9 +211,9 @@ if($version_input_file ne ""){
     $tmpMinor = $2;
     $tmpDev = $3;
     print STDERR "EXCEL FILE VERSION $s => Major $tmpMajor, Minor $tmpMinor, Dev $tmpDev\n";
-    if($verMajor != $tmpMajor) { versionMismatch(); exit(4); }
-    if($verMinor != $tmpMinor) { versionMismatch(); exit(4); }
-    if($verDev != $tmpDev) { versionMismatch(); exit(4); }
+    if($excelVersionMajor != $tmpMajor) { versionMismatch(); exit(4); }
+    if($excelVersionMinor != $tmpMinor) { versionMismatch(); exit(4); }
+    if($excelVersionDev != $tmpDev) { versionMismatch(); exit(4); }
 }
 
 # $gPrintHashName{"LXID_ROTATE"} = "telltale of type ROTATE";
@@ -235,8 +234,9 @@ foreach $mn (keys %Module_Name){
 sub versionMismatch {
 	print STDERR "Version Mismatch between excel file and this git repository\n";
 	print STDERR "1.check Excel_Version in excel file\n";
-	print STDERR "2.check Version in $version_input_file file\n";
-	print STDERR "Please Convert your excel file into latest excel version.\n";
+	print STDERR "2.check Version of excel in $excel_version_input_file file\n";
+	print STDERR "Please update Excel version and CGA_RDL .\n";
+    exit(4);
 }
 
 sub FixXML {
@@ -315,9 +315,9 @@ sub help
 	printf("Help :\n");
 	printf("\t--input=[input excel file]\n");
 	printf("\t\t  default input file name : $input_file\n");
-	printf("\t--version_input=[version input file]\n");
-	printf("\t\t  default version input file name : $version_input_file\n");
-	printf("\t\t  if null , we do not check the version between version input file and [VARIABLE]Excel_Version  in excel file ($input_file)\n");
+	printf("\t--excel_version_input=[excel version input file]\n");
+	printf("\t\t  default excel version of input file name : $excel_version_input_file\n");
+	printf("\t\t  if null , we ignore the version between excel version input file and [VARIABLE]Excel_Version  in excel file ($input_file)\n");
 	printf("\t--output=[output file with global variables]\n");
 	printf("\t\t  default output file name : $output_file\n");
 	printf("\t--csv_out=[csv output file]\n");
