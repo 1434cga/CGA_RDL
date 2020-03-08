@@ -1,13 +1,45 @@
 #!/bin/perl
+use 5.010;
 
 use File::Path qw(make_path);
+use Getopt::Long;
+use File::Basename qw(dirname);
+use Cwd  qw(abs_path);
+use lib dirname(dirname abs_path $0) . '/perllib';
 
-our $tttime;
-our $cchange_start_time;
-our $outputdir = "OUTPUT";
-our %local_var_set;
+
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
+
+sub versionMismatch {
+	print STDERR "Version Mismatch between excel file and this git repository\n";
+	print STDERR "1.check Version of CGA_RDL in $cga_rdl_version_input_file file\n";
+	print STDERR "Please update your CGA_RDL version and Excel version.\n";
+    exit(4);
+}
+
+
+sub help 
+{
+	printf("Help :\n");
+	printf("\t--inputstci=[stcI or stc file]\n");
+	printf("\t\t  default input stc or stcI file name : $stcfilename\n");
+	printf("\t--outputdb=[output file]\n");
+	printf("\t\t  default output DB file name : $filename\n");
+	printf("\t--cga_rdl_version_input=[version file name]\n");
+	printf("\t\t  default input version file name : $cga_rdl_version_input_file\n");
+	printf("\t\t  if null , we ignore the version between excel version input file and [VARIABLE]Excel_Version  in excel file ($cga_rdl_version_input_file)\n");
+	printf("\t--debug");
+	printf("\t\t  debug mode : ITERATE  IFEQUAL IFNOTEQUAL\n");
+	printf("\t--debugdetail");
+	printf("\t\t  --debug + ITERATE detail \n");
+	printf("\t\t  debug mode : ITERATE  IFEQUAL IFNOTEQUAL  ITERATE detail \n");
+	printf("\t--original");
+	printf("\t\t  run NO performance mode\n");
+	printf("\t--nolog");
+	printf("\t\t  print log into /dev/null\n");
+	printf("\t--help\n");
+}
 
 sub plus {
     my $num = shift @_;
@@ -399,24 +431,37 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 				$in_end = $in;
 				#ITERATOR_DEBUG 
 				print DBG "iterate_comments [" . $iterate_comments . "]\n";
-				if( "ON" eq $iterate_comments){
+                my $oDebug = "";
+				if( $optionDebug ){
 					$temp1=$in_start;
 					$temp2=$iterate_lines;
 					$temp3=$in_end;
 					# /** */ 으로 묶는 안에 /* */이 있으면 안되므로 <* *>으로 변환을 시켜주는 것이다.  
-					$temp1 =~ s/\/\*/\<\*/g;
-					$temp1 =~ s/\*\//\*\>/g;
-					$temp2 =~ s/\/\*/\<\*/g;
-					$temp2 =~ s/\*\//\*\>/g;
+					#$temp1 =~ s/\/\*/\<\*/g;
+					#$temp1 =~ s/\*\//\*\>/g;
+					#$temp2 =~ s/\/\*/\<\*/g;
+					#$temp2 =~ s/\*\//\*\>/g;
 					$temp2 =~ s/IFNOTEQUAL/ifNOTequal/g;
 					$temp2 =~ s/IFEQUAL/ifequal/g;
-					$temp3 =~ s/\/\*/\<\*/g;
-					$temp3 =~ s/\*\//\*\>/g;
+					#$temp3 =~ s/\/\*/\<\*/g;
+					#$temp3 =~ s/\*\//\*\>/g;
 					#ITERATOR_DEBUG 
 					print DBG "\/\*\*\n$temp1$temp2$temp3\*\/\n";
+                    $oDebug = "#if 0 // DEBUG ITERATE  : debug mode start\n$temp1$temp2$temp3\n#endif // debug mode end\n";
+					$oDebug =~ s/\+\{\{\+/\+\[\[\+/g;
+					$oDebug =~ s/\+\}\}\+/\+\]\]\+/g;
+					$oDebug =~ s/\+\<\+/\+\(\+/g;
+					$oDebug =~ s/\+\>\+/\+\)\+/g;
+					$oDebug =~ s/\+\<\<\+/\+\(\(\+/g;
+					$oDebug =~ s/\+\>\>\+/\+\)\)\+/g;
 				}
 				# Iterator_recursion은 단지 확장을 위한 것이다. 그러므로 , 확장을하는 것만 해주면 된다.  
 				$iterate_lines = Iterator_recursion($iterate_var_type , $iterate_var_name,$iterate_key,$iterate_value,$iterate_lines);
+
+				if( $optionDebug ){
+                    $iterate_lines = $oDebug . $iterate_lines;
+                }
+
 				#ITERATOR_DEBUG  
 				#$iterate_lines =~ s/\+<\+\s*\$(\S+)\s*\+>\+/$$1/g;		# 	+<+$stg_hash_del_timeout+>+ ==> 10
 
@@ -425,6 +470,7 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 				# 이런식으로 처리하면 많은 %값들을 만들지 않아도 되며, define같은 값들을 지저분하게 군데군데 만들어줄 필요가 없다. 
 				#print DBG "Set Hash 10 : $iterate_lines\n";
 				if(0){      # It is mendatory
+                    # for performance
 					#  because of processing speed.  when it is replacement , it scans whole string. So I break down into substring.
 					my $iter_lena = length($iterate_lines);
 					my $iterate_lines_org = $iterate_lines;
@@ -491,7 +537,11 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 			}
 			$lines = iterate_equal($lines);
 		} else {
-			$lines = iterate_equal($linesOrg);
+            if($optionPerformance){
+			    $lines = iterate_equal_performance($linesOrg);
+            } else {
+			    $lines = iterate_equal($linesOrg);
+            }
 		}
         #print DBG __SUB__ . " DDDDD IFEQUAL = $linesOrg\n";
 		$lines = replace_var_with_value($lines);
@@ -530,6 +580,216 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 	if($stc_debug eq "DEBUG_ON"){ end_time_log("==END CChange =="); }
 }
 
+sub iterate_equal_performance()
+{
+	# Rules
+	# IFEQUAL | IFNOTEQUAL ( condition with general rules :&& ,|| ,etc)  /#       
+	#       Contents with multiple lines
+	# #/
+	my $il="";
+	my $ifequal_one="";
+	my $ifequal_two="";
+	my $ifequal_parm="";
+	my $len;
+	my $if_before="";
+	my $if_match="";
+	my $if_after="";
+    my $if_eval = "";
+
+	$il = shift @_;
+
+
+	open(STF , ">temp.cpp.stc");
+    print STF $il;
+    close(STF);
+
+    my $cnt = 0;
+
+    
+    my @ll = split(/\n/,$il);
+    print DBG $ll[0] . "\n";
+    print DBG $ll[1] . "\n";
+    my $startll = @ll;
+    my $sbrace;
+    my $ebrace;
+    my @stack;
+    my @oDbg;
+    print $startll . "\n";
+    while($startll >= 0){
+        print DBG "While startll $startll\n";
+        if($ll[$startll] =~ m/\+\}\}\+/){
+            push @stack , $startll;
+            print DBG " stack:@stack   , count $#stack\n";
+            $startll--;
+        } elsif($ll[$startll] =~ m/\+\{\{\+/){
+            $sbrace = $startll;
+            print DBG "stack:" . "@stack \n";
+            $ebrace = pop @stack;
+            print DBG "startll $startll  , sbrace $sbrace , ebrace $ebrace\n";
+            print DBG "stack:" . "$#stack : @stack \n";
+            if($ll[$startll] =~ m/(IFEQUAL|IFNOTEQUAL)/){
+                my $order = $&;
+                my $after = $';
+                my $condition;
+                my $val;
+                if($after =~ m/(\(([^\(\)]|(?R))*\))/){
+                    $condition = $&;
+                    print DBG "$startll : $order  condition = $condition\n";
+                }
+		        $condition = replace_var_with_value($condition);
+                $val = eval($condition);
+                print DBG "$startll : $order  condition = $condition , value:$val\n";
+                if($order eq "IFEQUAL"){
+                    if($val ne ""){
+                        print DBG "==1== , stacksize $#stack\n";
+                        for($i=10;$i>=-10;$i--){
+                            if( ($sbrace <= ($startll-$i) ) && (($startll-$i) <= $ebrace) ){
+                                print DBG "o| ";
+                            } else {
+                                print DBG ">> ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        if($optionDebug){
+                            splice(@oDbg , $ebrace , 1);
+                            splice(@oDbg , $sbrace , 1);
+                            if($#stack < 0){
+                                $oDbg[$sbrace] .= "#if 0 // DEBUG_IF : debug mode\n";
+                                my $j=0;
+                                for($i=$sbrace;$i<=$ebrace;$i++){
+                                    $oDbg[$sbrace] .= $ll[$i] . "\n";
+                                    $j++;
+                                    if($j > 8){
+                                        $oDbg[$sbrace] .= "....\n";
+                                        last;
+                                    }
+                                }
+                                $oDbg[$sbrace] .= "#endif // DEBUG_IF : debug mode\n";
+                            }
+                        }
+                        splice(@ll , $ebrace , 1);
+                        splice(@ll , $sbrace , 1);
+                        for($i=10;$i>=-10;$i--){
+                            if( ($sbrace <= ($startll-$i) ) && (($startll-$i) <= ($ebrace-2)) ){
+                                print DBG "o| ";
+                            } else {
+                                print DBG "<< ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        for($i=0;$i<=$#stack;$i++){
+                            print DBG "old stack : [$i] $stack[$i] -> ";
+                            $stack[$i] = $stack[$i] - 2;
+                            print DBG "new stack : [$i] $stack[$i]\n";
+                        }
+                        $startll = $startll -1;
+                        print DBG "mid startll : $startll\n";
+                    } else {
+                        print DBG "==2==\n";
+                        for($i=10;$i>=-10;$i--){
+                            if( ($sbrace <= ($startll-$i) ) && (($startll-$i) <= $ebrace) ){
+                                print DBG "x| ";
+                            } else {
+                                print DBG ">> ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        if($optionDebug){
+                            splice(@oDbg , $sbrace , $ebrace - $sbrace +1);
+                        }
+                        splice(@ll , $sbrace , $ebrace - $sbrace +1);
+                        for($i=10;$i>=-10;$i--){
+                            if( ($sbrace == ($startll-$i) ) ){
+                                print DBG "x| ";
+                            } else {
+                                print DBG "<< ";
+                            }
+                            print DBG ($startll - $i) . " : $ll[$startll-$i]\n";
+                        }
+                        for($i=0;$i<=$#stack;$i++){
+                            print DBG "old stack : [$i] $stack[$i] -> ";
+                            $stack[$i] = $stack[$i] - ($ebrace - $sbrace +1);
+                            print DBG "new stack : [$i] $stack[$i]\n";
+                        }
+                        $startll = $startll - 1 ;
+                        print DBG "mid startll : $startll\n";
+                    }
+                } elsif($order eq "IFNOTEQUAL"){
+                    if($val eq ""){
+                        if($optionDebug){
+                            splice(@oDbg , $ebrace , 1);
+                            splice(@oDbg , $sbrace , 1);
+                            if($#stack < 0){
+                                $oDbg[$sbrace] .= "#if 0 // DEBUG_IF : debug mode\n";
+                                my $j=0;
+                                for($i=$sbrace;$i<=$ebrace;$i++){
+                                    $oDbg[$sbrace] .= $ll[$i] . "\n";
+                                    $j++;
+                                    if($j > 8){
+                                        $oDbg[$sbrace] .= "....\n";
+                                        last;
+                                    }
+                                }
+                                $oDbg[$sbrace] .= "#endif // DEBUG_IF : debug mode\n";
+                            }
+                        }
+                        splice(@ll , $ebrace , 1);
+                        splice(@ll , $sbrace , 1);
+                        for($i=0;$i<=$#stack;$i++){
+                            $stack[$i] = $stack[$i] - 2;
+                        }
+                        $startll = $startll -1;
+                    } else {
+                        if($optionDebug){
+                            splice(@oDbg , $sbrace , $ebrace - $sbrace +1);
+                        }
+                        splice(@ll , $sbrace , $ebrace - $sbrace +1);
+                        for($i=0;$i<=$#stack;$i++){
+                            $stack[$i] = $stack[$i] - ($ebrace - $sbrace +1);
+                        }
+                        $startll = $startll - 1 ;
+                    }
+                }
+            } else {
+                print STDERR "(temp.cpp.stc) line:" . $startll+1 . " does not have IF command\n";
+                exit(4);
+            }
+            if($#stack >= 0){
+                $startll = pop @stack;
+            } else {
+                #$startll--;
+            }
+            #for($i=10;$i>=-5;$i--){
+                #print DBG ">> " . ($startll - $i) . " : $ll[$startll-$i]\n";
+            #}
+            print DBG ">end stack count:" . "$#stack \n";
+            print DBG "end stack : @stack \n";
+            print DBG "end startll : $startll \n";
+        } else {
+            $startll--;
+        }
+    }
+
+    #$il = join("\n",@ll);
+    $il = "";
+    for($i=0;$i<=$#ll;$i++){
+        if($optionDebug){
+            print DBG "optionDebug $i : $oDbg{$i}\n";
+            if($oDbg[$i]){
+                $il .= $oDbg[$i];
+            }
+        }
+        $il .= $ll[$i] . "\n";
+        print DBG "line $i : $ll[$i]\n";
+    }
+
+	open(STF , ">temp.cpp");
+    print STF $il;
+    close(STF);
+
+    return $il;
+} 
+
 sub iterate_equal()
 {
 	# Rules
@@ -548,31 +808,39 @@ sub iterate_equal()
 
 	$il = shift @_;
 
+
+	#open(STF , ">temp.cpp");
+    #print STF $il;
+    #close(STF);
+
+    $tcnt++;
+    print __SUB__ . "\n our iterate_equal $tcnt\n";
+
     
     my $cnt = 0;
     while ($il =~ m/\+\{\{\+(\s*(.*?|\n)*\s*)+\}\}\+/){   # recursion for nesting
-        print("cnt $cnt , end $end\n");
+        #print("cnt $cnt , end $end\n");
 
         $pttn = "\+\{\{\+";
         if($il =~ m/\+\{\{\+(\s*(.*?|\n)*\s*)+\}\}\+/){   # recursion for nesting
             $before = $`;
             $match = $&;
             $after = $';
-            print DBG __SUB__ . "ND1-1 match[$match]\n";
+            #print DBG __SUB__ . "ND1-1 match[$match]\n";
             @a = split(/\+\{\{\+/,$match);
-            print DBG __SUB__ . "ND1-1 \n";
+            #print DBG __SUB__ . "ND1-1 \n";
             for($i=0;$i<= $#a;$i++) {
-                print DBG __SUB__ . "$i:($a[$i])\n";
+                #print DBG __SUB__ . "$i:($a[$i])\n";
             }
             $final = $a[$#a];
             delete $a[$#a];
             for($i=0;$i<= $#a;$i++) {
-                print DBG __SUB__ . "$i:($a[$i])\n";
+                #print DBG __SUB__ . "$i:($a[$i])\n";
             }
 
             $final =~ s/^\s*\n//;
             $final =~ s/(\n)?\s*\+\}\}\+\s*$//;
-            print DBG __SUB__ . "final:($final)\n";
+            #print DBG __SUB__ . "final:($final)\n";
             #print "before($before)\n";
             for($i=0;$i< $#a;$i++) {
                 $before .= $a[$i] . $pttn;
@@ -583,9 +851,9 @@ sub iterate_equal()
             $i_match = $&;
             $i_after = $';
             $iif = $1;
-            print DBG __SUB__ . "ND1-2 i_before[$iif:$i_before]\n";
-            print DBG __SUB__ . "ND1-2 i_match[$i_match]\n";
-            print DBG __SUB__ . "ND1-2 i_after[$i_after]\n";
+            #print DBG __SUB__ . "ND1-2 i_before[$iif:$i_before]\n";
+            #print DBG __SUB__ . "ND1-2 i_match[$i_match]\n";
+            ##print DBG __SUB__ . "ND1-2 i_after[$i_after]\n";
             $i_before =~ s/\n\s*$//;
             $before .= $i_before;
         } else {
@@ -594,47 +862,49 @@ sub iterate_equal()
                 $i_match = $&;
                 $i_after = $';
                 $iif = $1;
-                print DBG __SUB__ . "ND1-3 i_before[$iif:$i_before]\n";
-                print DBG __SUB__ . "ND1-3 i_match[$i_match]\n";
-                print DBG __SUB__ . "ND1-3 i_after[$i_after]\n";
+                #print DBG __SUB__ . "ND1-3 i_before[$iif:$i_before]\n";
+                #print DBG __SUB__ . "ND1-3 i_match[$i_match]\n";
+                ##print DBG __SUB__ . "ND1-3 i_after[$i_after]\n";
                 $i_before =~ s/\n\s*$//;
                 $before = $i_before;
             } 
         }
-        print DBG __SUB__ . "before($before)\n";
+        #print DBG __SUB__ . "before($before)\n";
         if($i_after =~ m/(\(([^\(\)]|(?R))*\))/){
             $b_before = $`;
             $b_match = $&;
             $b_after = $';
-            print DBG __SUB__ . "ND1-2 b_before[$b_before]\n";
-            print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
-            print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
+            #print DBG __SUB__ . "ND1-2 b_before[$b_before]\n";
+            #print DBG __SUB__ . "ND1-2 b_match[$b_match]\n";
+            ##print DBG __SUB__ . "ND1-2 b_after[$b_after]\n";
         }
 
 		$b_match = replace_var_with_value($b_match);
         if($iif eq "IFEQUAL"){
             $val = eval($b_match);
-            print DBG __SUB__ . "$b_match -> val:$val\n";
+            #print DBG __SUB__ . "$b_match -> val:$val\n";
             if($val ne ""){
                 if($final ne ""){ $before .= "\n$final"; }
             }
         } else {
             $val = eval($b_match);
-            print DBG __SUB__ . "$b_match -> val:$val\n";
+            #print DBG __SUB__ . "$b_match -> val:$val\n";
             if($val eq ""){
                 if($final ne ""){ $before .= "\n$final"; }
             }
         }
-        #print "before($before$after)\n";
+        ##print "before($before$after)\n";
         #open($fh , ">" , "iter" . $cnt . ".out");
-        #print $fh "$before$after\n";
+        ##print $fh "$before$after\n";
         #close $fh;
         $il = "$before$after";
         $cnt++;
         if($cnt == $end){ return ""; }
-        print DBG __SUB__ . "cnt $cnt , end $end\n";
-	    print DBG __SUB__ . " RD1 $il]]]]]\n";
+        #print DBG __SUB__ . "cnt $cnt , end $end\n";
+        ##print DBG __SUB__ . " RD1 $il]]]]]\n";
     };
+
+    #print "iterate_equal loop count $cnt end\n";
 
 	return $il;
 }
@@ -810,7 +1080,7 @@ sub Iterator_recursion
 
 	# Various Operation
 	$iterate_lines = "";
-	if($result =~            /\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/){ 
+	if($result =~ /\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/){ 
 		@lines = split("\n",$result);
 		$result = "";
 		foreach my $it_line (@lines){
@@ -832,9 +1102,30 @@ sub Iterator_recursion
 			elsif ($it_line =~ /^(.*)\+>>\+/){
 #print DBG "SUB_ITERATE : $iterate_cnt : $it_line\n";
 				$iterate_cnt--;
+
 				if(0 == $iterate_cnt){
+                    my $oDebug="";
+                    if($optionDebugDetail){
+                        if(not($iterate_lines =~ /^[\s\n]*$/)){
+                            $oDebug = $iterate_lines;
+					        #$temp2 =~ s/\/\*/\<\*/g;
+					        #$temp2 =~ s/\*\//\*\>/g;
+					        $oDebug =~ s/IFNOTEQUAL/ifNOTequal/g;
+					        $oDebug =~ s/IFEQUAL/ifequal/g;
+					        $oDebug =~ s/\+\{\{\+/\+\[\[\+/g;
+					        $oDebug =~ s/\+\}\}\+/\+\]\]\+/g;
+					        $oDebug =~ s/\+\<\+/\+\(\+/g;
+					        $oDebug =~ s/\+\>\+/\+\)\+/g;
+					        $oDebug =~ s/\+\<\<\+/\+\(\(\+/g;
+					        $oDebug =~ s/\+\>\>\+/\+\)\)\+/g;
+                            $oDebug = "#if  0  // DEBUG_DETAIL : debug mode in detail start\n$oDebug\n#endif // debug mode in detail end\n";
+                        }
+                    }
 					$iterate_lines = Iterator_recursion($iterate_var_type , $iterate_var_name,$iterate_key,$iterate_value,$iterate_lines);
-#print  DBG "Send result 30 :: $iterate_lines\n"; 
+#print  DBG "send result 30 :: $iterate_lines\n"; 
+                    if($optionDebugDetail){
+                        $iterate_lines = $oDebug . $iterate_lines;
+                    }
 					#$iterate_lines = replace_var_with_value($iterate_lines);
 					if($myiterate_newline_type ne "WithoutNewLine"){
 						$result .= $iterate_lines;
@@ -877,7 +1168,66 @@ sub replace_var_with_value
 {
 	my $replace_in;
 	my $in_cnt = 0;
-	$replace_in = shift @_;
+	my $nn_cnt = 0;
+	my $replace_in = shift @_;
+
+    my $ln = length($replace_in);
+
+    if($ln > 10000){
+        print "length = " . length($replace_in) . "\n";
+    }
+
+	#print DBG __SUB__ . ":" . __LINE__ . " ---- : in_cnt $in_cnt\n";
+	#while(
+	#($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\+>\+/$$1/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\[\s*(\d*)\s*\]\s*\+>\+/$$1[$2]/)	# +<+$typedef_name[54]+>+  ==> COMBI_Accum
+	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\{\s*([^\}]+)\s*\}\s*\+>\+/$$1{"$2"}/) 	# +<+$HASH_KEY_TYPE{uiIP}+>+ ==> IP4
+	#){
+	#print DBG __SUB__ . __LINE__ . " BBBB : 1 $replace_in\n";
+	#$in_cnt ++;
+	#print DBG "Set Hash replace2 in_cnt=$in_cnt: $replace_in \n";
+	#}			# +<+$type{+<+$HASH_KEY_TYPE{uiIP}+>+}+>+  ==> int
+
+	#####  while($replace_in =~ /\+<\+\s*(\$[\w\d\.\)\(]+\s*[^\+>]*)\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	if($optionPerformance){      
+        # for performance
+		my $iter_lena = length($replace_in);
+		my $replace_org  = $replace_in;
+        my $replace_tmp;
+        $replace_in = "";
+		for(my $itt = 0;$itt <= $iter_lena ; $itt += 1000){
+		    $replace_tmp = substr($replace_org, $itt, 1000);
+            #if($ln > 10000){
+            #print "[[[$replace_tmp]]]\n";
+            #}
+	        while($replace_tmp =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	        {
+                #my $match = $&;
+		        my $val = eval($1);
+                #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+		        $replace_tmp =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+                $in_cnt ++;
+	        }
+            $replace_in = $replace_in . $replace_tmp;
+		}
+	    while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+	    {
+            #my $match = $&;
+	        my $val = eval($1);
+            #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+	        $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+	        $nn_cnt ++;
+	    }
+    } else {        # this is basic
+        while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+        {
+            #my $match = $&;
+            my $val = eval($1);
+            #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+            $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+            $in_cnt ++;
+        }
+    }
 
     #print DBG __SUB__ . ":" . __LINE__ . " AAAA : before $replace_in\n";
 	while($replace_in =~ /(\d+)\s*\+\+\+\+/){		# 	++++     1을 더해 준다. 
@@ -895,28 +1245,12 @@ sub replace_var_with_value
 		$replace_in =~ s/\d+\s*\-\-\-\-/$temp_num/;
 		$in_cnt ++;
 	}
-	#print DBG __SUB__ . ":" . __LINE__ . " ---- : in_cnt $in_cnt\n";
-	#while(
-	#($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\+>\+/$$1/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\[\s*(\d*)\s*\]\s*\+>\+/$$1[$2]/)	# +<+$typedef_name[54]+>+  ==> COMBI_Accum
-	#|| ($replace_in =~ s/\+<\+\s*\$([\w\d\.]+)\s*\{\s*([^\}]+)\s*\}\s*\+>\+/$$1{"$2"}/) 	# +<+$HASH_KEY_TYPE{uiIP}+>+ ==> IP4
-	#){
-	#print DBG __SUB__ . __LINE__ . " BBBB : 1 $replace_in\n";
-	#$in_cnt ++;
-	#print DBG "Set Hash replace2 in_cnt=$in_cnt: $replace_in \n";
-	#}			# +<+$type{+<+$HASH_KEY_TYPE{uiIP}+>+}+>+  ==> int
 
-	#####  while($replace_in =~ /\+<\+\s*(\$[\w\d\.\)\(]+\s*[^\+>]*)\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	{
-		my $match = $&;
-		my $val = eval($1);
-		print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
-		$replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
-		$in_cnt ++;
-	};
 	#print DBG __SUB__ . ":" . __LINE__ . " +<+ \$... +>+ : in_cnt $in_cnt\n";
     #print DBG __SUB__ . ":" . __LINE__ . " AAAA : after $replace_in\n";
+    if($ln > 10000){
+        print "in_cnt matched = $in_cnt $nn_cnt\n";
+    }
 
 	return $replace_in;
 }
@@ -957,23 +1291,82 @@ sub traverse_hash_tree {
 	traverse_hash_tree_to_recover_special_code($TAXA_TREE,$vn,$lstr,$fh);
 }
 
+#
+#======= main MAIN ==============
+#
+
+print STDERR "perlscript=$0\n";
+
+our $tttime;
+our $cchange_start_time;
+our $outputdir = "OUTPUT";
+our %local_var_set;
+our $optionDebug=0;
+our $optionDebugDetail=0;
+our $optionPerformance=1;
+our $optionNoLog=0;
+my $filename="default.GV";
+my $stcfilename="default.stc";
+our $cga_rdl_version_input_file   = "";
+our $cgaRdlVersionMajor;
+our $cgaRdlVersionMinor;
+our $cgaRdlVersionDev;
+
+GetOptions (
+		"inputstci=s"   => \$stcfilename,      # string
+		"outputdb=s"   => \$filename,      # string
+		"cga_rdl_version_input=s"   => \$cga_rdl_version_input_file,      # string
+        "debug" => sub { $optionDebug = 1 },   # flag
+        "debugdetail" => sub { $optionDebug = 1;  $optionDebugDetail = 1;  },   # flag
+        "original" => sub { $optionPerformance = 0 },   # flag
+        "nolog" => sub { $optionNoLog = 1 },   # flag
+		"verbose|help"  => sub { $help = 1 })   # flag
+or  die(help() . "Error in command line arguments\n");
+
+if($help == 1){
+	help();
+	exit();
+}
+
+if($cga_rdl_version_input_file ne ""){
+    my $_dir = dirname($0);
+    if(open(my $verfh, "<", "$_dir\/$cga_rdl_version_input_file")){
+        my $s = <$verfh>;
+        $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
+        $cgaRdlVersionMajor = $1;
+        $cgaRdlVersionMinor = $2;
+        $cgaRdlVersionDev = $3;
+        print STDERR "CGA_RDL CURRENT VERSION $s => Major $cgaRdlVersionMajor, Minor $cgaRdlVersionMinor, Dev $cgaRdlVersionDev\n";
+        close($verfh);
+    } else {
+        print STDERR "cga rdl version file ($_dir\/$cga_rdl_version_input_file) does not exist.\n";
+        $cga_rdl_version_input_file = "";
+    }
+}
+
 
 mkdir "OUTPUT";
 mkdir "OUTPUT/stc";
 mkdir "OUTPUT/tmp";
 # set the variables from file
-print "arguments count : $#ARGV\n";
-print STDERR "arguments count : $#ARGV\n";
-($filename,$stcfilename) = (@ARGV);
-if($stcfilename eq ""){
-	$filename = "default.GVm";
-	$stcfilename = "default.stc";
-}
+#print "arguments count : $#ARGV\n";
+#print STDERR "arguments count : $#ARGV\n";
+#($filename,$stcfilename) = (@ARGV);
+#if($stcfilename eq ""){
+#$filename = "default.GVm";
+#$stcfilename = "default.stc";
+#}
 
 ## init file open
-open(DBG,">debug.log");
-open(TIME_DBG,">time_debug.log");
-open(VAR_DBG,">var_debug.log");
+if($optionNoLog){
+    open(DBG,">/dev/null");
+    open(TIME_DBG,">/dev/null");
+    open(VAR_DBG,">/dev/null");
+} else {
+    open(DBG,">debug.log");
+    open(TIME_DBG,">time_debug.log");
+    open(VAR_DBG,">var_debug.log");
+}
 
 
 print "fname = $filename , stc fname = $stcfilename\n";
@@ -993,6 +1386,24 @@ while(<FH>){
 	#$lcnt++;
 }
 close(FH);
+
+
+if($cga_rdl_version_input_file ne ""){
+    my $tmpMajor = 0;
+    my $tmpMinor = 0;
+    my $tmpDev = 0;
+    my $s = $gTitle{"VARIABLE"}{"CGA_RDL_Version"};
+    $s =~ /\s*\D*\s*(\d+)\.(\d+)\.(\d+)\s*$/;
+    $tmpMajor = $1;
+    $tmpMinor = $2;
+    $tmpDev = $3;
+    print STDERR "cga_rdl FILE VERSION $s => Major $tmpMajor, Minor $tmpMinor, Dev $tmpDev\n";
+    if($cgaRdlVersionMajor != $tmpMajor){ versionMismatch(); exit(4); }
+    if($cgaRdlVersionMinor != $tmpMinor){ versionMismatch(); exit(4); }
+    if($cgaRdlVersionDev != $tmpDev){ versionMismatch(); exit(4); }
+}
+
+
 foreach my $key (keys %gVariables){
 	$$key = $gVariables{$key};
 }
