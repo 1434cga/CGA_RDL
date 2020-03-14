@@ -403,7 +403,9 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 
 #print_fp("Line 1 icnt=$iterate_cnt : $in",DBG);
 		if(0 == $iterate_cnt){
-			$in = replace_var_with_value($in);
+	            #foreach my $key (sort keys %API) { print DBG __SUB__ . "API1-4-0 $key - CChange\n"; }
+			#$in = replace_var_with_value($in,3696);
+	            #foreach my $key (sort keys %API) { print DBG __SUB__ . "API1-4-1 $key - CChange\n"; }
 		}
 #print_fp("Line 2 icnt=$iterate_cnt : $in",DBG);
 
@@ -1017,9 +1019,10 @@ sub Iterator_recursion
 
 	($iterate_var_type , $iterate_var_name , $iterate_key , $iterate_value, $iterate_lines) = @_;
 	#print_fp( "O : @_\n", OUTPUTC);
-	print DBG __SUB__ . "RC : $iterate_var_type , $iterate_var_name , $iterate_key , $iterate_value\n";
+	#print DBG __SUB__ . "RC1 : $iterate_var_type , $iterate_var_name , $iterate_key , $iterate_value\n";
 
-	print DBG __SUB__ . "RC : Iterator_recursion : \$iterate_lines = $iterate_lines ]]]\n";
+	#print DBG __SUB__ . "RC2 : Iterator_recursion : \$iterate_lines = $iterate_lines ]]]\n";
+	$iterate_var_name = replace_var_with_value($iterate_var_name);
 
 	# Various Operation  :
 	#   % : hash
@@ -1031,7 +1034,7 @@ sub Iterator_recursion
 		#$tmp1 = eval $$iterate_var_name;
 		#print DBG __SUB__ . "RC-1 : " . (sort_keys($iterate_var_name) ) . "\n";
 		foreach $stg_key_hash (sort_keys($iterate_var_name,$iterate_var_type,"DEBUG_ON")){
-			print DBG __SUB__ . "RC : HASH Iterator_recursion : \$key = $stg_key_hash value=[ $$iterate_var_name{$stg_key_hash} ] [ $iterate_var_name ] [ " .  getHashRef($iterate_var_name)->{$stg_key_hash} . "]\n";
+			print DBG __SUB__ . "RC-2 : HASH2 Iterator_recursion : \$key = $stg_key_hash value=[ $$iterate_var_name{$stg_key_hash} ] [ $iterate_var_name ] [ " .  getHashRef($iterate_var_name)->{$stg_key_hash} . "]\n";
 			my $myvalue = getHashRef($iterate_var_name)->{$stg_key_hash};
 			$temp = $iterate_lines;
 			$temp =~ s/$iterate_key/$stg_key_hash/g;
@@ -1086,7 +1089,6 @@ sub Iterator_recursion
 		foreach my $it_line (@lines){
 			if ($it_line =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/){  
 #print DBG "Set Hash 20 : $iterate_lines \n";
-				$it_line = replace_var_with_value($it_line);
 #print DBG "Set Hash 21 : $iterate_cnt : $it_line\n";
 				$it_line =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/;  
 				if(0 == $iterate_cnt){
@@ -1170,8 +1172,14 @@ sub replace_var_with_value
 	my $in_cnt = 0;
 	my $nn_cnt = 0;
 	my $replace_in = shift @_;
+	my $num = shift @_;
 
     my $ln = length($replace_in);
+
+    if($num == 369){
+	    print DBG __SUB__ . ":" . __LINE__ . " ---- : num $num  $replace_in\n";
+	    foreach my $key (sort keys %API) { print DBG __SUB__ . "API1 $key - replace_var_with_value\n"; }
+    }
 
     if($ln > 10000){
         print "length = " . length($replace_in) . "\n";
@@ -1189,7 +1197,7 @@ sub replace_var_with_value
 	#}			# +<+$type{+<+$HASH_KEY_TYPE{uiIP}+>+}+>+  ==> int
 
 	#####  while($replace_in =~ /\+<\+\s*(\$[\w\d\.\)\(]+\s*[^\+>]*)\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
-	if($optionPerformance){      
+    if(0){      # when I use pulus($g_y) , it is not proper method. so I won't use it
         # for performance
 		my $iter_lena = length($replace_in);
 		my $replace_org  = $replace_in;
@@ -1222,9 +1230,17 @@ sub replace_var_with_value
         while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
         {
             #my $match = $&;
+                if($num == 369){
+	                print DBG __SUB__ . ":" . __LINE__ . " ---- : 1: $1 num $num  $replace_in\n";
+	                foreach my $key (sort keys %API) { print DBG __SUB__ . "API1 $key - replace_var_with_value\n"; }
+                }
             my $val = eval($1);
             #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
             $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+                if($num == 369){
+	                print DBG __SUB__ . ":" . __LINE__ . " ---- : val:$val 1: $1 num $num  $replace_in\n";
+	                foreach my $key (sort keys %API) { print DBG __SUB__ . "API1 $key - replace_var_with_value\n"; }
+                }
             $in_cnt ++;
         }
     }
