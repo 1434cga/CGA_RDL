@@ -1,11 +1,9 @@
 #!/usr/bin/perl
 
-# help URL :  http://search.cpan.org/~hmbrand/Spreadsheet-Read/Read.pm
-
 use 5.010;
-use Spreadsheet::Read;
 use File::Basename qw(dirname);
 use Cwd  qw(abs_path);
+use List::Util qw[min max];
 
 use lib dirname(dirname abs_path $0) . '/perllib';
 use lib abs_path . '/../../../CGA_RDL/perllib';
@@ -20,7 +18,7 @@ use MY::CHARLES qw(traverse_tree_to_file);
 use MY::CHARLES qw(traverse_hash_tree);
 
 use Getopt::Long;
-our $input_file   = "./1_example.xlsx";
+our $input_file   = "./1_example.csv";
 our $excel_version_input_file   = "";
 our $output_file = "./default.GV";
 our $csv_file = "./1_example.csv";
@@ -62,9 +60,11 @@ print "excel input file = $input_file /  output file = $output_file / csv out fi
 our %gTitle;
 our %VARIABLE;
 
-my $book = ReadData($input_file);
 open(my $csvfh, ">", $csv_file)
     or die "Can't open > $csv_file : $!";
+    
+my $comment = <<'EOC';
+my $book = ReadData($input_file);
 
 say '[0] A1: ' . $book->[0]{A1};
 say '[1] A1: ' . $book->[1]{A1};
@@ -80,6 +80,82 @@ say '[1] maxrow:' . $book->[1]{maxrow};
 #say '[3] maxcol:' . $book->[3]{maxcol};
 #say '[3] maxrow:' . $book->[3]{maxrow};
 #say '[4] A1: ' . $book->[4]{A1};
+EOC
+
+our $startQuotation = "###START_#_QUOTATION__";
+our $endQuotation = "###END__#QUOTATION___";
+our $doubleQuotation = "###DOUBLE__#QUOTATION___";
+our $commaInQuotation = "###COMMAIN__#QUOTATION___";
+our $separatorCommaQuotation = "###SEPARATOR_COMMA__#QUOTATION___";
+our $MAX = 999999999;
+
+open(my $incsvfh, "<", $input_file);
+while(<$incsvfh>){
+    my $s = $_;
+    chop($s);
+    print $_;
+    my $mydqCnt = 0;
+    foreach my $char (split //, $s) {
+        if($char eq "\""){
+            print "[$char:$mydqCnt]";
+            $mydqCnt++;
+        } else {
+            print "[$char]";
+        }
+    }
+    print "\n";
+    print "Position \": " . index($s,"\"");
+    print "   Position \"\": " . index($s,"\"\"");
+    print "\n";
+    my $flag = 1;
+    my $inQuotationFlag = 0;
+    my $my_cnt=0;
+    while($flag){
+        #if($my_cnt++ == 20){ $flag = 0; }
+        my $quotaPos = index($s,"\"");
+        my $dquotaPos = index($s,"\"\"");
+        my $commaPos = index($s,",");
+        print "{C:$my_cnt}[\":$quotaPos][\"\":$dquotaPos][,:$commaPos]{in\":$inQuotationFlag} $s\n";
+        if( ($quotaPos == -1) && ($dquotaPos == -1) ){ $flag = 0; next; }
+
+        if($quotaPos == -1){ $quotaPos = $MAX; }
+        if($dquotaPos == -1){ $dquotaPos = $MAX; }
+        if($commaPos == -1){ $commaPos = $MAX; }
+        if($inQuotationFlag){
+            my $minidx = min($quotaPos , $dquotaPos , $commaPos);
+            #print "min : $minidx\n";
+            if($minidx == $dquotaPos){
+                $s =~ s/\"\"/$doubleQuotation/;
+            } elsif($minidx == $quotaPos){
+                $s =~ s/\"/$endQuotation/;
+                $inQuotationFlag = 0;
+            } elsif($minidx == $commaPos){
+                $s =~ s/\,/$commaInQuotation/;
+            }
+        } else {
+            # non inside quotation  $quotaPos and $commaPos
+            if($quotaPos < $commaPos){
+                $inQuotationFlag = 1;
+                $s =~ s/\"/$startQuotation/;
+            } else {
+                $s =~ s/\,/$separatorCommaQuotation/;
+            }
+        }
+    }
+    $s =~ s/$separatorCommaQuotation/,/g;
+    print "==> $s\n";
+    my @sep = split /,/ , $s;
+    $my_cnt = 0;
+    foreach my $kk (@sep) {
+        my $ret = recoverOrigin($kk);
+        if($ret ne ""){
+            print "[$my_cnt] $ret\n";
+        }
+        $my_cnt++;
+    }
+}
+
+exit;
 
 #our %Manager_Name;
 
@@ -102,13 +178,7 @@ say '[1] maxrow:' . $book->[1]{maxrow};
         {
 			my @row = Spreadsheet::Read::row($book->[1], $i);
 			for my $j (0 .. $#row) {
-                my $myt = FixXML($row[$j]);
-                if( ($myt =~ /\"/) || ($myt =~ /,/) ){
-                    $myt =~ s/\"/\"\"/g;
-                    print $csvfh "\"" . $myt . "\",";
-                } else {
-                    print $csvfh $myt . ",";
-                }
+                print $csvfh "\"" . FixXML($row[$j]) . "\",";
             }
             print $csvfh "\n";
         }
@@ -237,6 +307,24 @@ foreach $mn (keys %Module_Name){
     close($mnfh);
 }
 
+sub recoverOrigin {
+    my $s = shift;
+    if(1){
+        $s =~ s/$startQuotation//g;
+        $s =~ s/$endQuotation//g;
+        $s =~ s/$doubleQuotation/\"/g;
+        $s =~ s/$commaInQuotation/,/g;
+        $s =~ s/$separatorCommaQuotation/,/g;
+    } else {
+        $s =~ s/$startQuotation/\"/g;
+        $s =~ s/$endQuotation/\"/g;
+        $s =~ s/$doubleQuotation/\"\"/g;
+        $s =~ s/$commaInQuotation/,/g;
+        $s =~ s/$separatorCommaQuotation/,/g;
+    }
+    return $s;
+}
+
 sub versionMismatch {
 	print STDERR "Version Mismatch between excel file and this git repository\n";
 	print STDERR "1.check Excel_Version in excel file\n";
@@ -329,8 +417,4 @@ sub help
 	printf("\t--csv_out=[csv output file]\n");
 	printf("\t\t  default csv output file name : $csv_file\n");
 	printf("\t--help\n");
-    #$a = "\"1,2,3,4\"\" , 5 67";
-    #print $a . "\n";
-    #$a =~ s/\"/\"\"/g;
-    #print $a . "\n";
 }

@@ -15,6 +15,8 @@ test_recover: 3_recover.sh
 	sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
 1:
 	perl 1_excel.pl --input=./test/TIDL.xlsx --csv_out=1.csv
+1csv:
+	perl 1_csv.pl --input=./test/TIDL.csv --csv_out=1.csv
 3:
 	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 toc:
