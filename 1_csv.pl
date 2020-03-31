@@ -57,6 +57,7 @@ die "input file $input_file is not exist\n" unless (-e $input_file);
 
 print "excel input file = $input_file /  output file = $output_file / csv out file = $csv_file\n";
 
+our @rowss;
 our %gTitle;
 our %VARIABLE;
 
@@ -90,6 +91,8 @@ our $separatorCommaQuotation = "###SEPARATOR_COMMA__#QUOTATION___";
 our $MAX = 999999999;
 
 open(my $incsvfh, "<", $input_file);
+my $my_rowIndex = 0;
+my $my_colIndex = 0;
 while(<$incsvfh>){
     my $s = $_;
     chop($s);
@@ -110,6 +113,7 @@ while(<$incsvfh>){
     my $flag = 1;
     my $inQuotationFlag = 0;
     my $my_cnt=0;
+    $my_colIndex = 0;
     while($flag){
         #if($my_cnt++ == 20){ $flag = 0; }
         my $quotaPos = index($s,"\"");
@@ -150,9 +154,23 @@ while(<$incsvfh>){
         my $ret = recoverOrigin($kk);
         if($ret ne ""){
             print "[$my_cnt] $ret\n";
+            $rowss[$my_rowIndex][$my_colIndex] = $ret;
         }
         $my_cnt++;
+        $my_colIndex++;
     }
+    $my_rowIndex++;
+}
+
+foreach my $i (1 .. scalar @rowss) {
+    print "scala [$i] " . $rowss[$i-1][0];
+    my $rowref = $rowss[$i];
+    $n = @$rowref - 1;
+    $p = $i -1;
+    foreach my $j (0 .. $n) {
+        print " {$j}$rowss[$p][$j] ";
+    }
+    print "\n";
 }
 
 exit;
