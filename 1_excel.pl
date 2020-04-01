@@ -285,6 +285,7 @@ sub removeSpace {
 	my $default = shift;
 	$s =~ s/^\s*//g;
 	$s =~ s/\s*$//g;
+	$s =~ s/\r//g;
     #$s =~ s/ /_/g;
     $s = FixXML($s);
 	return $s eq "" ? $default : $s;

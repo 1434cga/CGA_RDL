@@ -13,11 +13,11 @@ test2: test/TIDL.xlsx test/test2.cpp.stcI
 	perl 2_replace.pl default.GV test/test2.cpp.stcI
 test_recover: 3_recover.sh
 	sh 3_recover.sh OUTPUT/stc test_recover/working test_recover/merged
-1:
-	perl 1_excel.pl --input=./test/TIDL.xlsx --csv_out=1.csv
-1csv:
-	perl 1_csv.pl --input=./time/org.csv --csv_out=1.csv
-3:
+ex: 1_excel.pl ./time/Code_Generator.xlsx
+	perl 1_excel.pl --input=./time/Code_Generator.xlsx --csv_out=./time/c.csv
+csv: 1_csv.pl ./time/Code_Generator.csv
+	perl 1_csv.pl --input=./time/Code_Generator.csv --csv_out=./time/o.csv
+3merge:
 	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 toc:
 	markdown-pp README.mdpp -o README.md        # DOC.md  is basic file in README.mdpp
