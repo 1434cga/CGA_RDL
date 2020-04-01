@@ -114,6 +114,14 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 # Environment
 - install perl module (cpan)
 - library MY::CHARLES in perllib directory
+
+## use csv file instead of excel
+- Excel is more convenient and effective. But , you can use csv file with 1_csv.pl if you have some problem to install  perl package.
+- ```perl 1_csv.pl --input=./time/Code_Generator.csv --csv_out=./time/o.csv``` 
+    - you can run with  csv file instead of xlsx file.
+    - First of all , you convert the file into csv file when you have error of perl package for excel.
+    - if you use MAC OSX , your csv file will have as one line with ^M. so you can replace ^M with \r\n
+
 ## read excel
 https://perlmaven.com/read-an-excel-file-in-perl
 ## Install
@@ -122,7 +130,6 @@ https://perlmaven.com/read-an-excel-file-in-perl
     - install Spreadsheet::Read
         - When I run read.pl , I meet the following msg “Parser for XLSX is not installed at read.pl line 9.”
     - install Spreadsheet::XLSX
-
 
 # How to run the test
 ## example1 (test)
