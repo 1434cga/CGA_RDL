@@ -1,3 +1,11 @@
+add 1_csv.pl to run without XLSX perl package
+
+200401--------------
+you can run with  csv file instead of xlsx file.
+First of all , you convert the file into csv file when you have error of perl package for excel.
+if you use MAC OSX , your csv file will have as one line with ^M. so you can replace ^M with \r\n
+
+--------------
 support sldd & %+<+$API+>+ and restore $g_y policy (plus)
 
 v1.0.4
