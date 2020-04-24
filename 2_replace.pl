@@ -78,7 +78,7 @@ sub substitute {
 sub in {
     my $my_a = shift @_;
     my $my_b = shift @_;
-    if($my_a = /$my_b/){
+    if($my_a =~ /$my_b/){
         return $my_b;
     } else {
         return "";
