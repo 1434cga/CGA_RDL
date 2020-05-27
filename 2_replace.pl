@@ -96,6 +96,29 @@ sub countKey {
     return $my_count;
 }
 
+our $noPrintNumber;
+sub noPrintSetZero {
+    $noPrintNumber = 0;
+    return "";
+}
+sub noPrintCountKey {
+    my $my_s = shift @_;
+    foreach my $my_key (sort_keys($my_s)){
+        #print STDERR "countKey : KEY : $my_key\n";
+        $noPrintNumber++;
+    }
+    #print STDERR "countKey : $my_s : $my_count\n";
+    return "";
+}
+sub noPrintPlus {
+    my $cnt = shift @_;
+    $noPrintNumber += $cnt;
+    return "";
+}
+sub printNumber {
+    return $noPrintNumber;
+}
+
 sub start_time_log {
 	my $tmpLogInit = shift @_;
 	($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time) ;
