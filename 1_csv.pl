@@ -219,11 +219,55 @@ foreach my $i (1 .. scalar @rowss) {
 		#say "$book->[1]{label} sheet Header:" . chr(65+$i) . (1) . ' ' . ($row[$i] // '');
 	#}
     #
+
+
+    # fill out the empty cell in [HEADER] column
+    my $headerCnt = 0;
+	foreach my $i (1 .. scalar @rowss) {
+        my @row = @{$rowss[$i-1]};
+        # check empty line
+        my $emptyFlag = 0;
+        my $headerFlag = 0;
+        my $p = $i -1;
+        for my $j (0 .. $#row) {
+            if(not (($rowss[$p][$j] =~ /^\s*$/) || ($rowss[$p][$j] =~ /^\s*#/)) ){
+                $emptyFlag = 1;
+            }
+            if($headerFlag == 0){
+                if($rowss[$p][$j] =~ /^\s*\[HEADER\]\s*(\S*)/){
+                    $headerCnt++;
+                    print STDERR "$i : $headerCnt : $rowss[$p][$j]\n";
+                } else {
+                    $headerFlag=1;
+                }
+            } else {
+                if($rowss[$p][$j] =~ /^\s*\[HEADER\]\s*(\S*)/){
+					die "ERROR : You should have [HEADER] continuously from first column. But, you used [HEADER] in the middle of titles.\n";
+                }
+            }
+        }
+        if($emptyFlag == 0){
+            $headerCnt = 0;
+            print STDERR "empty $i : $headerCnt : $rowss[$p][$j]\n";
+            next;
+        } 
+        for($j=0;$j<$headerCnt;$j++){
+            if( ($rowss[$p][$j] =~ /^\s*$/) && ($p>0) ){
+                if( not ($rowss[$p][$headerCnt-1] =~ /^\s*$/) ){
+                    print STDERR "---> $i $j : $rowss[$p][$j] <- $rowss[$p-1][$j]\n";
+                    $rowss[$p][$j] = $rowss[$p-1][$j];
+                }
+            }
+        }
+    }
+
+
+    #
     # Title Row starts with [VARIABLE].
     # this is a single varialbe. so we will make %VARIABLE
     #my @rows = Spreadsheet::Read::rows($book->[1]);
 	my @title;
-	my $headerCnt = 0;
+	$headerCnt = 0;
 	my $titleCnt = 0;
 	my $titleName = "";
 	foreach my $i (1 .. scalar @rowss) {
