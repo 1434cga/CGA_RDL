@@ -236,7 +236,7 @@ foreach my $i (1 .. scalar @rowss) {
             if($headerFlag == 0){
                 if($rowss[$p][$j] =~ /^\s*\[HEADER\]\s*(\S*)/){
                     $headerCnt++;
-                    print STDERR "$i : $headerCnt : $rowss[$p][$j]\n";
+                    # print STDERR "$i : $headerCnt : $rowss[$p][$j]\n";
                 } else {
                     $headerFlag=1;
                 }
@@ -248,13 +248,13 @@ foreach my $i (1 .. scalar @rowss) {
         }
         if($emptyFlag == 0){
             $headerCnt = 0;
-            print STDERR "empty $i : $headerCnt : $rowss[$p][$j]\n";
+            # print STDERR "empty $i : $headerCnt : $rowss[$p][$j]\n";
             next;
         } 
         for($j=0;$j<$headerCnt;$j++){
             if( ($rowss[$p][$j] =~ /^\s*$/) && ($p>0) ){
                 if( not ($rowss[$p][$headerCnt-1] =~ /^\s*$/) ){
-                    print STDERR "---> $i $j : $rowss[$p][$j] <- $rowss[$p-1][$j]\n";
+                    # print STDERR "---> $i $j : $rowss[$p][$j] <- $rowss[$p-1][$j]\n";
                     $rowss[$p][$j] = $rowss[$p-1][$j];
                 }
             }
