@@ -1,3 +1,23 @@
+2020.07.14 [-b master] v1.0.4 solve #43 : Automatic fill out the empty cell with proper value 
+
+# solve #43  : we wanna have the same result bwtween Origiand and After table.
+
+## Original  : we should fill out completely
+
+|  [HEADER]A | [HEADER]B | value |
+|-------|-----|----|
+| receiver1 | A | One |
+| receiver1 | B | Two |
+
+## After : Automatics fill out the form
+
+|  [HEADER]A | [HEADER]B | value |
+|-------|-----|----|
+| receiver1 | A | One |
+| | B | Two |
+
+-------------------------------------------
+
 add in($a,$b) sub-function : is $b in $a?
 
 200424--------------
