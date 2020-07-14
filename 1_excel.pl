@@ -4,7 +4,7 @@
 
 use 5.010;
 use Spreadsheet::Read;
-use File::Basename qw(dirname);
+use File::Basename;
 use Cwd  qw(abs_path);
 
 use lib dirname(dirname abs_path $0) . '/perllib';
@@ -28,10 +28,22 @@ our $help=0;
 our $excelVersionMajor;
 our $excelVersionMinor;
 our $excelVersionDev;
+our $py=0;
+our $ldest="input_file_name";
+our $lid="tidl";
+our $lpasswd="tidl1234";
+our $lhost="abc.com";
+our $lloc="~/warehouse/";
 GetOptions ("output=s" => \$output_file,    # string
 		"input=s"   => \$input_file,      # string
 		"excel_version_input=s"   => \$excel_version_input_file,      # string
 		"csv_output=s"   => \$csv_file,      # string
+		"python"  => sub { $py = 1 } ,  # python  command
+		"destinfo=s"  => \$ldest ,  # destination information file name
+		"id=s"  => \$lid ,  # account id
+		"passwd=s"  => \$lpasswd ,  # passwd
+		"host=s"  => \$lhost ,  # host
+		"location=s"  => \$lloc ,  # storing location
 		"verbose|help"  => sub { $help = 1 })   # flag
 or  die(help() . "Error in command line arguments\n");
 
@@ -237,6 +249,44 @@ foreach $mn (keys %Module_Name){
     close($mnfh);
 }
 
+
+$lg = getlogin;
+#print STDERR "$lg\n";
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+my $namePrefix = sprintf("%04d-%02d-%02d-%02d-%02d-%02d-%s-%s-%s", $year+1900, $mon+1, $mday, $hour, $min, $sec,$lg,$VARIABLE{Module_Name},$VARIABLE{Excel_Version});
+$lloc =~ s/\/\s*$//;
+$bn = basename($input_file);
+open(my $infh, ">", $ldest);
+print $infh "user,$lg\n";
+print $infh "fullname,$namePrefix\n";
+print $infh "inputfile,$input_file\n";
+print $infh "basename,$bn\n";
+print $infh "modulename,$VARIABLE{Module_Name}\n";
+print $infh "excelversion,$VARIABLE{Excel_Version}\n";
+print $infh "id,$lid\n";
+print $infh "passwd,$lpasswd\n";
+print $infh "host,$lhost\n";
+print $infh "location,$lloc\n";
+close($infh);
+if($py == 0){
+    $cmd = "sshpass -p '$lpasswd' scp $input_file $lid\@$lhost:$lloc/$namePrefix-$bn";
+    print STDERR "$cmd START\n";
+    system($cmd);
+    print STDERR "$cmd END\n";
+} else {        # python script for goh
+    open(my $infh, "<", "run_command");
+    $cmd = <$infh>;
+    $cmd =~ s/[\s\n]*$//g;
+    $cmd .= " $ldest";
+    close($infh);
+    print STDERR "$cmd START\n";
+    system($cmd);
+    print STDERR "$cmd END\n";
+}
+
+# END of main
+
+
 sub versionMismatch {
 	print STDERR "Version Mismatch between excel file and this git repository\n";
 	print STDERR "1.check Excel_Version in excel file\n";
@@ -329,6 +379,18 @@ sub help
 	printf("\t\t  default output file name : $output_file\n");
 	printf("\t--csv_out=[csv output file]\n");
 	printf("\t\t  default csv output file name : $csv_file\n");
+	printf("\t--python\n");
+	printf("\t\t  run command with python scripti to backup\n");
+	printf("\t--destinfo=[input file name with info]\n");
+	printf("\t\t  default : input_file_name\n");
+	printf("\t--id=[host id ]\n");
+	printf("\t\t  default : tidl\n");
+	printf("\t--passwd=[passwd of id]\n");
+	printf("\t\t  default : tidl1234\n");
+	printf("\t--host=[host name]\n");
+	printf("\t\t  default : abc.com\n");
+	printf("\t--location=[warehouse location]\n");
+	printf("\t\t  default : ~/warehouse/\n");
 	printf("\t--help\n");
     #$a = "\"1,2,3,4\"\" , 5 67";
     #print $a . "\n";
