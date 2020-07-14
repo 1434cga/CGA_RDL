@@ -16,7 +16,8 @@ test_recover: 3_recover.sh
 ex: 1_excel.pl ./time/Code_Generator.xlsx
 	perl 1_excel.pl --input=./time/Code_Generator.xlsx --csv_out=./time/c.csv
 csv: 1_csv.pl ./time/Code_Generator.csv
-	perl 1_csv.pl --input=./time/Code_Generator.csv --csv_out=./time/o.csv
+	perl 1_csv.pl --input=./time/Code_Generator.csv --csv_out=./time/o.csv --host=lotto645.lge.com
+	perl 1_csv.pl --input=./time/Code_Generator.csv --csv_out=./time/o.csv --python
 merge:
 	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 toc:
