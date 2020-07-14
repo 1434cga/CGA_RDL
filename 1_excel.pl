@@ -250,7 +250,7 @@ foreach $mn (keys %Module_Name){
 }
 
 
-$lg = getlogin;
+$lg =  getpwuid($<) || getlogin || "Tidl";
 #print STDERR "$lg\n";
 my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 my $namePrefix = sprintf("%04d-%02d-%02d-%02d-%02d-%02d-%s-%s-%s", $year+1900, $mon+1, $mday, $hour, $min, $sec,$lg,$VARIABLE{Module_Name},$VARIABLE{Excel_Version});
