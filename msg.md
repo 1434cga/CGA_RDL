@@ -1,3 +1,13 @@
+2020.07.14 [-b master] v1.0.4 solve #45 : -o StrictHostKeyChecking=no passes the qeustion yes/no when we connect the host at first.
+
+- 1_csv.pl  1_excel.pl
+    - solve #45 : -o StrictHostKeyChecking=no passes the qeustion yes/no when we connect the host at first.
+- 2_replace.pl
+    - add getFunctionName("abc(a,b,c)")   => abc
+    - add getInitArg("a(a,b,c)" ) =>  0,0,0
+
+
+-------------------------------------------
 2020.07.14 [-b master] v1.0.4 solve #45 : backup inputfile (csv or excel) to warehouse
 
 # solve #45 : backup inputfile (csv or excel) to warehouse

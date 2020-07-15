@@ -455,7 +455,7 @@ print $infh "host,$lhost\n";
 print $infh "location,$lloc\n";
 close($infh);
 if($py == 0){
-    $cmd = "sshpass -p '$lpasswd' scp $input_file $lid\@$lhost:$lloc/$namePrefix-$bn";
+    $cmd = "sshpass -p '$lpasswd' scp -o StrictHostKeyChecking=no $input_file $lid\@$lhost:$lloc/$namePrefix-$bn";
     print STDERR "$cmd START\n";
     system($cmd);
     print STDERR "$cmd END\n";

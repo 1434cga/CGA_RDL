@@ -75,6 +75,27 @@ sub substitute {
     return $my_s;
 }
 
+sub getInitArg {
+    my $my_s = shift @_;
+    my @my_a = split(/\,/,$my_s);
+    my $my_cnt = @my_a;
+    if($my_cnt == 0){ return ""; }
+    if($my_cnt == 1){ return "0"; }
+    my $my_r = "0";
+    for(my $i=1;$i<$my_cnt;$i++){
+        $my_r .= ",0";
+    }
+    return $my_r;
+}
+
+sub getFunctionName {
+    my $my_s = shift @_;
+    #print STDERR "my_from : $my_from\n";
+    #print STDERR "my_to : $my_to\n";
+    $my_s =~ /^\s*([^\(]*)\(/;
+    return $1;
+}
+
 sub in {
     my $my_a = shift @_;
     my $my_b = shift @_;
