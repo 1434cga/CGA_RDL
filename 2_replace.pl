@@ -96,6 +96,38 @@ sub getFunctionName {
     return $1;
 }
 
+sub getArg {
+    my $my_s = shift @_;
+    my $p = "";
+    if($my_s =~ m/(\(([^\(\)]|(?R))*\))/){
+        my $my_2 = $1;
+        $my_2 =~ s/^\(\s*//;
+        $my_2 =~ s/\s*\)\s*$//;
+		$p = $my_2;
+    }
+
+    return $p;
+}
+
+sub getArgName {
+    my $my_s = shift @_;
+    my $p = "";
+    if($my_s =~ m/(\(([^\(\)]|(?R))*\))/){
+        my $my_2 = $1;
+        $my_2 =~ s/^\(\s*//;
+        $my_2 =~ s/\s*\)\s*$//;
+		my @my_a = split(/\,/,$my_2);
+        my @my_r;
+        foreach my $k (@my_a){
+            $k =~ /([^\s\&\*]+)\s*$/;
+            push(@my_r,$1);
+        }
+        $p = join(',', @my_r);
+    }
+
+    return $p;
+}
+
 sub in {
     my $my_a = shift @_;
     my $my_b = shift @_;
