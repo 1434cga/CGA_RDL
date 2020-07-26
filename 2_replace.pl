@@ -590,7 +590,8 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 					$file_output{$stc_filename_output} =~ s/\n$/ /;
 					#print STDERR "1[ $file_output{$stc_filename_output} ]\n\n";
 					$iterate_lines =~ s/\n/ /g;
-					$iterate_lines =~ s// /g;
+					$iterate_lines =~ s/
+/ /g;
 					$file_output{$stc_filename_output} .= $iterate_lines . "\n";
 					$myiterateNewLineType = "";
 					#print STDERR "2{$iterate_lines}\n\n";
@@ -659,7 +660,8 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
         } else {
 		    open(OUTPUTC , "> $outputdir/$stc_output_dir/$tmpKey");
         }
-		$lines =~ s///g;
+		$lines =~ s/
+//g;
 		print OUTPUTC $lines;
 		close(OUTPUTC);
 	}
@@ -1223,7 +1225,8 @@ sub Iterator_recursion
 						#print STDERR "3[$result]\n\n";
 						chomp($result);
 						$iterate_lines =~ s/\n/ /g;
-						$iterate_lines =~ s// /g;
+						$iterate_lines =~ s/
+/ /g;
 						$result .= $iterate_lines . "\n";
 						$myiterate_newline_type = "";
 						#print STDERR "4{$iterate_lines}\n\n";
@@ -1455,6 +1458,7 @@ if($yours_module ne ""){
         require "./$yours_module"
     } else {
         print STDERR "Not exist $yours_module in your directory!\n";
+	exit(4);
     }
 }
 
