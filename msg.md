@@ -1,3 +1,43 @@
+2020.07.26 [-b master] v1.0.4 I think this is final update to support sub functions for each module (ex. TIDL) 
+
+- refer to : https://stackoverflow.com/questions/1712016/how-do-i-include-functions-from-another-file-in-my-perl-script
+```
+$ cat m1.pl 
+use strict;
+sub x { warn "aard"; }
+1;
+
+$ cat m2.pl 
+use strict;
+require "m1.pl";
+x();
+
+$ perl m2.pl 
+aard at m1.pl line 2.
+```
+
+- we do not chnange anymore to support special function for TIDL
+    - if TIDL has yours.pl ,  you add --yours=yours.pl after 2_replace.pl
+- add option : --yours
+perlscript=2_replace.pl
+Help :
+	--inputstci=[stcI or stc file]
+		  default input stc or stcI file name : 
+	--outputdb=[output file]
+		  default output DB file name : 
+	--cga_rdl_version_input=[version file name]
+		  default input version file name : 
+		  if null , we ignore the version between excel version input file and [VARIABLE]Excel_Version  in excel file ()
+	--debug		  debug mode : ITERATE  IFEQUAL IFNOTEQUAL
+	--debugdetail		  --debug + ITERATE detail 
+		  debug mode : ITERATE  IFEQUAL IFNOTEQUAL  ITERATE detail 
+	--original		  run NO performance mode
+	--nolog		  print log into /dev/null
+	--yours=[module file name]
+		  default is null (not use it)
+	--help
+
+-------------------------------------------
 2020.07.14 [-b master] v1.0.4 solve #45 : -o StrictHostKeyChecking=no passes the qeustion yes/no when we connect the host at first.
 
 - 1_csv.pl  1_excel.pl

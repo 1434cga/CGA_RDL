@@ -8,7 +8,6 @@ use Cwd  qw(abs_path);
 use lib dirname(dirname abs_path $0) . '/perllib';
 
 
-
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
 
 sub versionMismatch {
@@ -38,6 +37,8 @@ sub help
 	printf("\t\t  run NO performance mode\n");
 	printf("\t--nolog");
 	printf("\t\t  print log into /dev/null\n");
+	printf("\t--yours=[module file name]\n");
+	printf("\t\t  default is null (not use it)\n");
 	printf("\t--help\n");
 }
 
@@ -1413,11 +1414,13 @@ our $cga_rdl_version_input_file   = "";
 our $cgaRdlVersionMajor;
 our $cgaRdlVersionMinor;
 our $cgaRdlVersionDev;
+our $yours_module = "";
 
 GetOptions (
 		"inputstci=s"   => \$stcfilename,      # string
 		"outputdb=s"   => \$filename,      # string
 		"cga_rdl_version_input=s"   => \$cga_rdl_version_input_file,      # string
+		"yours=s"   => \$yours_module,      # string
         "debug" => sub { $optionDebug = 1 },   # flag
         "debugdetail" => sub { $optionDebug = 1;  $optionDebugDetail = 1;  },   # flag
         "original" => sub { $optionPerformance = 0 },   # flag
@@ -1445,6 +1448,16 @@ if($cga_rdl_version_input_file ne ""){
         $cga_rdl_version_input_file = "";
     }
 }
+
+if($yours_module ne ""){
+    if(-e "./$yours_module"){
+        print STDERR "Exist $yours_module in your directory!\n";
+        require "./$yours_module"
+    } else {
+        print STDERR "Not exist $yours_module in your directory!\n";
+    }
+}
+
 
 
 mkdir "OUTPUT";
