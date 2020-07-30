@@ -454,11 +454,18 @@ print $infh "passwd,$lpasswd\n";
 print $infh "host,$lhost\n";
 print $infh "location,$lloc\n";
 close($infh);
+print "ping \n";
 if($py == 0){
-    $cmd = "sshpass -p '$lpasswd' scp -o StrictHostKeyChecking=no $input_file $lid\@$lhost:$lloc/$namePrefix-$bn";
-    print STDERR "$cmd START\n";
-    system($cmd);
-    print STDERR "$cmd END\n";
+    my $rt = system("ping -W 1 -c 1 $lhost");
+    print STDERR "ping $lhost return : $rt\n";
+    if($rt == 0){
+    	$cmd = "sshpass -p '$lpasswd' scp -o StrictHostKeyChecking=no $input_file $lid\@$lhost:$lloc/$namePrefix-$bn";
+    	print STDERR "$cmd START\n";
+    	system($cmd);
+    	print STDERR "$cmd END\n";
+    } else {
+        print STDERR "host $lhost is unreachable.\n";
+    }
 } else {        # python script for goh
     open(my $infh, "<", "run_command");
     $cmd = <$infh>;
