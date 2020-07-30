@@ -1,3 +1,9 @@
+2020.07.30 [-b master] v1.0.4 skip the copy when host is unreachable.
+
+- ping -W 1 -c 1 host 
+- check return value ( 0 is successful)
+
+-------------------------------------------
 2020.07.26 [-b master] v1.0.4 I think this is final update to support sub functions for each module (ex. TIDL) 
 
 - refer to : https://stackoverflow.com/questions/1712016/how-do-i-include-functions-from-another-file-in-my-perl-script
