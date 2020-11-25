@@ -140,20 +140,22 @@ sub sort_keys
 
 sub change_special_code {
 	my ($s) = @_;
-	$s =~ s/\{/#\+#\+#\+\+###/g;
-	$s =~ s/\}/#\-#\-#\-\-###/g;
-	$s =~ s/\\/#\=#\=#\=\=###/g;
-	$s =~ s/\n/#\%#\%#\%\%###/g;
-	$s =~ s/\"/#\&#\&#\&\&###/g;
+	$s =~ s/\{/#\+#\+#\+\+braceopen###/g;
+	$s =~ s/\}/#\-#\-#\-\-braceclose###/g;
+	$s =~ s/\\/#\=#\=#\=\=backslash###/g;
+	$s =~ s/\n/#\%#\%#\%\%return###/g;
+	$s =~ s/\"/#\&#\&#\&\&doublequotation###/g;
+	$s =~ s/\@/#\&#\=#\&\&alpha###/g;
 	return $s;
 }
 sub recover_special_code {
 	my ($s) = @_;
-	$s =~ s/#\+#\+#\+\+###/\{/g;
-	$s =~ s/#\-#\-#\-\-###/\}/g;
-	$s =~ s/#\=#\=#\=\=###/\\/g;
-	$s =~ s/#\%#\%#\%\%###/\n/g;
-	$s =~ s/#\&#\&#\&\&###/\"/g;
+	$s =~ s/#\+#\+#\+\+braceopen###/\{/g;
+	$s =~ s/#\-#\-#\-\-braceclose###/\}/g;
+	$s =~ s/#\=#\=#\=\=backslash###/\\/g;
+	$s =~ s/#\%#\%#\%\%return###/\n/g;
+	$s =~ s/#\&#\&#\&\&doublequotation###/\"/g;
+	$s =~ s/#\&#\=#\&\&alpha###/\@/g;
 	return $s;
 }
 sub traverse_tree_to_file {

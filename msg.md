@@ -1,3 +1,13 @@
+2020.11.25 [-b 201125/emailProblem] not process well about email address
+
+Solve #52
+guess : perl process @ as array.
+so i change @ to special string before processing.  then i recover it when i show the result
+
+	modified:   2_replace.pl
+	modified:   perllib/MY/CHARLES.pm
+
+-------------------------------------------
 2020.07.30 [-b master] v1.0.4 skip the copy when host is unreachable.
 
 - ping -W 1 -c 1 host 

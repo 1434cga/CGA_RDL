@@ -5,7 +5,17 @@ use File::Path qw(make_path);
 use Getopt::Long;
 use File::Basename qw(dirname);
 use Cwd  qw(abs_path);
+
 use lib dirname(dirname abs_path $0) . '/perllib';
+use lib abs_path . '/../../../CGA_RDL/perllib';
+use lib abs_path . '/../../CGA_RDL/perllib';
+use lib abs_path . '/../CGA_RDL/perllib';
+use lib abs_path . '/CGA_RDL/perllib';
+use lib abs_path . '/perllib';
+use lib abs_path . '/../perllib';
+use lib abs_path . '/../../perllib';
+use lib abs_path . '/../../../perllib';
+use MY::CHARLES qw(recover_special_code);
 
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
@@ -1358,24 +1368,6 @@ sub replace_var_with_value
 	return $replace_in;
 }
 
-sub change_special_code {
-	my ($s) = @_;
-	$s =~ s/\{/#\+#\+#\+\+###/g;
-	$s =~ s/\}/#\-#\-#\-\-###/g;
-	$s =~ s/\\/#\=#\=#\=\=###/g;
-	$s =~ s/\n/#\%#\%#\%\%###/g;
-	$s =~ s/\"/#\&#\&#\&\&###/g;
-	return $s;
-}
-sub recover_special_code {
-	my ($s) = @_;
-	$s =~ s/#\+#\+#\+\+###/\{/g;
-	$s =~ s/#\-#\-#\-\-###/\}/g;
-	$s =~ s/#\=#\=#\=\=###/\\/g;
-	$s =~ s/#\%#\%#\%\%###/\n/g;
-	$s =~ s/#\&#\&#\&\&###/\"/g;
-	return $s;
-}
 sub traverse_hash_tree_to_recover_special_code {
 	my ($TAXA_TREE,$vn,$lstr,$fh)    = @_;
 	#print "sub $TAXA_TREE\n";
