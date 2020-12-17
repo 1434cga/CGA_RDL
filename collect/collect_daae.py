@@ -8,6 +8,9 @@ import enum
 import re
 import shutil
 
+warehouse_path = "../warehouse/"
+output_path = "./output/"
+
 class WriteType(enum.Enum):
 	NONE = 0
 	CLASS = 1
@@ -23,7 +26,7 @@ class DuplicateError(Exception):
 
 #get the latest file name
 def getLatestFileName():
-	csv_dir = "../warehouse/*.csv"
+	csv_dir = warehouse_path + "*.csv"
 	list_of_files = glob.glob(csv_dir)
 	if not list_of_files:
 		print("!!!Error (getLatestFileName) : There is no file")
@@ -48,7 +51,7 @@ def getServiceName(row):
 
 #get services from the latest file
 def getServices(fileName, services):
-	filepath = "../warehouse/" + fileName
+	filepath = warehouse_path + fileName
 	print(">> Get services from : " + fileName)
 	with open(filepath, 'r', encoding='cp1252') as csvfile:
 		rdr = csv.reader(csvfile)
@@ -82,7 +85,7 @@ def checkValidValue(line):
 #make csv file for ouptut
 def writeOutput(lines, file_name):
 	print(">> Start to write output : " + file_name)
-	output_filename = "./output/" + file_name
+	output_filename = output_path + file_name
 	f = open(output_filename, "w", encoding='cp1252')
 	writer = csv.writer(f)
 	writer.writerows(lines)
@@ -124,7 +127,7 @@ def collectServiceInfo(lines, build_service_name):
 	enum_array = []
 	writeFlag = WriteType.NONE
 
-	filepath = "../warehouse/" + getLatestFileName()
+	filepath = warehouse_path + getLatestFileName()
 	print(">> Get the information of : " + build_service_name)
 	with open(filepath, 'r', encoding='cp1252') as csvfile:
 		rdr = csv.reader(csvfile)
@@ -228,7 +231,7 @@ def copyFromLatest(service, lines):
 	end_str = "#===== END of " + service
 	write_flag = False
 
-	filepath = "./output/latest_tidl.csv"
+	filepath = output_path + "latest_tidl.csv"
 	with open(filepath, 'r', encoding='cp1252') as csvfile:
 		rdr = csv.reader(csvfile)
 		for row in rdr:
@@ -256,7 +259,7 @@ def copyFromLatest(service, lines):
 def copyLeftFromLatest(services, lines):
 	write_flag = False
 
-	filepath = "./output/latest_tidl.csv"
+	filepath = output_path + "latest_tidl.csv"
 	with open(filepath, 'r', encoding='cp1252') as csvfile:
 		for service in services:
 			start_str = "#===== START of " + service + " : Each Manager ===="
@@ -286,7 +289,9 @@ def copyLeftFromLatest(services, lines):
 def copyNewInfo(services):
 	print(">> Start to copy new information")
 	new_lines = []
-	shutil.copyfile('./output/Code_Generator.csv', './output/Code_Generator_old.csv')
+	new = output_path + "Code_Generator_old.csv"
+	old = output_path + "Code_Generator.csv"
+	shutil.copyfile(old, new)
 
 	start_strs = []
 	end_strs = []
@@ -299,7 +304,7 @@ def copyNewInfo(services):
 		start_strs.append(start_str)
 		end_strs.append(end_str)
 
-	filepath = "./output/Code_Generator.csv"
+	filepath = output_path + "Code_Generator.csv"
 	with open(filepath, 'r', encoding='cp1252') as csvfile:
 			rdr = csv.reader(csvfile)
 			for row in rdr:
@@ -323,7 +328,7 @@ def copyNewInfo(services):
 					print("!!!Error (copyNewInfo) : ", e)
 					exit()
 
-	#os.remove('./output/Code_Generator.csv')
+	#os.remove(output_path + 'Code_Generator.csv')
 	writeOutput(new_lines, 'Code_Generator.csv')
 	print(">> End to copy new information")
 
