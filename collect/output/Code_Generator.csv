@@ -1,0 +1,501 @@
+# Do not change the Green Color,,,,,,,,,,,,,,,,,
+#this is update time of  header each file.,,,,,,,,,,,,,,,,,
+[HEADER]Author,,,,,,,,,,,,,,,,,
+LGE_worker@lge.com,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+"#this is a single variable not hash.  +<+$VARIABLE{""Date""}+>+",,,,,,,,,,,,,,,,,
+#this is update time of  header each file.,,,,,,,,,,,,,,,,,
+[VARIABLE]Version,2.0.00,,,,,,,,,,,,,,,,
+[VARIABLE]Date,2020.02.13,,,,,,,,,,,,,,,,
+[VARIABLE]CGA_RDL_Version,v1.0.4,,# support sldd,,,,,,,,,,,,,,
+[VARIABLE]Excel_Version,v2.9.8,,# it is related to the verion of excel_version file.,,# add asyncHandler column & [HEADER]no_tidl_receiver_XXX & [HEADER]no_tidl_callback__XXX_BnXXX_,,,# 2020.05.18,,,,,,,,,
+[VARIABLE]git,git://vgit.lge.com:29420/tiger/services/TIDLManagerService,,,,# change into your git address : it is mendatory,,,,,,,,,,,,
+[VARIABLE]protocol,,,,,"# ""http"" if you use mod.lge.com/hub as git instread of vgit",,,,,,,,,,,,
+[VARIABLE]debug,ON,,,,"# if ON , debug print code will be added.  (default : OFF)",,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[VARIABLE]Module_Name,tidl,,,,,,,,,,,,,,,,
+[HEADER]Module_Name,Description,,,,,,,,,,,,,,,,
+tidl,TIDL service manager,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[VARIABLE]testScript,TRUE,,,,,,,,,,,,,,,,
+[VARIABLE]App_Tidl,TRUE,,,,,,,,,,,,,,,,
+[VARIABLE]App_Name,xxx,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,#default : name+Len if type uint8_t*,,,,,,,#default : synchronous call,,,,,
+# this is comments.  (1_excel.pl ignores this row as comments when starts with #.),,,,,,# optional argument,#argument description,#api description,,#in/out,# for UTS (argument count),#async on handler,,,,,
+[HEADER]API,[HEADER]Order,name,type,init,Len,isOptArg,Description,apiDescription,mode,inOut,utsArgCount,asyncHandler,,,,,
+TIDL_COMMON_API_0,1,,,,,,,,Normal,,0,,,,,,
+TIDL_COMMON_API_1,1,switchOff,int32_t,0,,,desc it is switch off <br> when you want to power off.,api 1 desc,Normal,"in,out",1,,,,,,
+TIDL_COMMON_API_2_get_str,1,str,uint8_t*,"""1,2,3""",strLen,,desc : this is another example <p> add line,api desc,Normal,out,2,,,,,,
+TIDL_COMMON_API_2_get_int,1,getN,int32_t,345,,,desc,api desc,Normal,out,1,,,,,,
+TIDL_COMMON_API_3_enum,1,Edidxx,ETidlDid,ETidlDid::DID1,,O,desc string data,api desc,Normal,in,1,,,,,,
+TIDL_COMMON_API_3_class,1,CTidlDidxx,CTidlDid,,,,desc,api desc,Normal,out,1,,,,,,
+TIDL_COMMON_API_4_two,1,sDTC,uint32_t,0,,,desc,api desc,Normal,in,2,,,,,,
+,2,CTiIxx,CTidlItaly,,,,desc,api 2 desc,Normal,out,,,,,,,
+TIDL_COMMON_API_5,1,dd,double,0.72,,,desc,api desc,Normal,out,3,,,,,,
+,2,str,uint8_t*,"""1,2,3""",strLen,,desc : this is another example <p> add line,api desc,Normal,out,,,,,,,
+TIDL_COMMON_API_6,1,CTiDataxx,CTidlData,,,,desc,api desc,Normal,out,2,asyncMain,,,,,
+,2,ft,float,0.125,,,7 float (first argument),api with multiple argument including float,Normal,"in,out",,,,,,,
+TIDL_COMMON_API_7,1,fTest1,float,0.125,,,7 float (first argument),api with multiple argument including float,Normal,"in,out",4,main,,,,,
+,2,xx7,CTidlData,,,,7 CTidlDid,,Normal,in,,,,,,,
+,3,st7,CTidlItaly,,,,7 string,,Normal,out,,,,,,,
+,4,fTest4,ETidlSignal,ETidlSignal::DID1234,,O,7 float (4th argument),,Normal,in,,,,,,,
+TIDL_COMMON_API_8,1,rcv,TidlStatusReceiver,,,,8 receiver,receiver arguments test,Normal,in,2,,,,,,
+,2,nn,int32_t,1234,,O,8 nn int32_,,Normal,in,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===== START of tidl : Each Manager ====,,,,,,,,,,,,,,,,,
+# class name,,,,,,,,,,,,,,,,,
+[HEADER]xxClass,description,,,,,,,,,,,,,,,,
+CTidlData,CTidlData class - This is argument class in related to  {Module}Command.h & I{Module}Data.cpp,,,,,,,,,,,,,,,,
+CTidlItaly,CTidlItaly class - I wanna go to Italy again. Example (Italy),,,,,,,,,,,,,,,,
+CTidlDid,CTidlDid 3rd class,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+# enum class name,#default : int32_t,,,,,,,,,,,,,,,,
+[HEADER]xxEnum,type,description,,,,,,,,,,,,,,,
+ETidlDid,,example of Enum (DIDA),,,,,,,,,,,,,,,
+ETidlSignal,int8_t,example of Enum (DIDB),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]ETidlDid,name,value,description,IsOn,,,,,,,,,,,,,
+1,DID1,,Initaial,,,,,,,,,,,,,,
+2,DID02,,,,,,,,,,,,,,,,
+3,DID10,10,set by OEM,,,,,,,,,,,,,,
+4,DID_ANY,,end,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]ETidlSignal,name,value,description,IsOn,,,,,,,,,,,,,
+1,DID1234,'c',,,,,,,,,,,,,,,
+2,DID02,,last element,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,#default : name+Len if type uint8_t*,,#default:Auto,Len variable name when AutoLenUse is X,,,,,,,,,,
+[HEADER]CTidlData,name,type,init,Len,Description,AutoLenUse,existLen,,,,,,,,,,
+1,strAutoLenUse,uint8_t*,"""initstring""",strAutoLenUseLen,desc str auto length use,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,#default : name+Len if type uint8_t*,,#default:Auto,Len variable name when AutoLenUse is X,,,,,,,,,,
+[HEADER]CTidlDid,name,type,init,Len,Description,AutoLenUse,existLen,,,,,,,,,,
+1,did,uint16_t,1,,desc did,,,,,,,,,,,,
+2,att,uint32_t,1,,desc att,,,,,,,,,,,,
+3,strAutoLenUse,uint8_t*,"""initstring""",strAutoLenUseLen,desc str auto length use,,,,,,,,,,,,
+4,len,int32_t,10,,data length,,,,,,,,,,,,
+5,d5,double,0.712,,,,,,,,,,,,,,
+6,strNoLenUse,uint8_t*,"""initstring""",len,desc str not used auto length,X,len,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,#default : name+Len if type uint8_t*,,#default:Auto,Len variable name when AutoLenUse is X,,,,,,,,,,
+[HEADER]CTidlItaly,name,type,init,Len,Description,AutoLenUse,existLen,,,,,,,,,,
+1,italyDid,uint16_t,1,,desc did,,,,,,,,,,,,
+2,italyAtt,ETidlDid,ETidlDid::DID10,,desc ENUM test in Class,,,,,,,,,,,,
+3,italyStrAutoLenUse,uint8_t*,"""initstring""",italyStrAutoLenUseLen,desc str auto length use,,,,,,,,,,,,
+4,italyLen,int32_t,10,,data length,,,,,,,,,,,,
+5,italyD5,double,0.712,,,,,,,,,,,,,,
+6,italyStrNoLenUse,uint8_t*,"""initstring""",italyStrNoLenUseLen,desc str not used auto length,,italyStrNoLenUseLen,,,,,,,,,,
+7,italyFloat,float,0.712,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+# you should transfer the length with value.,,,,,,,,,,,,,,,,,
+"#This is DID enum values for this manager. in case of diag , it will have more than 400 DIDs.",,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]receiver_name,,,,,,,,,,,,,,,,,
+TidlSignalReceiver,,,,,,,,,,,,,,,,,
+TidlStatusReceiver,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,key is filled in order.,all keys are in register arguments.,basicall all arguments are sent as callback arguments,,,,
+# this is comments.  (1_excel.pl ignores this row as comments when starts with #.),,,,,,,#argument description,#pure virtual description,,#in/out,#default : noKey to map,,#default:X,,,,
+[HEADER]receiver_function,[HEADER]pure_virtual,[HEADER]order,name,type,init,Len,Description,apiDescription,mode,inOut,isRegiKey,isRegiArg,isCbArg,return,,,
+TidlSignalReceiver,onReceive,1,signalID,ETidlDid,ETidlDid::DID1,,enum with related class,desc onReceive with did,Privileged,in,O,O,O,int32_t,,,
+,onReceive,2,buf,uint8_t*,"""123""",bufLen,enum with related class,,,"in,out",,,O,,,,
+,onReceiveSecond,1,p,int32_t,1,,integer,desc onReceiveB,Privileged,in,,O,,void,,,
+,onReceiveSecond,2,q,int32_t,12,,integer,desc onReceiveB,Privileged,in,,,O,,,,
+TidlStatusReceiver,onStatusReceive,1,p,ETidlSignal,ETidlSignal::DID1234,,first integer,desc onStatusReceive,Privileged,"in,out",O,O,O,void,,,
+,onStatusReceive,2,q,int32_t,1,,second integer,,,in,,O,,,,,
+,onStatusReceive,3,ctd,CTidlData,,,third integer (no class),,,"in,out",,,O,,,,
+,onNoArguReceive,1,,,,,,no aruments,Privileged,in,,,,error_t,,,
+#===== END of tidl : Each Manager ======,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]ArgType1,read,write,argument,Description,slddType,printType,,,,,,,,,,,
+uint64_t,readUint64,writeUint64,,,Uint,%d,,,,,,,,,,,
+int64_t,readInt64,writeInt64,,,Int,%d,,,,,,,,,,,
+uint32_t,readUint32,writeUint32,,,Uint,%d,,,,,,,,,,,
+int32_t,readInt32,writeInt32,,,Int,%d,,,,,,,,,,,
+uint8_t*,"ERROR readByteArray
+",ERROR writeByteArray,,,String,%s,,,,,,,,,,,
+uint16_t,readInt32,writeInt32,,,Uint,%d,,,,,,,,,,,
+int16_t,readInt32,writeInt32,,,Int,%d,,,,,,,,,,,
+uint8_t,readInt32,writeInt32,,,Uint,%d,,,,,,,,,,,
+int8_t,readInt32,writeInt32,,,Int,%d,,,,,,,,,,,
+float,readFloat,writeFloat,,,Float,%f,,,,,,,,,,,
+double,readDouble,writeDouble,,,Float,%f,,,,,,,,,,,
+error_t,readInt32,writeInt32,,,Int,%d,,,,,,,,,,,
+etc,readetc,writeetc,,,Etc,%%,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+# this is comments.  (1_excel.pl ignores this row as comments when starts with #.),,,,,,,,,,,,,,,,,
+[HEADER]Related_Manager,VALUE,usingName,InterfaceService,SERV_NAME,libraryName,receiverHeader,serviceHeader,serviceTypeHeader,dataHeader,sampleCode,VALUE_APP,,,,,,
+,,,,,,,,,,,,,,,,,
+antenna,X,Antenna,IAntennaManagerService,ANTENNA_SRV_NAME,#NAME?,IAntennaReceiver.h,IAntennaManagerService.h,,,"class AntennaChanged : public RefBase, public BnAntennaReceiver
+
+----
+
+AntennaManager& antenna_manager = AntennaManager::getInstance()
+
+android::sp<IAntennaReceiver> receiver = new AntennaChanged();
+
+antenna_manager.registerAntennaDTCReceiver(receiver);",X,,,,,,
+audio,X,Audio,IAudioManagerService,AUDIO_SRV_NAME,#NAME?,,IAudioManagerService.h,IAudioManagerServiceType.h,,"class AudioReceiver : public BnAudioManagerReceiver
+
+----
+
+mAudioManager = AudioManager::instance();
+
+mAudioReceiver = new AudioReceiver(*this);
+mAudioManager->registerReceiver(0x1111, mAudioReceiver);",X,,,,,,
+diag,X,Diag,IDiagManagerService,DIAG_SRV_NAME,#NAME?,,IDiagManagerService.h,IDiagManagerServiceType.h,,"class DiagReceiver : public BnDiagManagerReceiver
+
+----
+
+mDiagManager = DiagManager::instance();
+
+mDiagMgrReceiver = new DiagReceiver(*this);
+
+mDiagManager->registerReceiver(0x1111, mDiagMgrReceiver);",X,,,,,,
+hmi,X,HMI,IHMIManagerService,HMI_SRV_NAME,#NAME?,IHMIEventReceiver.h,IHMIManagerService.h,IHMIManagerServiceType.h,,"mHMIManager = HMIManager::instance();
+
+mHMIMgrReceiver = new HMIReceiver(*this);
+mHMIManager->registerReceiver(0x1111, mHMIMgrReceiver);",X,,,,,,
+locmgr,X,Location,ILocationManagerService,LOCATION_SRV_NAME,#NAME?,ILocationReceiver.h,ILocationManagerService.h,ILocationManagerServiceType.h,LocationData.h,"class LocReceiver : public BnLocationReceiver
+
+----
+
+m_locationService = interface_cast<ILocationManagerService> (defaultServiceManager()->getService(String16(LOCATION_SRV_NAME)));
+
+mLocReceiver = new LocReceiver(*this);
+
+m_locationService->registerReceiver(mLocReceiver);",X,,#location is not working,,,,
+power,X,Power,IPowerManagerService,POWER_SRV_NAME,#NAME?,,PowerManager.h,,,"class PowerStateReceiver : public BnPowerStateReceiver
+
+----
+
+mPowerManager = PowerManager::instance();
+
+receiver = new PowerStateReceiver();
+
+int32_t mask = MASK_FOR_ALL_NOTI;
+
+mPowerManager->registerPowerStateReceiver(receiver, mask, false );",X,,,,,,
+vif,X,vif,IvifManagerService,VIF_SRV_NAME,#NAME?,IvifManagerReceiver.h,IvifManagerService.h,,,"class VifReceiver: public BnvifManagerReceiver    (@ vifManager.h)
+
+class vifHandler : public sl::Handler   ( by User )
+
+----
+
+mHandler = new vifHandler(*this);
+
+mMyvifRec = new VifReceiver(mHandler);
+
+mMyvifMgr = new vifManager(mMyvifRec);
+
+mMyvifMgr->registerReceiver_sync(SIGNAL_INTERNAL_BOOT_COMPLETED);
+mMyvifMgr->registerReceiver_sync(SIGNAL_INTERNAL_SLEEP_MICOM_TO_MDM);",X,,,,,,
+alarm,X,alarm,IAlarmManagerService,ALARM_SRV_NAME,#NAME?,,AlarmManager.h,,,"class AlarmHandler : public sl::Handler
+
+class myAlarmListenser : public AlarmListener
+
+----
+
+mHandler = new AlarmHandler(*this);
+
+mAlarmmListen = new myAlarmListenser(mHandler,this);
+mAlarmmgr = new AlarmManager(mAlarmmListen);
+mAlarmmgr->setAlarmFromNow(1000,0x01);",X,,# alarm will be changed to TIDL,,,,
+audioio,X,audioio,IAudioioManagerService,AUDIOIO_SRV_NAME,#NAME?,,AudioioManager.h,,,"class AudioioReceiver : public BnAudioioManagerReceiver
+
+----
+
+mAudioioMgrService = AudioioManager::instance();
+
+mAudioioMgrReceiver = new AudioioReceiver(*this);
+mAudioioMgrService->registerReceiver(0x1111, mAudioioMgrReceiver);",X,,,,,,
+audiorouter,X,audiorouter,IAudioRouterManagerService,AUDIOROUTER_SRV_NAME,#NAME?,,AudioRouterManager.h,,,"class AudioRouterReceiver : public BnAudioRouterManagerReceiver
+
+----
+
+mAudioRouterManager = AudioRouterManager::instance();
+
+mAudioRouterReceiver = new AudioRouterReceiver(*this);
+mAudioRouterManager->registerReceiver(0x1111, mAudioRouterReceiver);",X,,,,,,
+config,X,Config,IConfigurationManagerService,CONFIGURATION_SRV_NAME,#NAME?,,ConfigManager.h,,,"class ConfigurationManagerReceiver : public BnConfigurationManagerReceiver
+
+----
+
+std::string ConfigDataList[] = { ""RmtImmobi"", ""RmtConf"",  . . . };
+
+mConfigManager = ConfigManager::instance();
+
+mConfigManagerReceiver = new ConfigurationManagerReceiver(*this);
+
+for(auto name : ConfigDataList)
+{
+
+    mConfigManager¡æregisterReceiver (configmgr::OEM_CONFIG_FILE, name.c_str(), mConfigManagerReceiver);
+
+}",O,,,,,,
+ecall,X,Ecall,IECALLManagerService,ECALL_SRV_NAME,#NAME?,,ECALLManager.h,,,"mECALLManager = ECALLManager::instance();
+
+mECALLMgrReceiver = new ECALLReceiver(*this);
+
+mECALLManager->registerReceiver(0x1111, mECALLMgrReceiver);",X,,,,,,
+filesys,X,Filesys,IFilesysManagerService,FILESYS_SRV_NAME,#NAME?,,FilesysManager.h,,,"mFilesysManager = FilesysManager::instance();
+
+mFilesysMgrReceiver = new FilesysReceiver(*this);
+mFilesysManager->registerReceiver(0x1111, mFilesysMgrReceiver);",X,,,,,,
+health,O,Health,IHealthManagerService,HEALTH_SRV_NAME,#NAME?,,HealthManager.h,,,"mHealthManager = new HealthManager(nullptr);
+
+// mHealthManager->registerReceiver();",X,,,,,,
+packetaudio,X,PacketAudio,IPacketAudioManagerService,PACKETAUDIO_SRV_NAME,#NAME?,,PacketAudioManager.h,,,"mPacketAudioManager = PacketAudioManager::instance();
+
+mPacketAudioMgrReceiver = new PacketAudioReceiver(*this);
+
+mPacketAudioManager->registerReceiver(0x1111, mPacketAudioMgrReceiver);",X,,,,,,
+progmgr,X,Prog,IProgManagerService,PROG_SRV_NAME,#NAME?,,ProgManager.h,,,"mProgManager  = ProgManager::instance();
+
+mProgMgrReceiver = new ProgMgrReceiver(*this);
+mProgManager ->attachReceiver(0x1111, mProgMgrReceiver);",X,,,,,,
+route,X,Route,INetIFMgrService,ROUTING_SRV_NAME,#NAME?,,RoutingManager.h,,,"RoutingManager& route_manager = RoutingManager::getInstance();
+
+
+
+// route_manager. setInterfaceInfo ( . . . )",X,,# route does not support receiver (callback),,,,
+telephony,X,Telephony,,,,,,,,,X,,# telephony is not working. Need LGSI works to support this. ,,,,
+time,X,Time,ITimeManagerService,TIME_SRV_NAME,#NAME?,,TimeManager.h,,,"class TimeReceiver : public RefBase, public BnTimeChangedReceiver
+
+----
+
+TimeManager& time_manager = TimeManager::getInstance()
+
+android::sp<ITimeChangedReceiver> time_receiver = new TimeReceiver();
+
+time_manager. registerTimeChangedReceiver (time_receiver);",X,,,,,,
+updateagent,X,UpdateAgent, IUpdateAgentManagerService,UPDATEAGENT_SRV_NAME,#NAME?,,UpdateAgentManager.h,,,"mUpdateAgentManager = UpdateAgentManager::instance();
+
+mUpdateAgentReceiver = new UpdateAgentReceiver(*this);
+
+mUpdateAgentManager->attachReceiver(0x1111, mUpdateAgentReceiver);",X,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===================================================================================================================,,,,,,,,,,,,,,,,,
+#all system DID information,,,,,,,,,,,,,,,,,
+#we need DID information with related to other managers.,,,,,,,,,,,,,,,,,
+"#if diag is O , we have DID information of diag.",,,,,,,,,,,,,,,,,
+# we can support all system DID information with different excel or csv file.,,,,,,,,,,,,,,,,,
+[HEADER]receiver_DID_diag,commClass,isOn,,,,,,,,,,,,,,,
+V_DID0,int32_t,O,,,,,,,,,,,,,,,
+V_DID1,CTidlDid,X,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===== START of vvv : Each Manager ====,,,,,,,,,,,,,,,,,
+[VARIABLE]Excel_Version_vvv,v2.9.5,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]xxEnum_vvv,,,,,,,,,,,,,,,,,
+EVvvDid,,,,,,,,,,,,,,,,,
+EVvvSignal,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+# you should add +<+$receiver_DID_vvv+>+ Enum class information ,,,,,,,,,,,,,,,,,
+[HEADER]EVvvDid,name,value,description,IsOn,,,,,,,,,,,,,
+1,DID1,,Initaial,O,,,,,,,,,,,,,
+2,DID02,,,O,,,,,,,,,,,,,
+3,DID10,10,set by OEM,O,,,,,,,,,,,,,
+4,DID_ANY,,end,X,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]EVvvSignal,name,value,description,IsOn,,,,,,,,,,,,,
+1,DID1234,'c',,O,,,,,,,,,,,,,
+2,DID02,,last element,O,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]receiver_name_vvv,IsOn,,,,,,,,,,,,,,,,
+VvvMannerReceiver,O,,,,,,,,,,,,,,,,
+VvvBetterReceiver,O,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,key is filled in order.,all keys are in register arguments.,basicall all arguments are sent as callback arguments,,,
+# this is comments.  (1_excel.pl ignores this row as comments when starts with #.),,,,,,,#argument description,#api description,,#in/out,# for UTS (argument count),#default : noKey to map,,#default:X,,,
+[HEADER]receiver_function_vvv,[HEADER]pure_virtual,[HEADER]order,name,type,init,Len,Description,apiDescription,mode,inOut,utsArgCount,isRegiKey,isRegiArg,isCbArg,keyArgCount,return,IsOn
+VvvMannerReceiver,onReceive,1,signalID,EVvvDid,EVvvDid::DID1,,enum with related class,desc onReceive with did,Privileged,in,3,O,O,O,1,void,O
+,,2,buf,uint8_t*,"""123""",bufLen,enum with related class,,,in,,,,O,,,
+,onReceiveSecond,1,p,int32_t,0,,integer,desc onReceiveB,Privileged,in,1,,,,0,void,O
+VvvBetterReceiver,onStatusReceive,1,p,EVvvSignal,EVvvSignal::DID1234,,first integer,desc onStatusReceive,Privileged,in,3,O,O,O,2,void,O
+,onStatusReceive,2,q,int32_t,0,,second integer,,,in,,O,O,O,,,
+,onStatusReceive,3,kk,int32_t,0,,third integer (no class),,,in,,,O,,,,
+,onNoArguReceive,1,,,,,,no aruments,Privileged,in,0,,,,0,void,
+#===== END of vvv : Each Manager ======,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===== START of wifi : Each Manager ====,,,,,,,,,,,,,,,,,
+[VARIABLE]Excel_Version_wifi,v2.9.4,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]xxEnum_wifi,,,,,,,,,,,,,,,,,
+EwifiSignal,,,,,,,,,,,,,,,,,
+EwifiId,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+# you should add +<+$receiver_DID_wifi+>+ Enum class information ,,,,,,,,,,,,,,,,,
+[HEADER]EwifiSignal,name,value,description,IsOn,,,,,,,,,,,,,
+1,DID1,,Initaial,O,,,,,,,,,,,,,
+2,DID02,,,O,,,,,,,,,,,,,
+3,DID10,10,set by OEM,O,,,,,,,,,,,,,
+4,DID_ANY,,end,X,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]EwifiId,name,value,description,IsOn,,,,,,,,,,,,,
+1,DID5,,Initaial,O,,,,,,,,,,,,,
+2,DID6,,,O,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]receiver_name_wifi,IsOn,,,,,,,,,,,,,,,,
+WifiManagerReceiver,O,,,,,,,,,,,,,,,,
+WifiStatusReceiver,X,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+# this is comments.  (1_excel.pl ignores this row as comments when starts with #.),,,,,,,#argument description,#api description,,# for UTS (argument count),,,,#default:O,,,
+[HEADER]receiver_function_wifi,[HEADER]pure_virtual,[HEADER]order,name,type,init,Len,Description,apiDescription,mode,utsArgCount,receiverSignalId,IsOn,,isCbArg,keyArgCount,IsOn,return
+WifiManagerReceiver,onReceiveWifi,1,wifisignalID,EwifiSignal,EwifiSignal::DID1,,wifi enum with related class,wifi desc onReceive with did,,3,O,X,,,,,
+WifiManagerReceiver,onReceiveWifi,2,buf,uint8_t*,"""123""",bufLen,wifi enum with related class,,,,,,,,,,
+WifiManagerReceiver,onReceiveSecondWifi,1,p,int32_t,,,wifi CTidlDid class,wifi desc onReceiveB,,1,,O,,,,,
+WifiStatusReceiver,onStatusReceiveWifi,1,p,EwifiId,EwifiId::DID5,,wifi first integer,wifi desc onStatusReceive,,3,O,O,,,,,
+WifiStatusReceiver,onStatusReceiveWifi,2,q,EwifiSignal,EwifiSignal::DID1,,wifi second integer,,,,O,,,,,,
+WifiStatusReceiver,onStatusReceiveWifi,3,r,int32_t,0,,wifi third integer,,,,,,,,,,
+#===== END of wifi : Each Manager ======,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===== Add TIDL Manager =====,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===== START of No TIDL Manager ====,,,,,,,,,,,,,,,,,
+,,,### add checklist,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_antenna,IReceiverClass,,,,,,,,,,,,,,,,
+BnAntennaReceiver,IAntennaReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_antenna_BnAntennaReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onAntennaReceived,void,"onAntennaReceived(int32_t antenna_type, uint32_t dtc_status, int32_t dtc_fault_cnt, int32_t id)",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_audio,IReceiverClass,,,,,,,,,,,,,,,,
+BnAudioManagerReceiver,IAudioManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_audio_BnAudioManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onAudioPlayStateChanged,void,onAudioPlayStateChanged(uint8_t state),,,,,,,,,,,,,,,
+onAudioDTCNotify,void,"onAudioDTCNotify(uint16_t dtcId, uint8_t dtcResult)",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_diag,IReceiverClass,,,,,,,,,,,,,,,,
+BnDiagManagerReceiver,IDiagManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_diag_BnDiagManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<DiagData>& mDiagData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_hmi,IReceiverClass,,,,,,,,,,,,,,,,
+BnHMIEventReceiver,IHMIEventReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_hmi_BnHMIEventReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onHMIReceived,void,"onHMIReceived(uint32_t type, uint32_t action)",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_loc,IReceiverClass,,,,,,,,,,,,,,,,
+BnLocationReceiver,ILocationReceiver,,,,,,,,,,,,,,,,
+BnLocationListener,ILocationListener,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_loc_BnLocationReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onLocationInfoChanged,void,onLocationInfoChanged(android::sp<LocationData> loc_data),,,,,,,,,,,,,,,
+onGPSStatusChanged,void,onGPSStatusChanged(gps_status_t status),,,,,,,,,,,,,,,
+onGPSTTFFTime,void,onGPSTTFFTime(long TTFFTime),,,,,,,,,,,,,,,
+onGPSGpsPosReportStatusChanged,void,onGPSGpsPosReportStatusChanged(uint8_t status),,,,,,,,,,,,,,,
+onGNSSJammingStatusChanged,void,onGNSSJammingStatusChanged(bool jamming),,,,,,,,,,,,,,,
+onNMEAData,void,onNMEAData(const char* nmea),,,,,,,,,,,,,,,
+onGNSSFixDataForSVT,void,onGNSSFixDataForSVT(android::sp<LocationDataQuality> loc_data),,,,,,,,,,,,,,,
+onDTCStatus,void,onDTCStatus(bool status),,,,,,,,,,,,,,,
+onDTCStatusbyName,void,"onDTCStatusbyName(int32_t pName, int32_t pValue)",,,,,,,,,,,,,,,
+onLocationDataAvailableChanged,void,onLocationDataAvailableChanged(bool status),,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_loc_BnLocationListener,return,callbackFunctionList,,,,,,,,,,,,,,,
+onLocationChanged,void,onLocationChanged(android::sp<tiger::Location> location),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_power,IReceiverClass,,,,,,,,,,,,,,,,
+BnPowerStateReceiver,IPowerStateReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_power_BnPowerStateReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onPowerStateChanged,void,"onPowerStateChanged(const int32_t newState, const int32_t reason)",,,,,,,,,,,,,,,
+onWakeup,void,"onWakeup(const int32_t currentState, const int32_t reason)",,,,,,,,,,,,,,,
+onPowerPreHandler,int32_t,"onPowerPreHandler(const int32_t toState, const int32_t reason)",,,,,,,,,,,,,,,
+onErrControlPower,void,"onErrControlPower(const int32_t err_reason, const int32_t errPowerID, const int32_t currPowerID)",,,,,,,,,,,,,,,
+onPowerModeChanged,void,onPowerModeChanged(const int32_t newMode),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_vif,IReceiverClass,,,,,,,,,,,,,,,,
+BnvifManagerReceiver,IvifManagerReceiver,,,,,,,,,,,,,,,,
+BnvifManagerStatusReceiver,IvifManagerStatusReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_vif_BnvifManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,"onReceive(uint32_t Sigid, android::sp<Buffer>& buf)",,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_vif_BnvifManagerStatusReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onIsReadyToSend,error_t,"onIsReadyToSend(int32_t status, int32_t reason)",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_alarm,IReceiverClass,,,,,,,,,,,,,,,,
+BnAlarmExpireListener,IAlarmExpireListener,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_alarm_BnAlarmExpireListener,return,callbackFunctionList,,,,,,,,,,,,,,,
+onAlarmExpired,void,onAlarmExpired(const int32_t param),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_audioio,IReceiverClass,,,,,,,,,,,,,,,,
+BnAudioioManagerReceiver,IAudioioManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_audioio_BnAudioioManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<AudioioData>& mAudioioData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_audiorouter,IReceiverClass,,,,,,,,,,,,,,,,
+BnAudioRouterManagerReceiver,IAudioRouterManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_audiorouter_BnAudioRouterManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<AudioRouterData>& mAudioRouterData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_config,IReceiverClass,,,,,,,,,,,,,,,,
+BnConfigurationManagerReceiver,IConfigurationManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_config_BnConfigurationManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onConfigDataChanged,void,"onConfigDataChanged(std::string& name, std::string& value)",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_ecall,IReceiverClass,,,,,,,,,,,,,,,,
+BnECALLManagerReceiver,IECALLManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_ecall_BnECALLManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<ECALLData>& mECALLData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_filesys,IReceiverClass,,,,,,,,,,,,,,,,
+BnFilesysManagerReceiver,IFilesysManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_filesys_BnFilesysManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<FilesysData>& mFilesysData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_health,IReceiverClass,,,,,,,,,,,,,,,,
+BnHealthManagerReceiver,IHealthManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_health_BnHealthManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onExceptionLevelNotify,void,"onExceptionLevelNotify(exception_level_t level, exception_reason_t reason)",,,,,,,,,,,,,,,
+onModemBootStateChagned,void,onModemBootStateChagned(modem_boot_state_t state),,,,,,,,,,,,,,,
+onMcuBootStateChagned,void,onMcuBootStateChagned(mcu_boot_state_t state),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_packetaudio,IReceiverClass,,,,,,,,,,,,,,,,
+BnPacketAudioManagerReceiver,IPacketAudioManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_packetaudio_BnPacketAudioManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<PacketAudioData>& mPacketAudioData),,,,,,,,,,,,,,,
+onPacketAudiocmd,void,"onPacketAudiocmd(int32_t id, uint8_t type, uint8_t cmd, uint8_t cmd2, android::sp<Buffer>& buf)",,,,,,,,,,,,,,,
+onPacketAudioInterfaceError,void,onPacketAudioInterfaceError(uint8_t errorType),,,,,,,,,,,,,,,
+onPacketPromptEndNotification,void,onPacketPromptEndNotification(),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_progmgr,IReceiverClass,,,,,,,,,,,,,,,,
+BnProgManagerReceiver,IProgManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_progmgr_BnProgManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,onReceive(android::sp<ProgData>& mProgData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_time,IReceiverClass,,,,,,,,,,,,,,,,
+BnTimeChangedReceiver, ITimeChangedReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_time_BnTimeChangedReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onTimeReceived,void,"onTimeReceived(const int32_t time_type, const int64_t GMT_msec, const int64_t diff_time_msec)",,,,,,,,,,,,,,,
+onTimeOffsetReceived,void,"onTimeOffsetReceived(const int32_t time_type, const int32_t offset_min, const int32_t dst)",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_receiver_updateagent,IReceiverClass,,,,,,,,,,,,,,,,
+BnUpdateAgentManagerReceiver,IUpdateAgentManagerReceiver,,,,,,,,,,,,,,,,
+[HEADER]no_tidl_callback_updateagent_BnUpdateAgentManagerReceiver,return,callbackFunctionList,,,,,,,,,,,,,,,
+onReceive,void,virtual void onReceive(android::sp<UpdateAgentData>& mUpdateAgentData),,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+#===== END of No TIDL Manager ======,,,,,,,,,,,,,,,,,
