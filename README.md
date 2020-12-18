@@ -24,6 +24,7 @@
 6.2.1\.  [Excel](#excel-1)  
 6.2.2\.  [DataBase](#database-1)  
 6.3\.  [Syntax and Explanation of RDL](#syntaxandexplanationofrdl)  
+7\.  [Collect the latest info](#collecthelatestinfo)  
 
 <a name="cga_rdl"></a>
 
@@ -544,3 +545,14 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
         - iterator with hash variable
         - ITKEY is key of hash (keys %hash in perl)
         - ITVALUE is value of hash ($hash{key} in perl). But, we use +<+$hash{ITKEY}??+>+ instead of ITVALUE.
+<a name="collect"></a>
+
+# 7\. Collect
+- Collect the latest info
+- execute
+	- cd ./collect
+	- python3 collect_daae.python3
+- output
+	- Code_Generator.csv : new csv file
+	- Code_Generator_old.csv : old csv file (copy the last Code_Generator.csv)
+	- late_tidl.csv : changed content
