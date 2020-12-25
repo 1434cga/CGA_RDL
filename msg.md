@@ -1,3 +1,38 @@
+-------------------------------------------
+2020.12.25 [-b master] csv2excel
+
+/csv2excel
+## csv2excel - implementation
+- 3 stage
+	- ===stage 1 : set_color set_width===
+	- ===stage 2 : HEADER VARIABLE font===
+	- ===stage 3 : HEADER no_data===
+    - add Makefile
+- Usage: csv2excel.py [options] -i inputfile(csv) -o outfile(xlsx)
+'''
+    Options:
+      -h, --help            show this help message and exit
+      -i INFILENAME, --in=INFILENAME
+                            read data from csv FILENAME
+      -o OUTFILENAME, --out=OUTFILENAME
+                            write data from excel FILENAME
+      -d, --debug           print debug message
+      -v, --verbose
+'''
+- #set_width(auto),10,10,5,auto,10,auto,10,¶
+    - change the width of column
+    - auto is maximum size of the same column
+	- ex) auto , best , number(size)
+- "#(red)this is a single variable not hash.  +<+$VARIABLE{""Date""}+>+",,,,,,,,,,,,,,,,,¶
+    - this is comments with color of font
+- # (green) this is update time of  header each file.,,,,,,,,,,,,,,,,,¶
+    - this is comments with color of font
+- #set_color(lightgreen),lightblue,lightgreen,lightblue,,,,lightgreen,lightblue,,,orange,
+    - change color of column
+- #set_color(lightgreen),orange,lightgreen,orange,,,,lightgreen,lightblue,,,orange,¶
+    - change color of column
+
+-------------------------------------------
 2020.11.25 [-b 201125/emailProblem] not process well about email address
 
 Solve #52
