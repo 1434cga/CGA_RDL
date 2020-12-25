@@ -24,10 +24,10 @@
 6.2.1\.  [Excel](#excel-1)  
 6.2.2\.  [DataBase](#database-1)  
 6.3\.  [Syntax and Explanation of RDL](#syntaxandexplanationofrdl)  
-7\. [convert csv to excel](#convertcsvtoexcel)
-7.1\. [csv2excel - design](#csv2exceldesign)
-7.2\. [csv2excel - implementation](#csv2excelimplementation)
-7.2\. [sample.xlsx](#samplexlsx)
+7\.  [convert csv to excel](#convertcsvtoexcel)  
+7.1\.  [csv2excel - design](#csv2exceldesign)  
+7.2\.  [csv2excel - implementation](#csv2excelimplementation)  
+7.2\.  [sample.xlsx](#samplexlsx)  
 
 <a name="cga_rdl"></a>
 
@@ -599,4 +599,4 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 <a name="samplexlsx"></a>
 
 ### 7.3\. sample.xlsx
-![](../png/sample.xlsx.png)
+![](./png/sample.xlsx.png)
