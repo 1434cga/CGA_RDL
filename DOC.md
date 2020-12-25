@@ -506,10 +506,12 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 	- ex) auto , best , number(size)
 - "#(red)this is a single variable not hash.  +<+$VARIABLE{""Date""}+>+",,,,,,,,,,,,,,,,,¶
     - this is comments with color of font
-- # (green) this is update time of  header each file.,,,,,,,,,,,,,,,,,¶
+- "# (green) this is update time of  header each file".,,,,,,,,,,,,,,,,,¶
     - this is comments with color of font
 - #set_color(lightgreen),lightblue,lightgreen,lightblue,,,,lightgreen,lightblue,,,orange,
     - change color of column
 - #set_color(lightgreen),orange,lightgreen,orange,,,,lightgreen,lightblue,,,orange,¶
     - change color of column
+
+### sample.xlsx
 
