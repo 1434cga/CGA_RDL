@@ -1,4 +1,33 @@
 -------------------------------------------
+2020.12.26 [-b 201226/macro]  MACRO as word unit (__INMACRO<>) & change INLINEMACRO to __INLINEMACRO
+
+## INLINEMACRO -> __INLINEMACRO
+	- define
+```
+stcI_MACRO_START : MACRO_1ARG(TT,TV)
+    TT is mine.
+    TV is yours.
+stcI_MACRO_END
+```
+
+	- usage (example)
+```
+__INLINEMACRO MACRO_1ARG(ANY1, ANY2)
+```
+
+## __INMACRO
+	- word unit MACRO
+	- define
+```
+stcI_MACRO_START : MACRO_1ARG(TT,TV)
+```
+
+	- usage (example)
+```
+* add __INMACRO< MACRO_WORD_EX(stcI_empty,PP2) >your function * add __INMACRO< MACRO_WORD_EX(,) >your function
+```
+
+-------------------------------------------
 2020.12.25 [-b 201226/macro]  add macro
 
 # MACRO
@@ -13,8 +42,8 @@ stcI_MACRO_END
 ```
 - use MACRO
 ```
-INLINEMACRO MACRO_1ARG(stcI_empty ,)        // Correct
-INLINEMACRO MACRO_1ARG(ANY1, ANY2)
+__INLINEMACRO MACRO_1ARG(stcI_empty ,)        // Correct
+__INLINEMACRO MACRO_1ARG(ANY1, ANY2)
 ```
 
 - make macro
