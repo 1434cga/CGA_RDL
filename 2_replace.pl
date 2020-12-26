@@ -18,6 +18,7 @@ use lib abs_path . '/../../../perllib';
 use MY::CHARLES qw(recover_special_code);
 
 our %macro;
+our %macro_word;
 our $stcI_macro_name;
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
@@ -301,6 +302,26 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 			$macro{$stcI_macro_name}{content} =~ s/\n$//;
 			print_fp("==MACRO content : $macro{$stcI_macro_name}{content}\n",DBG,STDOUT);
 			$stcI_macro_start = 0;
+		} elsif($in =~ /^stcI_MACRO_WORD\s*\:\s*(.*)\s*/){
+			$macro_def = $1;
+			$macro_def =~ /^\s*([^\s\(]+)\s*\(\s*([^\)]+)\s*\)/;
+			print_fp("MACRO WORD : $1 $2\n",DBG,STDOUT);
+			$stcI_macro_name = $1;
+			$stcI_macro_arg = $2;
+			$stcI_macro_content = $';
+			$stcI_macro_content =~ s/^\s*//;;
+			$stcI_macro_content =~ s/\s*$//;;
+			@stcI_marg = split(",",$stcI_macro_arg);
+			print_fp("MACRO WORD MARG : [@stcI_marg] [$stcI_macro_content]\n",DBG,STDOUT);
+			my $myargcnt = 0;
+			foreach my $myarg (@stcI_marg){
+				$myarg =~ /\s*(\S+)\s*/;
+				print_fp("MACRO START arg $myargcnt : $1\n",DBG,STDOUT);
+				$macro_word{$stcI_macro_name}{param}{$myargcnt}{name} = $1;
+				$myargcnt++;
+			}
+			$macro_word{$stcI_macro_name}{paramcount} = $myargcnt;
+			$macro_word{$stcI_macro_name}{content} = $stcI_macro_content;
 		} else {
 			if($stcI_macro_start == 1){
 				$macro{$stcI_macro_name}{content} .= $in;
@@ -316,6 +337,15 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 		foreach $mymn (sort {$a <=> $b}  keys %{$macro{$mym}{param}}){
 			print_fp("MACRO arg : $mymn\n",DBG,STDOUT);
 			print_fp("MACRO arg name : $macro{$mym}{param}{$mymn}{name}\n",DBG,STDOUT);
+		}
+	}
+	foreach $mym (keys %macro_word){
+		print_fp("MACRO WORD NAME : $mym\n",DBG,STDOUT);
+		print_fp("MACRO WORD content : $macro_word{$mym}{content}\n",DBG,STDOUT);
+		print_fp("MACRO WORD arg count : $macro_word{$mym}{paramcount}\n",DBG,STDOUT);
+		foreach $mymn (sort {$a <=> $b}  keys %{$macro_word{$mym}{param}}){
+			print_fp("MACRO WORD arg : $mymn\n",DBG,STDOUT);
+			print_fp("MACRO WORD arg name : $macro_word{$mym}{param}{$mymn}{name}\n",DBG,STDOUT);
 		}
 	}
 	print_fp("stcI_HASH : $stcI_for\n",STDOUT,DBG);
@@ -362,7 +392,7 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 				$ttt =~ s/^SetI/Set/;
 #print "A2 $ttt\n";
 				print STCI_OUTPUT "$ttt\n";
-			} elsif($ttt =~ /^\s*INLINEMACRO\s+(.*)/){
+			} elsif($ttt =~ /^\s*__INLINEMACRO\s+(.*)/){
 				print_fp("$ttt\n",DBG,STDOUT);
 				# 아래 print를 하는 곳에서 보면 이상한 것들까지 추가가되어지게 된다. 
 				# 이것은 access만 하려고 해도 뒤의 것이 없으면 뭔가를 앞에서 만들어 두는 perl의 습관츠로 보인다.
@@ -405,6 +435,61 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 						print STCI_OUTPUT "ERROR : $macro_name argument's count is differnet : $macro_name\n";
 					}
 				}
+			} elsif($ttt =~ /__INMACRO\s*<([^>]*)>/){
+				print_fp("$ttt\n",DBG,STDOUT);
+				# 아래 print를 하는 곳에서 보면 이상한 것들까지 추가가되어지게 된다. 
+				# 이것은 access만 하려고 해도 뒤의 것이 없으면 뭔가를 앞에서 만들어 두는 perl의 습관츠로 보인다.
+				# 우리는 이것을 방지하기 위해서는 해당 값이 어떤 값을 가지니는 지를 꼭 check해야 할 것이다. 
+				# 여기서도 뒤에 content로 해서 check해서 문제가 없는 것이지 실제로 내가 입력하지 않은 값들까지도 나오는 것을 볼수 있다. 
+				# 기존에 값을 보기만해도 많은 element가 늘어나 있는 것을 보고 당황한 적이 있다.
+				# 1.6chcker에서 xxclass를 먼저 계산할때 xxEnum을 보니 , 이때 xxEnum에는 자연스레 경우 값들이 늘어가게 되는 것이다.
+				# 그래서 여기서는 xxclass에서 element들을 늘리기 전에 xxEnum을 먼저 처리하는 방법으로 해결한 것이다. (그때는 이유를 몰랐는데 지금은 알게 된 것이다.)
+				foreach $mym (keys %macro_word){
+					print_fp("macro word name : $mym\n",DBG,STDOUT);
+				}
+				
+				while($ttt =~ /__INMACRO\s*<([^>]*)>/){
+					#print "Before: $`\n";
+					#print "Matched: $&\n";
+					#print "After: $'\n";
+					$macro_before = $`;
+					$macro_after = $';
+					$macro_def = $1;
+					$macro_def =~ /^\s*([^\s\(]+)\s*\(\s*([^\)]+)\s*\)/;
+					$macro_name = $1;
+					$macro_arg = $2;
+					$macro_arg = " " . $macro_arg . " ";
+					@marg = split(",",$macro_arg);
+					my $mycnt = 0;
+					my $my_macro_content = $macro_word{$macro_name}{content};
+					if($my_macro_content eq ""){
+						print_fp("ERROR : $macro_name MACRO_WORD is not exist.\n",STDERR,DBG);
+						print STCI_OUTPUT "\nERROR : MACRO_WORD $macro_name is not defined.\n";
+						last;
+					} else {
+						foreach my $myarg (@marg){
+							$myarg =~ s/\s//g;
+							print_fp("marg : [$myarg\]\n",DBG,STDOUT);
+							if($myarg ne ""){
+								if($myarg eq "stcI_empty"){
+									$my_macro_content =~ s/$macro_word{$macro_name}{param}{$mycnt}{name}//g;
+								} else {
+									$my_macro_content =~ s/$macro_word{$macro_name}{param}{$mycnt}{name}/$myarg/g;
+								}
+							}
+							$mycnt++;
+						}
+						if($macro_word{$macro_name}{paramcount} != $mycnt){
+							print_fp("ERROR : MACRO_WORD $macro_name argument's count is differnet : $macro_word{$macro_name}{paramcount} $mycnt : $macro_name\n",STDERR,DBG);
+							print STCI_OUTPUT "\nERROR : MACRO_WORD $macro_name argument's count is differnet : $macro_namei\n";
+							last;
+						} else {
+							$ttt = $macro_before . $my_macro_content . $macro_after;
+							print_fp("ttt : [$ttt\]\n",DBG,STDOUT);
+						}
+					}
+				}
+				print STCI_OUTPUT "$ttt\n";
 			} else {
 				print STCI_OUTPUT "$ttt\n";
 			}
@@ -739,6 +824,9 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 			my $m_before = $`;
 			my $m_match = $&;
             #print "tmpKey before[$m_before] , match [$m_match]\n";
+			#print "Before: $`\n";
+			#print "Matched: $&\n";
+			#print "After: $'\n";
             if($m_before ne ""){
                 if($tmpKey =~ /^\//){
                     print "make_path $m_before\n";
