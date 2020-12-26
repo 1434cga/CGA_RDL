@@ -1,4 +1,27 @@
 -------------------------------------------
+2020.12.25 [-b 201226/macro]  add macro
+
+# MACRO
+- define MACRO 
+``` example
+stcI_MACRO_START : MACRO_1ARG(TT,TV)
+====
+    TT is mine.
+    TV is yours.
+---
+stcI_MACRO_END
+```
+- use MACRO
+```
+INLINEMACRO MACRO_1ARG(stcI_empty ,)        // Correct
+INLINEMACRO MACRO_1ARG(ANY1, ANY2)
+```
+
+- make macro
+
+# reference/check-value-of-hash.pl  : example how to control the keys of hash. - i can not find the solution , but i know the reason.
+
+-------------------------------------------
 2020.12.25 [-b master] csv2excel
 
 /csv2excel
