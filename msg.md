@@ -1,4 +1,19 @@
 -------------------------------------------
+2020.12.27 [-b master] bug fix using isDefinedHash : if we access multi-dimension hash , this hash was made when it access.
+
+- solve #60
+- isDefinedHash does not define the room for this hash.
+```perl
+our %macro = {};
+if(isDefinedHash("macro{test}{0}") eq ""){
+  print "it is not accessed\n but $macro{test} was defined\n";
+}
+foreach my $key (keys %macro){
+  print "$key\n";    # print nothing
+}
+```
+
+-------------------------------------------
 2020.12.26 [-b 201226/macro]  MACRO as word unit (__INMACRO<>) & change INLINEMACRO to __INLINEMACRO
 
 ## INLINEMACRO -> __INLINEMACRO

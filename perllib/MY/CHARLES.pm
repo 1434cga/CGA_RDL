@@ -53,19 +53,52 @@ sub print_fp
 sub getHashRef {
 	my ($name) = @_;        # gCan{9}
 	my $first;
-	print "F " . $name . "\n";
+	#print "F " . $name . "\n";
 	$name =~ s/([^\{]+)//;
 	$first = $1;
 	my $hn = \%{$first};
-	print "F " . $hn . "\n";
+	#print "F " . $hn . "\n";
 	while($name =~ s/^\{([^\}]*)\}//){
 		my $uu = $1;
 		$hn = $hn->{$uu};
-		print "G " . $uu . "   $hn\n";
+		#print "G " . $uu . "   $hn\n";
+		if($hn == 0){
+			return $hn;
+		}
 	}
 
-	print "I " . $hn . "\n";
+	#print "I " . $hn . "\n";
 	return $hn;
+}
+
+sub isDefinedHash {
+	my ($name) = @_;        # gCan{9}
+	my $first;
+	#print "F " . $name . "\n";
+	$name =~ s/([^\{]+)//;
+	$first = $1;
+	my $hn = \%{$first};
+	#print $hn;
+	#print "\n";
+	while($name =~ s/^\{([^\}]*)\}//){
+		my $uu = $1;
+		$hn = $hn->{$uu};
+		#print "G " . $uu;
+		#print $hn;
+		#print "\n";
+		if($hn eq ""){
+			return "";
+		}
+	}
+
+	#print "I ";
+	#print $hn;
+	#print "\n";
+	if($hn == 0){
+		return "";
+	} else {
+		return $hn;
+	}
 }
 
 sub max_keys
