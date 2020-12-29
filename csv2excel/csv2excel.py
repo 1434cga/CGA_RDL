@@ -101,8 +101,8 @@ ws = wb.active
 #ws['AA2'] = datetime.datetime.now()
 # yellow : FFFF00
 
-colorList = [     "FFFFFF" , "FFFFFF" , "FF0000" , "00FF00" , "0000FF" , "FFCC00" , "C0C0C0" , "CCFFFF" ,    "CCFFCC",     "FFFFE0" ,      "99CCFF" ,   "C0C0C0" , "C0C0C0"  , "CCFFFF"]
-colorNameList = [ None ,     "white" ,  "red" ,    "green" ,  "blue" ,   "orange" , "gray" ,   "lightblue" , "lightgreen", "lightyellow" , "comment" , "header" , "variable" , "set"]
+colorList = [     "FFFFFF" , "FFFFFF" , "FF0000" , "00FF00" , "0000FF" , "FFCC00" , "C0C0C0" , "CCFFFF" ,    "CCFFCC",     "FFFFE0" ,      "99CCFF" ,   "C0C0C0" , "C0C0C0"  , "CCFFFF" , "FFFF00"]
+colorNameList = [ None ,     "white" ,  "red" ,    "green" ,  "blue" ,   "orange" , "gray" ,   "lightblue" , "lightgreen", "lightyellow" , "comment" , "header" , "variable" , "set"    , "yellow"]
 # white : FFFFFF
 # orange : FFCC00
 # gray : C0C0C0

@@ -7,7 +7,11 @@ our $cchange_start_time;
 our $outputdir = "OUTPUT";
 our %local_var_set;
 
-our @EXPORT_OK = qw(traverse_hash_tree  recover_special_code change_special_code sort_keys max_keys getHashRef print_fp end_time_log mid_time_log start_time_log  __SUB__ traverse_hash_tree_to_change_special_code traverse_tree_to_file);
+# require  like include
+# https://stackoverflow.com/questions/1712016/how-do-i-include-functions-from-another-file-in-my-perl-script
+
+# https://stackoverflow.com/questions/732133/how-can-i-export-all-subs-in-a-perl-package
+our @EXPORT = qw(traverse_hash_tree  recover_special_code change_special_code sort_keys max_keys getHashRef print_fp end_time_log mid_time_log start_time_log  __SUB__ traverse_hash_tree_to_change_special_code traverse_tree_to_file);
 
 sub __SUB__ { return  (caller 2)[3] . "|" . (caller 2)[2] . "-" . (caller 1)[3] . "|" . (caller 1)[2] . "-" . (caller 0)[2] . ": " }
 
