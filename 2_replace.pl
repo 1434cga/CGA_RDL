@@ -627,8 +627,15 @@ END_COMMENT
 		} elsif($in =~ /^Set\s*\:\s*\$(\w+)\s*\=\s*(\S+)/){		# Set: $A = B 
 			my $temp_set_var = $1;
 			my $temp_set_value = $2;
-print "LLL $iterate_comments : [$1]  [$2]\n";
-			$$1 = $2;
+print "LL1 $iterate_comments : [$1]  [$2]\n";
+			if($temp_set_value =~ /\$/){
+				$mys = eval($temp_set_value);
+				$$temp_set_var = $mys;
+			} else {
+				$$temp_set_var = $temp_set_value;
+			}
+print "LL2 $iterate_comments : [$temp_set_var]  [$temp_set_value]\n";
+print "LL3 $iterate_comments : [$$temp_set_var]  [$mys]\n";
 #print DBG "LLL $iterate_comments : [$1] [$2] \n";
 			#CCHANGE_DEBUG print DBG "SET : $1 = $2\n";
 			#  이게 SET하는 것이 잘 안되는군.... 다음 방법은 될까?  <- set을 잘못하여 시험함.
@@ -807,6 +814,8 @@ print "LLL $iterate_comments : [$1]  [$2]\n";
 			$lines = iterate_equal($lines);
 		} else {
             if($optionPerformance){
+				print DBG "perf1" . $linesOrg . "\n";;
+				print DBG "perf2\n";
 			    $lines = iterate_equal_performance($linesOrg);
             } else {
 			    $lines = iterate_equal($linesOrg);
@@ -881,6 +890,7 @@ sub iterate_equal_performance()
     my @ll = split(/\n/,$il);
     print DBG $ll[0] . "\n";
     print DBG $ll[1] . "\n";
+    print DBG "equal_performance :::" . $il . "\n";
     my $startll = @ll;
     my $sbrace;
     my $ebrace;
@@ -1438,7 +1448,6 @@ sub Iterator_recursion
 
 sub replace_var_with_value
 {
-	my $replace_in;
 	my $in_cnt = 0;
 	my $nn_cnt = 0;
 	my $replace_in = shift @_;
@@ -1501,14 +1510,14 @@ sub replace_var_with_value
         {
             #my $match = $&;
                 if($num == 369){
-	                print DBG __SUB__ . ":" . __LINE__ . " ---- : 1: $1 num $num  $replace_in\n";
+	                print DBG __SUB__ . ":" . __LINE__ . " replacein ---- : 1: $1 num $num  $replace_in\n";
 	                foreach my $key (sort keys %API) { print DBG __SUB__ . "API1 $key - replace_var_with_value\n"; }
                 }
             my $val = eval($1);
-            #print DBG __SUB__ . "REPLACE:" . " $match  $1 => value :  $val  , iterate_cnt : $iterate_cnt\n";
+            print DBG __SUB__ . "REPLACE:" . " $match  [$1] => value :  [$val]  , iterate_cnt : $iterate_cnt\n";
             $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
                 if($num == 369){
-	                print DBG __SUB__ . ":" . __LINE__ . " ---- : val:$val 1: $1 num $num  $replace_in\n";
+	                print DBG __SUB__ . ":" . __LINE__ . " replacein ---- : val:$val 1: $1 num $num  $replace_in\n";
 	                foreach my $key (sort keys %API) { print DBG __SUB__ . "API1 $key - replace_var_with_value\n"; }
                 }
             $in_cnt ++;
