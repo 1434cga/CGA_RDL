@@ -467,14 +467,14 @@ if($py == 0){
         print STDERR "host $lhost is unreachable.\n";
     }
 } else {        # python script for goh
-    open(my $infh, "<", "run_command");
-    $cmd = <$infh>;
-    $cmd =~ s/[\s\n]*$//g;
-    $cmd .= " $ldest";
-    close($infh);
-    print STDERR "$cmd START\n";
-    system($cmd);
-    print STDERR "$cmd END\n";
+	#open(my $infh, "<", "run_command");
+	#$cmd = <$infh>;
+	#$cmd =~ s/[\s\n]*$//g;
+	#$cmd .= " $ldest";
+	#close($infh);
+	print STDERR "$cmd START\n";
+	#system($cmd);
+	print STDERR "$cmd END\n";
 }
 
 
