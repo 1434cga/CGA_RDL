@@ -32,6 +32,7 @@ our $lid="tidl";
 our $lpasswd="tidl1234";
 our $lhost="abc.com";
 our $lloc="~/warehouse/";
+our $debug=0;
 
 GetOptions ("output=s" => \$output_file,    # string
 		"input=s"   => \$input_file,      # string
@@ -43,7 +44,8 @@ GetOptions ("output=s" => \$output_file,    # string
 		"passwd=s"  => \$lpasswd ,  # passwd
 		"host=s"  => \$lhost ,  # host
 		"location=s"  => \$lloc ,  # storing location
-		"verbose|help"  => sub { $help = 1 })   # flag
+		"verbose|help"  => sub { $help = 1 } ,   # flag
+		"debug"  => sub { $debug = 1 })   # flag
 or  die(help() . "Error in command line arguments\n");
 
 
@@ -144,9 +146,9 @@ my $comment = <<'EOC';
     }
     print "\n";
 EOC
-    print "Position \": " . index($s,"\"");
-    print "   Position \"\": " . index($s,"\"\"");
-    print "\n";
+    print "Position \": " . index($s,"\"") if($debug);
+    print "   Position \"\": " . index($s,"\"\"") if($debug);
+    print "\n" if($debug);
     my $flag = 1;
     my $my_cnt=0;
     $my_colIndex = 0;
@@ -195,13 +197,13 @@ EOC
     if($inQuotationFlag){ next; }
 
     $s =~ s/$separatorCommaQuotation/,/g;
-    print "==> $s\n";
+    print "==> $s\n" if($debug);
     my @sep = split /,/ , $s;
     $my_cnt = 0;
     foreach my $kk (@sep) {
         my $ret = recoverOrigin($kk);
         #if($ret ne ""){
-            print "[$my_cnt] $ret\n";
+            print "[$my_cnt] $ret\n" if($debug);
             $rowss[$my_rowIndex][$my_colIndex] = $ret;
         #}
         $my_cnt++;
@@ -211,16 +213,16 @@ EOC
 }
 
 foreach my $i (1 .. scalar @rowss) {
-    print "scala [$i] " . $rowss[$i-1][0];
+    print "scala [$i] " . $rowss[$i-1][0] if($debug);
     my $rowref = $rowss[$i];
     $n = @$rowref - 1;
     $p = $i -1;
     my @row = @{$rowss[$i]};
     foreach my $j (0 .. $n) {
-        print " {$j}$rowss[$p][$j] ";
-        print " <$row[$j]>";
+        print " {$j}$rowss[$p][$j] " if($debug);
+        print " <$row[$j]>" if($debug);
     }
-    print "\n";
+    print "\n" if($debug);
 }
 
 
@@ -285,13 +287,13 @@ foreach my $i (1 .. scalar @rowss) {
 	my $titleCnt = 0;
 	my $titleName = "";
 	foreach my $i (1 .. scalar @rowss) {
-		print "RAW $i  $rowss[$i-1][0] \n";
+		print "RAW $i  $rowss[$i-1][0] \n" if($debug);
         {
             #my @row = Spreadsheet::Read::row($book->[1], $i);
             my $p = $i -1;
             my $rowref = $rowss[$p];
             my $n = @$rowref - 1;
-            print "RAW $i  $rowss[$i-1][0] \n";
+            print "RAW $i  $rowss[$i-1][0] \n" if($debug);
 			for my $j (0 .. $n) {
                 my $myt = FixXML($rowss[$p][$j]);
                 if( ($myt =~ /\"/) || ($myt =~ /,/) || ($myt =~ /\n/) ){
@@ -316,7 +318,7 @@ foreach my $i (1 .. scalar @rowss) {
 			say "$1";
 			$titleName = $1;
 			my $myhash = \%{$titleName};
-			print "AAA $titleName : $$titleName myhash :$myhash\n";
+			print "AAA $titleName : $$titleName myhash :$myhash\n" if($debug);
 			#foreach my $key (keys %Manager_Name){ print "MN: $key  "; }
 			#print "\n";
             my @row = @{$rowss[$i-1]};
@@ -364,10 +366,10 @@ foreach my $i (1 .. scalar @rowss) {
             #my @row = Spreadsheet::Read::row($book->[1], $i);
             my @row = @{$rowss[$i-1]};
 			my $myhash = \%{ $titleName };
-			print "BBB myhash $titleName : $myhash\n";
+			print "BBB myhash $titleName : $myhash\n" if($debug);
 			for my $j (0 .. ($headerCnt -1)) {
-				print "1=> $j $row[$j]  max $#row  , headerCnt $headerCnt\n";
-				print "1=> $myhash $myhash->{$row[$j]}\n";
+				print "1=> $j $row[$j]  max $#row  , headerCnt $headerCnt\n" if($debug);
+				print "1=> $myhash $myhash->{$row[$j]}\n" if($debug);
 				#next if($row[$j] =~ /^\s*$/) ;
 				my $key = removeSpace($row[$j]);
 
@@ -383,7 +385,7 @@ foreach my $i (1 .. scalar @rowss) {
 				#}
 				unless (exists $myhash->{$key}){
 					$myhash->{$key} = {};
-					print "=> unless $myhash $myhash->{$key}\n";
+					print "=> unless $myhash $myhash->{$key}\n" if($debug);
 				}
 				say "$book->[1]{label} sheet Header:" . chr(65+$j) . (1) . ' ' . ($key // '');
 				$myhash = \%{ $myhash->{removeSpace($key)} };
@@ -394,9 +396,9 @@ foreach my $i (1 .. scalar @rowss) {
 				if($title[$j] =~ /^\s*$/){
 					die "ERROR: j=$j , title does not exist of $row[$j]\n";
 				}
-				print "2=> $j $row[$j]  max $#row , headerCnt $headerCnt\n";
-				print "2=> $myhash $myhash->{$title[$j]}\n";
-				print "=> DATA $j $title[$j]\n";
+				print "2=> $j $row[$j]  max $#row , headerCnt $headerCnt\n" if($debug);
+				print "2=> $myhash $myhash->{$title[$j]}\n" if($debug);
+				print "=> DATA $j $title[$j]\n" if($debug);
 				$myhash->{$title[$j]} = removeSpace($row[$j]);
 			}
 		}
@@ -454,7 +456,7 @@ print $infh "passwd,$lpasswd\n";
 print $infh "host,$lhost\n";
 print $infh "location,$lloc\n";
 close($infh);
-print "ping \n";
+print "ping \n" if($debug);
 if($py == 0){
     my $rt = system("ping -W 1 -c 1 $lhost");
     print STDERR "ping $lhost return : $rt\n";
@@ -532,13 +534,13 @@ sub checkHeader {
 
 sub hashTraverseSTDOUT {
     my $mys = shift;
-	print "[$mys]===========TTTTTT==============start\n";
-	traverse_hash_tree(\%gTitle,"gTitle","",STDOUT);
+	print "[$mys]===========TTTTTT==============start\n" if($debug);
+	traverse_hash_tree(\%gTitle,"gTitle","",STDOUT) if($debug);
 	foreach my $key (sort keys %gTitle){
-		print "key: $key\n";
-		traverse_hash_tree(\%$key,"$key","",STDOUT);
+		print "key: $key\n" if($debug);
+		traverse_hash_tree(\%$key,"$key","",STDOUT) if($debug);
 	}
-	print "[$mys]===========TTTTTT==============end\n";
+	print "[$mys]===========TTTTTT==============end\n" if($debug);
 }
 
 
