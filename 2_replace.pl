@@ -1506,7 +1506,7 @@ sub replace_var_with_value
 	        $nn_cnt ++;
 	    }
     } else {        # this is basic
-        while($replace_in =~ /\+<\+\s*([^\+>]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
+        while($replace_in =~ /\+<\+\s*([^\+]*)\s*\+>\+/)		# 	+<+$stg_hash_del_timeout+>+ ==> 10
         {
             #my $match = $&;
                 if($num == 369){
@@ -1515,7 +1515,7 @@ sub replace_var_with_value
                 }
             my $val = eval($1);
             print DBG __SUB__ . "REPLACE:" . " $match  [$1] => value :  [$val]  , iterate_cnt : $iterate_cnt\n";
-            $replace_in =~ s/\+<\+\s*([^\+>]*)\s*\+>\+/$val/;
+            $replace_in =~ s/\+<\+\s*([^\+]*)\s*\+>\+/$val/;
                 if($num == 369){
 	                print DBG __SUB__ . ":" . __LINE__ . " replacein ---- : val:$val 1: $1 num $num  $replace_in\n";
 	                foreach my $key (sort keys %API) { print DBG __SUB__ . "API1 $key - replace_var_with_value\n"; }
