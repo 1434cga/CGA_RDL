@@ -1665,6 +1665,9 @@ open(FH, "<",$filename) or die "Can't open < $filename: $!";
 my $lcnt = 0 ;
 while(<FH>){
 	$s = $s_org = $_;
+	if($s =~ /^#/){
+		next;
+	}
 	chop($s);
 	eval $s;
 	$s =~ /^\$([^\{]+)/;
