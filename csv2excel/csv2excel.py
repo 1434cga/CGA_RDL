@@ -37,7 +37,7 @@ if (options.infilename == None) or (options.outfilename == None) :
 file = pathlib.Path(options.infilename)
 if not file.exists ():
     print ("input file ( %s ) does not exist" % options.infilename)
-    quit()
+    quit(4)
 
 f = open(options.infilename, 'r' , encoding= 'unicode_escape')
 
