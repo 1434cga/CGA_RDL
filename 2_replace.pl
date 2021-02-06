@@ -1590,6 +1590,8 @@ our $cgaRdlVersionMinor;
 our $cgaRdlVersionDev;
 our $yours_module = "";
 
+die(help() . "\nError in command line arguments\n") if($#ARGV < 0);
+
 GetOptions (
 		"inputstci=s"   => \$stcfilename,      # string
 		"outputdb=s"   => \$filename,      # string
