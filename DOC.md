@@ -530,11 +530,15 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 # Functions
 
 ## MACRO
-- ![example](test/macro.cpp.stcI)
+- [example](test/macro.cpp.stcI)
 - if you want to empty argument , you use like MACRO_WORD_EX(void).
 	- it does not support empty argument like MACRO_WORD_EX().
+- test : it includes error.
+```
+make macro
+```
 
-### INLINEMACRO -> __INLINEMACRO : Multiple Line MACRO
+### Multiple Line MACRO : __INLINEMACRO
 	- define
 ```
 stcI_MACRO_START : MACRO_1ARG(TT,TV)
@@ -548,11 +552,11 @@ stcI_MACRO_END
 __INLINEMACRO MACRO_1ARG(ANY1, ANY2)
 ```
 
-### __INMACRO  : Single Line MACRO
+### Single Line MACRO : 
 	- word unit MACRO
 	- define
 ```
-stcI_MACRO_START : MACRO_WORD_EX(TT,TV)   TT == TV
+stcI_MACRO_WORD  : MACRO_WORD_EX(TT,TV)   33TT == 4TV
 ```
 
 	- usage (example)

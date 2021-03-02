@@ -32,8 +32,8 @@
 8.2.1\.  [sample.xlsx](#sample.xlsx)  
 9\.  [Functions](#functions)  
 9.1\.  [MACRO](#macro)  
-9.1.1\.  [INLINEMACRO -> __INLINEMACRO : Multiple Line MACRO](#inlinemacro->__inlinemacro:multiplelinemacro)  
-9.1.2\.  [__INMACRO  : Single Line MACRO](#__inmacro:singlelinemacro)  
+9.1.1\.  [Multiple Line MACRO : __INLINEMACRO](#multiplelinemacro:__inlinemacro)  
+9.1.2\.  [Single Line MACRO :](#singlelinemacro:)  
 
 <a name="cga_rdl"></a>
 
@@ -635,13 +635,17 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 <a name="macro"></a>
 
 ## 9.1\. MACRO
-- ![example](test/macro.cpp.stcI)
+- [example](test/macro.cpp.stcI)
 - if you want to empty argument , you use like MACRO_WORD_EX(void).
 	- it does not support empty argument like MACRO_WORD_EX().
+- test : it includes error.
+```
+make macro
+```
 
-<a name="inlinemacro->__inlinemacro:multiplelinemacro"></a>
+<a name="multiplelinemacro:__inlinemacro"></a>
 
-### 9.1.1\. INLINEMACRO -> __INLINEMACRO : Multiple Line MACRO
+### 9.1.1\. Multiple Line MACRO : __INLINEMACRO
 	- define
 ```
 stcI_MACRO_START : MACRO_1ARG(TT,TV)
@@ -655,13 +659,13 @@ stcI_MACRO_END
 __INLINEMACRO MACRO_1ARG(ANY1, ANY2)
 ```
 
-<a name="__inmacro:singlelinemacro"></a>
+<a name="singlelinemacro:"></a>
 
-### 9.1.2\. __INMACRO  : Single Line MACRO
+### 9.1.2\. Single Line MACRO : 
 	- word unit MACRO
 	- define
 ```
-stcI_MACRO_START : MACRO_WORD_EX(TT,TV)   TT == TV
+stcI_MACRO_WORD  : MACRO_WORD_EX(TT,TV)   33TT == 4TV
 ```
 
 	- usage (example)
