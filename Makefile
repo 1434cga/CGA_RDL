@@ -21,6 +21,7 @@ csv: 1_csv.pl ./time/Code_Generator.csv
 merge:
 	perl 3_recover.pl --template=./OUTPUT/stc/src/2_example.cpp --working=./3_working.cpp.data --merge=./c/d/a.cpp
 toc:
+	# pip3 install MarkdownPP
 	markdown-pp README.mdpp -o README.md        # DOC.md  is basic file in README.mdpp
 macro:
 	perl 1_csv.pl --input=1_example.csv --csv_out=o.csv --python > 1.log

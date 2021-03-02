@@ -304,15 +304,20 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 			$stcI_macro_start = 0;
 		} elsif($in =~ /^stcI_MACRO_WORD\s*\:\s*(.*)\s*/){
 			$macro_def = $1;
-			$macro_def =~ /^\s*([^\s\(]+)\s*\(\s*([^\)]+)\s*\)/;
-			print_fp("MACRO WORD : $1 $2\n",DBG,STDOUT);
-			$stcI_macro_name = $1;
-			$stcI_macro_arg = $2;
-			$stcI_macro_content = $';
-			$stcI_macro_content =~ s/^\s*//;;
-			$stcI_macro_content =~ s/\s*$//;;
-			@stcI_marg = split(",",$stcI_macro_arg);
-			print_fp("MACRO WORD MARG : [@stcI_marg] [$stcI_macro_content]\n",DBG,STDOUT);
+			if($macro_def =~ /^\s*([^\s\(]+)\s*\(\s*([^\)]*)\s*\)/){
+				print_fp("MACRO WORD : [$1] [$2]\n",DBG,STDOUT);
+				$stcI_macro_name = $1;
+				$stcI_macro_arg = $2;
+				$stcI_macro_content = $';
+				$stcI_macro_content =~ s/^\s*//;;
+				$stcI_macro_content =~ s/\s*$//;;
+				@stcI_marg = split(",",$stcI_macro_arg);
+			} else {
+				print_fp("MACRO WORD : [$1] [$2]\n",DBG,STDERR);
+				print STDERR "ERROR is not matched\n";
+				exit(4);
+			}
+			print_fp("MACRO WORD MARG : arg[@stcI_marg] content[$stcI_macro_content]\n",DBG,STDOUT);
 			my $myargcnt = 0;
 			foreach my $myarg (@stcI_marg){
 				$myarg =~ /\s*(\S+)\s*/;
@@ -414,8 +419,9 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 				my $mycnt = 0;
 				my $my_macro_content = $macro{$macro_name}{content};
 				if($my_macro_content eq ""){
-					print_fp("ERROR : $macro_name MACRO is not exist.\n",STDERR,DBG);
+					print_fp("ERROR : [$macro_name] MACRO content is not exist.\n",STDERR,DBG);
 					print STCI_OUTPUT "ERROR : $macro_name MACRO is not exist.\n";
+					exit(4);
 				} else {
 					foreach my $myarg (@marg){
 						$myarg =~ s/\s//g;
@@ -455,9 +461,13 @@ $tttime = $Hour * 3600 + $Minute * 60 + $Second;
 					$macro_before = $`;
 					$macro_after = $';
 					$macro_def = $1;
-					$macro_def =~ /^\s*([^\s\(]+)\s*\(\s*([^\)]+)\s*\)/;
-					$macro_name = $1;
-					$macro_arg = $2;
+					if($macro_def =~ /^\s*([^\s\(]+)\s*\(\s*([^\)]+)\s*\)/){
+						$macro_name = $1;
+						$macro_arg = $2;
+					} else {
+						print_fp("ERROR : [$macro_def] MACRO_WORD is not matched.\n",STDERR,DBG);
+						exit(4);
+					}
 					$macro_arg = " " . $macro_arg . " ";
 					@marg = split(",",$macro_arg);
 					my $mycnt = 0;

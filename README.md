@@ -7,9 +7,10 @@
 1.4\.  [recover (3_recover.sh 3_recover.pl)](#recover3_recover.sh3_recover.pl)  
 2\.  [Purpose](#purpose)  
 3\.  [Environment](#environment)  
-3.1\.  [read excel](#readexcel)  
-3.2\.  [Install](#install)  
-3.2.1\.  [perl module install](#perlmoduleinstall)  
+3.1\.  [use csv file instead of excel](#usecsvfileinsteadofexcel)  
+3.2\.  [read excel](#readexcel)  
+3.3\.  [Install](#install)  
+3.3.1\.  [perl module install](#perlmoduleinstall)  
 4\.  [How to run the test](#howtorunthetest)  
 4.1\.  [example1 (test)](#example1test)  
 4.2\.  [example2 (stc)](#example2stc)  
@@ -24,11 +25,15 @@
 6.2.1\.  [Excel](#excel-1)  
 6.2.2\.  [DataBase](#database-1)  
 6.3\.  [Syntax and Explanation of RDL](#syntaxandexplanationofrdl)  
-7\.  [Collect the latest info each TIDL module](#collect)  
-8\.  [convert csv to excel](#convertcsvtoexcel)  
-8.1\.  [csv2excel - design](#csv2exceldesign)  
-8.2\.  [csv2excel - implementation](#csv2excelimplementation)  
-8.3\.  [sample.xlsx](#samplexlsx)  
+7\.  [Collect the latest info each TIDL module](#collectthelatestinfoeachtidlmodule)  
+8\.  [convert csv to excel (csv2excel)](#convertcsvtoexcelcsv2excel)  
+8.1\.  [csv2excel - design](#csv2excel-design)  
+8.2\.  [csv2excel - implementation](#csv2excel-implementation)  
+8.2.1\.  [sample.xlsx](#sample.xlsx)  
+9\.  [Functions](#functions)  
+9.1\.  [MACRO](#macro)  
+9.1.1\.  [INLINEMACRO -> __INLINEMACRO : Multiple Line MACRO](#inlinemacro->__inlinemacro:multiplelinemacro)  
+9.1.2\.  [__INMACRO  : Single Line MACRO](#__inmacro:singlelinemacro)  
 
 <a name="cga_rdl"></a>
 
@@ -164,21 +169,30 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 # 3\. Environment
 - install perl module (cpan)
 - library MY::CHARLES in perllib directory
+
+<a name="usecsvfileinsteadofexcel"></a>
+
+## 3.1\. use csv file instead of excel
+- Excel is more convenient and effective. But , you can use csv file with 1_csv.pl if you have some problem to install  perl package.
+- ```perl 1_csv.pl --input=./time/Code_Generator.csv --csv_out=./time/o.csv``` 
+    - you can run with  csv file instead of xlsx file.
+    - First of all , you convert the file into csv file when you have error of perl package for excel.
+    - if you use MAC OSX , your csv file will have as one line with ^M. so you can replace ^M with \r\n
+
 <a name="readexcel"></a>
 
-## 3.1\. read excel
+## 3.2\. read excel
 https://perlmaven.com/read-an-excel-file-in-perl
 <a name="install"></a>
 
-## 3.2\. Install
+## 3.3\. Install
 <a name="perlmoduleinstall"></a>
 
-### 3.2.1\. perl module install
+### 3.3.1\. perl module install
 - cpan
     - install Spreadsheet::Read
         - When I run read.pl , I meet the following msg “Parser for XLSX is not installed at read.pl line 9.”
     - install Spreadsheet::XLSX
-
 
 <a name="howtorunthetest"></a>
 
@@ -550,7 +564,7 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
         - ITKEY is key of hash (keys %hash in perl)
         - ITVALUE is value of hash ($hash{key} in perl). But, we use +<+$hash{ITKEY}??+>+ instead of ITVALUE.
 
-<a name="collect"></a>
+<a name="collectthelatestinfoeachtidlmodule"></a>
 
 # 7\. Collect the latest info each TIDL module
 - Collect the latest info
@@ -562,11 +576,10 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
     - Code_Generator_old.csv : old csv file (copy the last Code_Generator.csv)
     - late_tidl.csv : changed content
 
-<a name="convertcsvtoexcel"></a>
+<a name="convertcsvtoexcelcsv2excel"></a>
 
 # 8\. convert csv to excel (csv2excel)
-
-<a name="csv2exceldesign"></a>
+<a name="csv2excel-design"></a>
 
 ## 8.1\. csv2excel - design
 - csv를 만들때 얼마의 단위로 만들 것인가?   hpp 파일 하나의 단위인가?  아니면 hpp들을 모은 단위인가?
@@ -577,7 +590,7 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 - excel을 먼저 빨리 만들어서, code에서 사용하는 값들을 모두 나열해야 할 것으로 보인다.
 - csv2excel : source code
 
-<a name="csv2excelimplementation"></a>
+<a name="csv2excel-implementation"></a>
 
 ## 8.2\. csv2excel - implementation
 - 3 stage
@@ -609,7 +622,49 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 - #set_color(lightgreen),orange,lightgreen,orange,,,,lightgreen,lightblue,,,orange,¶
     - change color of column
 
-<a name="samplexlsx"></a>
+<a name="sample.xlsx"></a>
 
-### 8.3\. sample.xlsx
+### 8.2.1\. sample.xlsx
 ![](./png/sample.xlsx.png)
+
+
+<a name="functions"></a>
+
+# 9\. Functions
+
+<a name="macro"></a>
+
+## 9.1\. MACRO
+- ![example](test/macro.cpp.stcI)
+- if you want to empty argument , you use like MACRO_WORD_EX(void).
+	- it does not support empty argument like MACRO_WORD_EX().
+
+<a name="inlinemacro->__inlinemacro:multiplelinemacro"></a>
+
+### 9.1.1\. INLINEMACRO -> __INLINEMACRO : Multiple Line MACRO
+	- define
+```
+stcI_MACRO_START : MACRO_1ARG(TT,TV)
+    TT is mine.
+    TV is yours.
+stcI_MACRO_END
+```
+
+	- usage (example)
+```
+__INLINEMACRO MACRO_1ARG(ANY1, ANY2)
+```
+
+<a name="__inmacro:singlelinemacro"></a>
+
+### 9.1.2\. __INMACRO  : Single Line MACRO
+	- word unit MACRO
+	- define
+```
+stcI_MACRO_START : MACRO_WORD_EX(TT,TV)   TT == TV
+```
+
+	- usage (example)
+```
+sing line :  __INMACRO< MACRO_WORD_EX(stcI_empty,PP2) > is eample of single line macro.
+```
