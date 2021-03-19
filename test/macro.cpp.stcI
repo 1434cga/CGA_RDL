@@ -19,6 +19,7 @@ KG3
 ---
 stcI_MACRO_END
 stcI_MACRO_WORD  : MACRO_WORD_EX(TT,TV)   33TT == 4TV
+stcI_MACRO_WORD  : MACRO_SINGLE(void)   +<+no_argument example+>+
 
 
 /*
@@ -35,8 +36,6 @@ __INLINEMACRO MACRO_2ARG(,,)
 pp
 __INLINEMACRO MACRO_1ARG(ANY1, ANY2)
 pp
-__INLINEMACRO MACRO_ERROR(, ANY2 )            // ERROR : macro name is error
-pp
 __INLINEMACRO MACRO_2ARG(, ANY2 )            // ERROR : different argument count
 pp
 
@@ -52,3 +51,8 @@ pp
 // CGA_VARIANT:__GLOBAL_SCOPE__:__YOUR_CODE__:variant END
 
 
+__INMACRO< MACRO_SINGLE(void)>
+
+
+pp
+__INLINEMACRO MACRO_ERROR(, ANY2 )            // ERROR : macro name is error

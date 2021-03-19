@@ -525,3 +525,41 @@ ITERATE %MODULE +<<+ ITKEY  ITVALUE
 
 ### sample.xlsx
 ![](./png/sample.xlsx.png)
+
+
+# Functions
+
+## MACRO
+- [example](test/macro.cpp.stcI)
+- if you want to empty argument , you use like MACRO_WORD_EX(void).
+	- it does not support empty argument like MACRO_WORD_EX().
+- test : it includes error.
+```
+make macro
+```
+
+### Multiple Line MACRO : __INLINEMACRO
+	- define
+```
+stcI_MACRO_START : MACRO_1ARG(TT,TV)
+    TT is mine.
+    TV is yours.
+stcI_MACRO_END
+```
+
+	- usage (example)
+```
+__INLINEMACRO MACRO_1ARG(ANY1, ANY2)
+```
+
+### Single Line MACRO : 
+	- word unit MACRO
+	- define
+```
+stcI_MACRO_WORD  : MACRO_WORD_EX(TT,TV)   33TT == 4TV
+```
+
+	- usage (example)
+```
+sing line :  __INMACRO< MACRO_WORD_EX(stcI_empty,PP2) > is eample of single line macro.
+```
