@@ -683,7 +683,7 @@ print "LL3 $iterate_comments : [$$temp_set_var]  [$mys]\n";
 		}
 #print_fp("Line 2 icnt=$iterate_cnt : $in",DBG);
 
-		if ($in =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)\s*$/){
+		if ($in =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])([ \S]+)\s+\+<<\+\s+(\S+)\s+(\S+)\s*$/){
 			#ITERATOR_DEBUG 
 			print DBG "ITERATE Mstart $1 $2 $3 $4 $5\n"; 
 			if(0 == $iterate_cnt){
@@ -1363,14 +1363,14 @@ sub Iterator_recursion
 
 	# Various Operation
 	$iterate_lines = "";
-	if($result =~ /\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/){ 
+	if($result =~ /\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])([ \S]+)\s+\+<<\+\s+(\S+)\s+(\S+)/){ 
 		@lines = split("\n",$result);
 		$result = "";
 		foreach my $it_line (@lines){
-			if ($it_line =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/){  
+			if ($it_line =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])([ \S]+)\s+\+<<\+\s+(\S+)\s+(\S+)/){  
 #print DBG "Set Hash 20 : $iterate_lines \n";
 #print DBG "Set Hash 21 : $iterate_cnt : $it_line\n";
-				$it_line =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])(\S+)\s+\+<<\+\s+(\S+)\s+(\S+)/;  
+				$it_line =~ /^\s*ITERATE(WithoutNewLine\s+|\s+)([+-]?[KV]?[%@&+])([ \S]+)\s+\+<<\+\s+(\S+)\s+(\S+)/;  
 				if(0 == $iterate_cnt){
 #print  DBG "Sstart $1 $2 $3 $4\n"; 
 					($iterate_var_type , $iterate_var_name , $iterate_key , $iterate_value) = ($2,$3,$4,$5);
