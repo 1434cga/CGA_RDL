@@ -17,6 +17,9 @@ use lib abs_path . '/../../perllib';
 use lib abs_path . '/../../../perllib';
 use MY::CHARLES qw(recover_special_code);
 
+our $tagWithoutNewLineStart = "##-------------123456===WithoutNewLine-----987654==Start====     ";
+our $tagWithoutNewLineEnd = "##-------------123456===WithoutNewLine-----987654==End====     ";
+
 our %macro;
 our %macro_word;
 our $stcI_macro_name;
@@ -782,6 +785,9 @@ print "LL3 $iterate_comments : [$$temp_set_var]  [$mys]\n";
 				if($myiterateNewLineType ne "WithoutNewLine"){
 					$file_output{$stc_filename_output} .= $iterate_lines;
 				} else {
+					$file_output{$stc_filename_output} .= $tagWithoutNewLineStart . "\n" . $iterate_lines . $tagWithoutNewLineEnd . "\n";
+					$myiterateNewLineType = "";
+my $comment =  <<END_COMMENT;
 					#print STDERR "1{$iterate_lines}\n\n";
 					#print STDERR "1[ $file_output{$stc_filename_output} ]\n\n";
 					$file_output{$stc_filename_output} =~ s/\n$/ /;
@@ -792,6 +798,7 @@ print "LL3 $iterate_comments : [$$temp_set_var]  [$mys]\n";
 					$myiterateNewLineType = "";
 					#print STDERR "2{$iterate_lines}\n\n";
 					#print STDERR "2[ $file_output{$stc_filename_output} ]\n\n";
+END_COMMENT
 				}
 
 				$iterate_lines = "";
@@ -862,6 +869,30 @@ print "LL3 $iterate_comments : [$$temp_set_var]  [$mys]\n";
 		    open(OUTPUTC , "> $outputdir/$stc_output_dir/$tmpKey");
         }
 		$lines =~ s///g;
+        my @tws = split(/$tagWithoutNewLineStart/,$lines);
+        my $tws_size = scalar @tws;
+        for($i=0;$i< $tws_size;$i++) {
+            if($tws[$i] =~ /$tagWithoutNewLineEnd/){
+                if($i == 0){
+		            print OUTPUTC "\nERROR: tws i[$i]\n";
+                }
+                $tws[$i-1] =~ s/\n$//;
+                my @twe = split(/$tagWithoutNewLineEnd/,$tws[$i]);
+                my $twe_size = scalar @twe;
+                $twe[0] =~ s/\t/ /g;
+                $twe[0] =~ s/\n//g;
+                while($twe[0] =~ /  /){
+                    $twe[0] =~ s/  / /g;
+                };
+                #$tws[$i] = "[[[" . $twe_size . "]]]{" . join('ETTE', @twe) . "}";
+                $tws[$i] = join('', @twe);
+                $tws[$i] =~ s/\n//;
+            }
+        }
+        #$lines = "[[[" . $tws_size . "]]]<<" . join('STTS',@tws) . ">>";
+        $lines = join('',@tws);
+my $comment =  <<END_COMMENT;
+END_COMMENT
 		print OUTPUTC $lines;
 		close(OUTPUTC);
 	}
@@ -1422,6 +1453,9 @@ sub Iterator_recursion
 					if($myiterate_newline_type ne "WithoutNewLine"){
 						$result .= $iterate_lines;
 					} else {
+					    $result .= $tagWithoutNewLineStart . "\n" . $iterate_lines . $tagWithoutNewLineEnd . "\n";
+					    $myiterateNewLineType = "";
+my $comment =  <<END_COMMENT;
 						#print STDERR "3{$iterate_lines}\n\n";
 						#print STDERR "3[$result]\n\n";
 						chomp($result);
@@ -1431,6 +1465,7 @@ sub Iterator_recursion
 						$myiterate_newline_type = "";
 						#print STDERR "4{$iterate_lines}\n\n";
 						#print STDERR "4[$result]\n\n";
+END_COMMENT
 					}
 					#print OUTPUTC "SUB RETURN \$iterate_lines = \n\[\n$iterate_lines\n\]\n";
 #print  DBG "Send result 31 :: $result\n"; 

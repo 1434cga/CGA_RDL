@@ -1,4 +1,13 @@
 -------------------------------------------
+2021.05.05 [-b master] ITERATEWithoutNewLine is working well
+
+- old problem : we can not proess ITERATEWithoutNewLIne when we have IFEQUAL in iterate.
+- solution :
+    - keep the same style with ITERATE.
+    - but , we put $tagWithoutNewLineStart and $tagWithoutNewLineEnd
+    - at the end of CChanage , we remove caridge return.  we can show the result in one line.
+ 
+-------------------------------------------
 2020.12.27 [-b master] bug fix using isDefinedHash : if we access multi-dimension hash , this hash was made when it access.
 
 - solve #60
