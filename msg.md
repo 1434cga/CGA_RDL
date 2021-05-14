@@ -1,4 +1,10 @@
 -------------------------------------------
+2021.05.14 [-b master] add special character ^ $
+
+- solution :
+    - change recover_special_code & change_special_code()
+ 
+-------------------------------------------
 2021.05.05 [-b master] ITERATEWithoutNewLine is working well
 
 - old problem : we can not proess ITERATEWithoutNewLIne when we have IFEQUAL in iterate.

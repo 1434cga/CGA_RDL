@@ -177,6 +177,10 @@ sub sort_keys
 
 sub change_special_code {
 	my ($s) = @_;
+	$s =~ s/\$/#\+#\+#\+\+shift4####/g;
+	$s =~ s/\^/#\+#\+#\+\+shift6####/g;
+    #$s =~ s/\[/#\+#\+#\+\+bracketopen####/g;
+    #$s =~ s/\]/#\+#\+#\+\+bracketclose####/g;
 	$s =~ s/\{/#\+#\+#\+\+braceopen###/g;
 	$s =~ s/\}/#\-#\-#\-\-braceclose###/g;
 	$s =~ s/\\/#\=#\=#\=\=backslash###/g;
@@ -187,6 +191,10 @@ sub change_special_code {
 }
 sub recover_special_code {
 	my ($s) = @_;
+	$s =~ s/#\+#\+#\+\+shift4####/\$/g;
+	$s =~ s/#\+#\+#\+\+shift6####/\^/g;
+    #$s =~ s/#\+#\+#\+\+bracketopen####/\[/g;
+    #$s =~ s/#\+#\+#\+\+bracketclose####/\]/g;
 	$s =~ s/#\+#\+#\+\+braceopen###/\{/g;
 	$s =~ s/#\-#\-#\-\-braceclose###/\}/g;
 	$s =~ s/#\=#\=#\=\=backslash###/\\/g;
